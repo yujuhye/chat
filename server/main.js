@@ -6,6 +6,7 @@ const path = require('path');
 const session = require('express-session');
 const { MemoryStore } = require('express-session');
 const bcrypt = require('bcrypt');
+const cors = require('cors');
 
 // socket.io 설정 -> 되는지 확인 필요
 const http = require('http').Server(app);
@@ -15,6 +16,13 @@ require('./socket/socket')(io);
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cors({
+
+    origin: 'http://localhost:3000',
+    credentials: true,
+
+}));
 
 // session start
 const maxAge = 60 * 60 * 30;
