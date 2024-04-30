@@ -4,50 +4,49 @@ const bodyParser = require('body-parser');
 const compression = require('compression');
 const path = require('path');
 const session = require('express-session');
-const { MemoryStore } = require('express-session');
+const MemoryStore = require('memorystore')(session);
 const bcrypt = require('bcrypt');
 const cors = require('cors');
+const http = require('http').createServer(app);
 
-const os = require('os');
-
-if (os.version().includes('Windows')) {
-    host = '192.168.0.41';
-} else {
-    host = '192.168.0.41';
-}
-
-// socket.io 설정 -> 되는지 확인 필요
-const http = require('http').Server(app);
-const io = require('socket.io')(http);
-require('./socket/socket')(io);
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(compression());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static('C:\\member\\upload\\profile_thums\\'));  // 프로필 사진 경선 추가
-
+// Express에 CORS 미들웨어 적용
 app.use(cors({
-
-    origin: 'http://localhost:3000',
-    credentials: true,
-
+    origin: "http://localhost:3000", // 프론트엔드 서버 주소
+    credentials: true // 쿠키를 포함시키기 위해 필요
 }));
 
-// session start
-const maxAge = 1000 * 60 * 30; // 세션 시간 경선 추가
-const sessionObj = {
+// Socket.IO 설정
+const io = require('socket.io')(http, {
+    cors: {
+        origin: "http://localhost:3000", // 프론트엔드 서버 주소
+        methods: ["GET", "POST"], // 허용할 HTTP 메소드
+        credentials: true
+    }
+});
 
-    secret: 'chat!', // session password
+// Socket.IO 설정을 위한 socket.js 모듈 호출
+require('./socket/socket')(io);
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); // 문제가 있을 시 확인 후 수정해야할듯
+app.use(compression());
+app.use(express.static(path.join(__dirname, 'public')));
+
+const maxAge = 60 * 60 * 1000 * 30; // 쿠키 최대 유효 시간 설정(예: 30시간)
+const sessionObj = {
+    secret: 'chat!',
     resave: false,
     saveUninitialized: true,
-    store: new MemoryStore({ checkPeriod: maxAge }),
+    store: new MemoryStore({
+        checkPeriod: maxAge
+    }),
     cookie: {
         maxAge: maxAge,
     },
-
 }
 
 app.use(session(sessionObj));
+
 
 // passport START  -- 경선 추가
 let pp = require('./lib/passport/passport');
@@ -79,17 +78,15 @@ app.get('/signinFail', (req, res) => {
 });
 // passport END
 
-app.get('/', (req, res) => {
 
+app.get('/', (req, res) => {
     console.log('/');
     res.redirect('/home');
-
 });
 
-// router setting start
-
-const homeRuter = require('./routes/homeRouter');
-app.use('/home', homeRuter);
+// 라우터 설정
+const homeRouter = require('./routes/homeRouter');
+app.use('/home', homeRouter);
 
 const chatRoomRouter = require('./routes/chatRoomRouter');
 app.use('/chatRoom', chatRoomRouter);
@@ -103,7 +100,7 @@ app.use('/friend', friendRouter);
 const memberRouter = require('./routes/memberRouter');
 app.use('/member', memberRouter);
 
-// router setting end
-
-
-app.listen(3001);
+// Express 서버 대신 http 서버를 사용하여 시작, Socket.IO와 함께 사용
+http.listen(3001, () => {
+    console.log('listening on *:3001');
+});
