@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const chatService = {
 
-    chat: (req, res) => {
+    chatView: (req, res) => {
         res.render('chat');
     }
 
