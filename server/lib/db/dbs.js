@@ -5,9 +5,9 @@ const DBs = {
     DB_LOCAL: () => {
 
         return mysql.createConnection({
-            host: 'localhost',
+            host: '192.168.0.41',
             port: '3306',
-            user: 'roor',
+            user: 'root',
             password: '1234',
             database: 'CHAT_SERVICE',
             dateStrings: true,

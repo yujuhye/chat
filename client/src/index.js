@@ -7,8 +7,9 @@ import ReduxStore from './component/ReduxStore';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-  <ReduxStore />
+    <ReduxStore />
   </React.StrictMode>
+
 );
 
 // If you want to start measuring performance in your app, pass a function
