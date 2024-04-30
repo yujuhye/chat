@@ -1,6 +1,6 @@
 const homeService = {
 
-    home: (req, rse) => {
+    home: (req, res) => {
 
         res.render('home/home');
 
