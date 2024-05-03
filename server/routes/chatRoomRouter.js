@@ -35,4 +35,12 @@ router.get('/deleteChatRoom', (req, res) => {
 
 });
 
+// getUserInfo
+router.get('/getUserInfo', (req, res) => {
+
+    console.log('/chatRoom/getUserInfo');
+    chatRoomService.getUserInfo(req, res);
+
+});
+
 module.exports = router;

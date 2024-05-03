@@ -5,7 +5,9 @@ const chatRoomService = {
 
     list: (req, res) => {
         //let user = req.user; // 또는 다른 방식으로 사용자 번호를 받아옴
-        let user = '2';
+        let user = '1';
+
+        console.log('chat list user -----> ',user);
     
         DB.query(
         `
@@ -53,35 +55,27 @@ const chatRoomService = {
         });
     },
     getFriendList: (req, res) => {
-
-        //let user = req.user; // 또는 다른 방식으로 사용자 번호를 받아옴
-        let query = req.query;
-        let user = '2';
-
+        let user = '1'; // 예시를 위한 하드코딩 값. 실제 작동 시 req를 통해 동적으로 받아와야 함.
+    
         let sql = 
-        `
-            SELECT * FROM FRIEND WHERE FRIEND_IS_BLOCK = 0
-        `;
-        DB.query(sql, (err, friends) => {
-
+            `
+                SELECT * FROM FRIEND WHERE FRIEND_IS_BLOCK = 0 AND USER_NO = ?
+            `;
+        DB.query(sql, [user], (err, friends) => { // SQL 인젝션 방지를 위해 사용자 입력값을 쿼리 매개변수로 바인딩
+    
             if(err) {
-
-                res.json(null);
-
+                res.status(500).json({error: "데이터베이스 쿼리 중 오류가 발생했습니다."});
             } else {
-
                 res.json(friends);
-
             }
-
+    
         })
-
-    },
+    },    
     modifyTitleConfirm: (req, res) => {
 
         let post = req.body;
         //let user = req.user; // 또는 다른 방식으로 사용자 번호를 받아옴
-        //let user = '2';
+        let user = '1';
 
         let sql = 
         `
@@ -109,9 +103,9 @@ const chatRoomService = {
             } else {
 
                 res.json({'result': 1});
-                console.log(post.parti_customzing_name);
-                console.log(post.user_no);
-                console.log(post.room_no);
+                console.log('parti_customzing_name : ',post.parti_customzing_name);
+                console.log('user_no : ',post.user_no);
+                console.log('room_no : ',post.room_no);
 
             }
 
@@ -120,7 +114,30 @@ const chatRoomService = {
     },
     deleteChatRoom: (req, res) => {
         res.render('deleteChatRoom');
-    }
+    },
+    getUserInfo: (req, res) => {
+
+        //let user = req.user; // 또는 다른 방식으로 사용자 번호를 받아옴
+        let user = '1';
+
+        let sql = 
+        `
+            SELECT * FROM USER_IFM WHERE USER_NO = ?
+        `;
+        DB.query(sql, [user], (err, user) => {
+
+            if(err) {
+                
+                res.json(null);
+
+            } else {
+
+                res.json(user[0]);
+
+            }
+        });
+
+    },
 
 }
 
