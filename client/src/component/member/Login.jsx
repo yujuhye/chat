@@ -88,7 +88,7 @@ const Login = () => {
                     dispatch(setIsLoginAction(true));
                     dispatch(setUserIdAction(response.data.sessionID));
 
-                    navigate('/List');
+                    navigate('/friend/friendList');
 
                 } else {
                     alert('MEMBER LOGIN PROCESS FAIL!!');
