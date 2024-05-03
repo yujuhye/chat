@@ -5,6 +5,7 @@ const initialState = {
     myprofile: {
 
     },
+  
    
 }
 
@@ -16,6 +17,13 @@ export const friendReducer = (state=initialState, action) =>  {
 
             state['friends'] = action.friends;
             return {...state}
+
+        case 'MYPROFILE' : 
+        console.log('action.myProfile: ', action.myProfile)
+
+            state['myprofile'] = action.myProfile;
+            return {...state}
+
 
         default:
             return state;

@@ -5,3 +5,12 @@ export const friendListsAction = (data) => {
         friends: data
     }
 }
+
+export const myProfileAction = (data) => {
+
+    return {
+        type: 'MYPROFILE',
+        myProfile: data
+    }
+}
+
