@@ -22,6 +22,4 @@ router.post('/signUpConfirm', uploads.UPLOAD_PROFILE_MIDDLEWARE(), (req, res) =>
 
 });
 
-
-
 module.exports = router;

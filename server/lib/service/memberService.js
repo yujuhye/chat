@@ -6,8 +6,13 @@ const memberService = {
 
     getMember: (req, res) => {
 
+        const sessionID = req.query.sessionID;
+
+        console.log('req.query.sessionID ---> ', sessionID)
+        console.log('req.sessionID ---> ', req.sessionID)
+
         // 세션 검증
-        if (req.query.sessionID === req.sessionID) {
+        if (sessionID === req.sessionID) {
             console.log('The session has not expired!!');
 
             DB.query(

@@ -83,34 +83,34 @@ app.get('/signinFail', (req, res) => {
 
 });
 
-//// ADMIN
-let ppa = require('./lib/passport/passportforadmin');
-let passportforadmin = ppa.passport(app);
+// //// ADMIN
+// let ppa = require('./lib/passport/passportforadmin');
+// let passportforadmin = ppa.passport(app);
 
-app.get('/admin/adminSigninConfirm', passportforadmin.authenticate('local', {
-    successRedirect: '/adminSigninSuccess',
-    failureRedirect: '/adminSigninFail',
+// app.get('/admin/adminSigninConfirm', passportforadmin.authenticate('local', {
+//     successRedirect: '/adminSigninSuccess',
+//     failureRedirect: '/adminSigninFail',
 
-}));
+// }));
 
-// 로그인 성공 시
-app.get('/adminSigninSuccess', (req, res) => {
-    console.log('signinSuccess ::: req.user --> ', req.user);
-    res.cookie('adminSessionID', req.sessionID, { maxAge: 1000 * 60 * 30 });
-    res.json({
-        'adminSessionID': req.sessionID,
-        'aId': req.user,
-    });
+// // 로그인 성공 시
+// app.get('/adminSigninSuccess', (req, res) => {
+//     console.log('signinSuccess ::: req.user --> ', req.user);
+//     res.cookie('adminSessionID', req.sessionID, { maxAge: 1000 * 60 * 30 });
+//     res.json({
+//         'adminSessionID': req.sessionID,
+//         'aId': req.user,
+//     });
 
-});
+// });
 
-// 로그인 실패 시
-app.get('/adminSigninFail', (req, res) => {
-    console.log('signinFail');
+// // 로그인 실패 시
+// app.get('/adminSigninFail', (req, res) => {
+//     console.log('signinFail');
 
-    res.json(null);
+//     res.json(null);
 
-});
+// });
 
 // passport END
 
@@ -136,8 +136,8 @@ app.use('/friend', friendRouter);
 const memberRouter = require('./routes/memberRouter');
 app.use('/member', memberRouter);
 
-const adminRouter = require('./routes/adminRouter');
-app.use('/admin', adminRouter);
+// const adminRouter = require('./routes/adminRouter');
+// app.use('/admin', adminRouter);
 
 // Express 서버 대신 http 서버를 사용하여 시작, Socket.IO와 함께 사용
 http.listen(3001, () => {

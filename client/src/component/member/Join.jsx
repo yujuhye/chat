@@ -66,7 +66,7 @@ const Join = () => {
     const joinSubmitBtnClickHandler = () => {
         console.log('[JOIN] joinSubmitBtnClickHandler()');
 
-        let form = document.member_join_form;
+        let form = document.memberJoinForm;
 
         if (uId === '') {
             alert('INPUT USER ID');
@@ -81,7 +81,7 @@ const Join = () => {
             form.uEmail.focus();
 
         } else if (uNickname === '') {
-            alert('INPUT USER PHONE');
+            alert('INPUT USER NICKNAME');
             form.uNickname.focus();
 
         } else {
@@ -111,7 +111,7 @@ const Join = () => {
             data: formData,
         })
             .then(response => {
-                console.log('[JOIN] AJAX MEMBER_JOIN COMMUNICATION SUCCESS');
+                console.log('[JOIN] AXIOS MEMBER_JOIN COMMUNICATION SUCCESS');
 
                 if (response.data !== null && response.data > 0) {
                     alert('MEMBER JOIN PROCESS SUCCESS!!');
@@ -134,11 +134,11 @@ const Join = () => {
 
             })
             .catch(error => {
-                console.log('[JOIN] AJAX MEMBER_JOIN COMMUNICATION ERROR');
+                console.log('[JOIN] AXIOS MEMBER_JOIN COMMUNICATION ERROR');
 
             })
             .finally(data => {
-                console.log('[JOIN] AJAX MEMBER_JOIN COMMUNICATION FINALLY');
+                console.log('[JOIN] AXIOS MEMBER_JOIN COMMUNICATION FINALLY');
 
             });
 
@@ -147,7 +147,6 @@ const Join = () => {
     return (
 
         <div>
-            <img src='resource/img/logo.jpg' />
 
             <p>MEMBER JOIN FORM</p>
             <form name="memberJoinForm">

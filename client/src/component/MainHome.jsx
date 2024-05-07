@@ -20,6 +20,8 @@ import News from './admin/adminmanagement/News';
 import RequestFriend from './friend/RequestFriend';
 import ManagementFriend from './friend/ManagementFriend';
 
+axios.defaults.withCredentials = true;
+
 const MainHome = () => {
 
     const isLogin = useSelector(state => state.login.isLogin);
@@ -91,6 +93,7 @@ const MainHome = () => {
     return (
         <BrowserRouter>
             {isLogin || isAdminLogin ? <Nav /> : null}
+            {/* {isLogin || isAdminLogin ? <Nav /> : null} */}
             <Routes>
                 <Route path="/" element={isLogin || isAdminLogin ? <Navigate to="/friend/friendList" /> : <Login />} />
                 <Route path="/member/join" element={<Join />} />
@@ -100,12 +103,12 @@ const MainHome = () => {
                 <Route path='/friend/requestFriend' element={<RequestFriend />}></Route>
                 <Route path='/friend/managementFriend' element={<ManagementFriend />}></Route>
                 <Route path="/admin/home" element={isAdminLogin ? <AdminHome /> : <Navigate to="/admin/adminlogin" />} />
-                    <Route path="/admin/adminlogin" element={<AdminLogin />} />
-                    <Route path="/admin/adminjoin" element={<AdminJoin />} />
-                    <Route path="/admin/news" element={<News />} />
-                    <Route path="/admin/cleancenter" element={<CleanCenter />} />
-                    <Route path="/admin/userstatus" element={<UserStatus />} />
-                    <Route path="/admin/chattimestatus" element={<ChatTimeStatus />} />
+                <Route path="/admin/adminlogin" element={<AdminLogin />} />
+                <Route path="/admin/adminjoin" element={<AdminJoin />} />
+                <Route path="/admin/news" element={<News />} />
+                <Route path="/admin/cleancenter" element={<CleanCenter />} />
+                <Route path="/admin/userstatus" element={<UserStatus />} />
+                <Route path="/admin/chattimestatus" element={<ChatTimeStatus />} />
             </Routes>
 
         </BrowserRouter>

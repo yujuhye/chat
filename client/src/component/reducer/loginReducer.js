@@ -1,8 +1,9 @@
-import { SET_UID, SET_UPW } from '../action/types';
+import { SET_UID, SET_UPW, SET_IS_LOGIN } from '../action/types';
 
 const initialState = {
     uId: '',
-    uPw: ''
+    uPw: '',
+    isLogin: false
 };
 
 const loginReducer = (state = initialState, action) => {
@@ -16,6 +17,12 @@ const loginReducer = (state = initialState, action) => {
             return {
                 ...state,
                 uPw: action.payload
+            };
+
+        case SET_IS_LOGIN:
+            return {
+                ...state,
+                isLogin: action.payload
             };
         default:
             return state;

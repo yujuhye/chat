@@ -3,16 +3,12 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUIdAction, setUPwAction, setIsLoginAction, setUserIdAction } from '../action/loginActions';
-import GET_MEMBER from '../../util/getmembers';
+
 // import { SERVER_URL } from '../../util/url';
 
 axios.defaults.withCredentials = true;
 
 const Login = () => {
-
-    // useEffect(() => {
-    //     GET_MEMBER(); // useEffect 내에서 GET_MEMBER 함수 호출
-    // }, []);
 
     const dispatch = useDispatch();
     const [uId, setUId] = useState(''); // mId와 mPw의 상태를 정의해주어야 합니다.
@@ -75,7 +71,7 @@ const Login = () => {
             params: {
                 'uId': uId,
                 'uPw': uPw,
-            }
+            },
         })
             .then(response => {
                 console.log('[LOGIN] AXIOS MEMBER_LOGIN COMMUNICATION SUCCESS');
@@ -84,7 +80,7 @@ const Login = () => {
 
                 if (response.data !== null) {
                     alert('MEMBER LOGIN PROCESS SUCCESS!!');
-                    // sessionStorage.setItem('sessionID', response.data.sessionID);
+                    sessionStorage.setItem('sessionID', response.data.sessionID);
                     dispatch(setIsLoginAction(true));
                     dispatch(setUserIdAction(response.data.sessionID));
 
@@ -112,7 +108,7 @@ const Login = () => {
     return (
         <div>
             <div>
-                <img src='resource/img/logo.jpg' />
+                <img src='/resource/img/logo.jpg' />
 
                 <p>MEMBER LOGIN FORM</p>
                 <form name="memberLoginForm">
@@ -124,7 +120,9 @@ const Login = () => {
 
             </div>
             <div>
-                <Link to="/join">회원가입</Link>
+                <Link to="/member/join">회원가입</Link><br />
+                <Link to="/admin/home">ADMIN</Link><br />
+                <a href="http://localhost:3001/auth/google">with Google</a>
             </div>
         </div>
 
