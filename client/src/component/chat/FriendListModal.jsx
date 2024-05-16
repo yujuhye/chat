@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useReducer } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchUser } from "./fetchFunction";
+import { setRooms } from '../action/chatRoom';
 import axios from "axios"; 
+import '../../css/common.css'
 
 const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendModal, setIsShowFriendModal}) => {
    
@@ -9,6 +13,8 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
     const [isShowChatNameInput, setIsShowChatNameInput] = useState(false);
     const [chatName, setChatName] = useState('');
     const [selectedFriendDetails, setSelectedFriendDetails] = useState([]);
+    const dispatch = useDispatch();
+    const rooms = useSelector(state => state['room']['rooms']);
 
     const fetchFriends = () => {
         axios({
@@ -19,13 +25,19 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
         })
         .then(response => {
             if (response.data) {
+
                 setFriends(response.data);
+
             } else {
-                alert('친구 목록을 불러오는 데 실패했습니다.');
+
+                alert('[FriendListModal] 친구 목록을 불러오는 데 실패했습니다.');
+
             }
         })
         .catch(error => {
-            alert(`Error: ${error.message}`);
+
+            alert(`[FriendListModal] fetchFriends Error: ${error.message}`);
+
         });
     };
 
@@ -45,13 +57,13 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
 
             } else {
 
-                alert('user 정보를 불러오는 데 실패했습니다.');
+                alert('[FriendListModal] user 정보를 불러오는 데 실패했습니다.');
 
             }
         })
         .catch(error => {
 
-            alert(`Error: ${error.message}`);
+            alert(`[FriendListModal] fetchUser Error: ${error.message}`);
 
         });
     };
@@ -67,7 +79,10 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
     if (!isShowFriendModal) return null; // 모달을 표시하지 않을 경우 렌더링하지 않음
 
     const handleFriendSelection = (friendNo) => {
+        console.log('friendNo -----> ', friendNo);
+        
         const friend = friends.find(f => f.FRIEND_NO === friendNo);
+
         if (selectedFriends.includes(friendNo)) {
           // 이미 선택된 경우, 선택 목록에서 제거
           setSelectedFriends(selectedFriends.filter(no => no !== friendNo));
@@ -113,36 +128,53 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
             console.log('채팅할 친구 : ', inputValue);
             
         } 
-    }    
+    }
+
+    const fetchRooms = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/chatRoom/list');
+            console.log('chat list : ', response.data); 
+            console.log('채팅 리스트 room : ', response.data.rooms); 
+
+            // 가져온 채팅방 목록을 리덕스 스토어에 설정
+            dispatch(setRooms(response.data.rooms));
+        
+        } catch (error) {
+            console.error("채팅방 목록을 불러오는데 실패했습니다.", error);
+        }
+    };
  
     const newChatStartBtnClickHandler = () => {
         const newChatData = {
             room_default_name: chatName, // 사용자가 입력한 채팅방 이름
             participants: selectedFriendDetails, // 참여자 정보
-            userInfo: userInfo, // 채팅방 설명 추가
-            // 필요에 따라 추가할 다른 데이터 필드
+            userInfo: userInfo, // 채팅방 생성 유저
         };
     
-        // Socket을 사용하여 서버로 채팅방 생성 요청을 합니다.
         console.log('[friends modal] newChatData -----> ', newChatData);
         console.log('[friends modal] selectedFriendDetails -----> ', selectedFriendDetails);
         console.log('[friends modal] userInfo -----> ', userInfo);
         socket.emit('createRoom', newChatData);
         // 필요한 추가 로직(예: 상태 초기화 등)
-    }
+        fetchRooms();
+        socket.on('update room list', fetchRooms);
 
+        setIsShowFriendModal(false);
+    }
+ 
     return (
         <div className="friendWrap">
             <div className="friend">
                 <p>친구 리스트</p>
-                {friends.map(friend => (
-                    <div key={friend.FRIEND_NO}>
+                {friends.map(friends => (
+                    <div key={friends.FRIEND_NO}>
                         <input 
                           type="checkbox" 
-                          checked={selectedFriends.includes(friend.FRIEND_NO)}
-                          onChange={() => handleFriendSelection(friend.FRIEND_NO)}
+                          checked={selectedFriends.includes(friends.FRIEND_NO)}
+                          onChange={() => handleFriendSelection(friends.FRIEND_NO)}
                         />
-                        {friend.FRIEND_TARGET_NAME}
+                        {friends.USER_NO}
+                        {friends.FRIEND_TARGET_NAME}
                     </div>
                 ))}
                 <button onClick={handleCreateRoom}>친구 선택</button>
@@ -153,8 +185,8 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
                 ?
                 <>
                     <form name="newChatTitle">
-                        <input type="hidden" name="user_no" value={userInfo.USER_NO} onChange={(e)=>newChatTitleNameInputChange(e)} />                        
-                        <input type="hidden" name="user_nickname" value={userInfo.USER_NICKNAME} onChange={(e)=>newChatTitleNameInputChange(e)} />                        
+                        <input type="hidden" name="user_no" value={userInfo.USER_NO} />                        
+                        <input type="hidden" name="user_nickname" value={userInfo.USER_NICKNAME} />                        
                         <input type="text" name="room_default_name" value={chatName} onChange={(e)=>newChatTitleNameInputChange(e)} />                        
                         <input type="button" value="NEW CHAT" onClick={newChatStartBtnClickHandler} />
                     </form>

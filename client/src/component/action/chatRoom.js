@@ -1,7 +1,7 @@
 export const setRooms = (rooms) => ({
 
     type: 'SET_ROOMS',
-    payload: rooms,
+    rooms: rooms,
     
 });
 

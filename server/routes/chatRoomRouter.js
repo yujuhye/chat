@@ -7,6 +7,7 @@ const router = express.Router();
 router.get('/list', (req, res) => {
 
     console.log('/chatRoom/list');
+    console.log('/chatRoom/list -----> ', req.user);
     chatRoomService.list(req, res);
 
 });
@@ -40,6 +41,14 @@ router.get('/getUserInfo', (req, res) => {
 
     console.log('/chatRoom/getUserInfo');
     chatRoomService.getUserInfo(req, res);
+
+});
+
+// 채팅방 검색하기
+router.get('/searChatRoom', (req, res) => {
+
+    console.log('/chatRoom/searChatRoom');
+    chatRoomService.searChatRoom(req, res);
 
 });
 
