@@ -1,8 +1,41 @@
 * {
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
 }
 
 ul {
     list-style-type: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column; 
+    align-items: center;
 }
+
+nav {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    width: 500px;
+  }
+
+nav a {
+    margin: 10px;
+}
+
+.sideNav {
+    width: 100px; 
+    background-color: #f0f0f0; 
+    border-right: 2px solid #d3d3d3; 
+    border-left: 1px solid #d3d3d3; 
+    padding: 20px;
+    height: 100%; 
+  }
+.sideNav a {
+    display: block; 
+    margin: 10px 0; 
+    text-align: center; 
+}
+
+

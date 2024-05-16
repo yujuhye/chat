@@ -11,11 +11,16 @@ import adminJoinReducer from './adminJoinReducer';
 export const reducer = combineReducers({
     join: joinReducer,
     login: loginReducer,
+    findpassword: findPasswordReducer,
+    membermodify: memberModifyReducer,
     friend: friendReducer,
     requestFriend: requestFriendReducer,
     chat: chatReducer,
     room: roomsReducer,
     adminjoin: adminJoinReducer,
-    adminlogin: adminLoginReducer
+    adminlogin: adminLoginReducer,
+    file: fileReducer,
+    news: newsReducer
+ 
 
 });
