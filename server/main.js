@@ -33,6 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true })); // 문제가 있을 시 확�
 app.use(compression());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(`C:\\member\\upload\\profile_thums\\`));  //img 주해추가
+app.use(express.static(`C:\\ChatSquare\\chat\\upload\\chat\\`));       // chat 추가
 
 const maxAge = 60 * 60 * 1000 * 30; // 쿠키 최대 유효 시간 설정(예: 30시간)
 const sessionObj = {
@@ -49,70 +50,21 @@ const sessionObj = {
 
 app.use(session(sessionObj));
 
+// 05/14 경선 추가
+passport(app);
+// 05/14 경선 추가
+
 app.use(cookieParser());
 
-// passport START  -- 경선 추가
-
-//// USER
-
-let pp = require('./lib/passport/passport');
-let passport = pp.passport(app);
-
-app.get('/member/signinConfirm', passport.authenticate('local', {
-    successRedirect: '/signinSuccess',
-    failureRedirect: '/signinFail',
-
-}));
-
-// 로그인 성공 시
-app.get('/signinSuccess', (req, res) => {
-    console.log('signinSuccess ::: req.user --> ', req.user);
-    res.cookie('sessionID', req.sessionID, { maxAge: 1000 * 60 * 30 });
-    res.json({
-        'sessionID': req.sessionID,
-        'uId': req.user,
-    });
-
+// 05/16 경선 추가
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
 });
-
-// 로그인 실패 시
-app.get('/signinFail', (req, res) => {
-    console.log('signinFail');
-
-    res.json(null);
-
-});
-
-// //// ADMIN
-// let ppa = require('./lib/passport/passportforadmin');
-// let passportforadmin = ppa.passport(app);
-
-// app.get('/admin/adminSigninConfirm', passportforadmin.authenticate('local', {
-//     successRedirect: '/adminSigninSuccess',
-//     failureRedirect: '/adminSigninFail',
-
-// }));
-
-// // 로그인 성공 시
-// app.get('/adminSigninSuccess', (req, res) => {
-//     console.log('signinSuccess ::: req.user --> ', req.user);
-//     res.cookie('adminSessionID', req.sessionID, { maxAge: 1000 * 60 * 30 });
-//     res.json({
-//         'adminSessionID': req.sessionID,
-//         'aId': req.user,
-//     });
-
-// });
-
-// // 로그인 실패 시
-// app.get('/adminSigninFail', (req, res) => {
-//     console.log('signinFail');
-
-//     res.json(null);
-
-// });
-
-// passport END
+// 05/16 경선 추가
 
 
 app.get('/', (req, res) => {
@@ -136,8 +88,8 @@ app.use('/friend', friendRouter);
 const memberRouter = require('./routes/memberRouter');
 app.use('/member', memberRouter);
 
-// const adminRouter = require('./routes/adminRouter');
-// app.use('/admin', adminRouter);
+const adminRouter = require('./routes/adminRouter');
+app.use('/admin', adminRouter);
 
 // Express 서버 대신 http 서버를 사용하여 시작, Socket.IO와 함께 사용
 http.listen(3001, () => {

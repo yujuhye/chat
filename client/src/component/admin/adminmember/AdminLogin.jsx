@@ -3,18 +3,24 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAIdAction, setAPwAction, setIsAdminLoginAction, setAdminIdAction } from '../../action/adminLoginActions';
-
-// import { SERVER_URL } from '../../util/url';
+import cookie from 'js-cookie';
 
 axios.defaults.withCredentials = true;
 
 const AdminLogin = () => {
 
     const dispatch = useDispatch();
-    const [aId, setAId] = useState(''); // mId와 mPw의 상태를 정의해주어야 합니다.
+    const [aId, setAId] = useState('');
     const [aPw, setAPw] = useState('');
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const adminToken = cookie.get('adminToken');
+        if (adminToken) {
+            navigate('/admin/dashboard');
+        }
+    }, [navigate]);
 
     // handler
     const adminInfoChangeHandler = (e) => {
@@ -37,11 +43,11 @@ const AdminLogin = () => {
 
         let form = document.adminLoginForm;
         if (aId === '') {
-            alert('INPUT ADMIN ID');
+            alert('아이디를 입력하세요!');
             form.aId.focus();
 
         } else if (aPw === '') {
-            alert('INPUT ADMIN PW');
+            alert('비밀번호를 입력하세요!');
             form.aPw.focus();
 
         } else {
@@ -64,45 +70,36 @@ const AdminLogin = () => {
 
         console.log('[AdminLogin] axiosAdminLogin()');
 
-        axios({
-            url: `http://localhost:3001/admin/adminSigninConfirm`,
-            method: 'get',
-            params: {
-                'aId': aId,
-                'aPw': aPw,
-            },
-        })
+        axios.post('http://localhost:3001/admin/adminSigninConfirm', {
+            'aId': aId,
+            'aPw': aPw,
+        }, { withCredentials: true })
             .then(response => {
                 console.log('[AdminLogin] AXIOS ADMIN LOGIN COMMUNICATION SUCCESS');
-                console.log('[AdminLogin] data ---> ', response.data);
-                console.log('[AdminLogin] data.sessionID ---> ', response.data.adminSessionID);
-
-                if (response.data !== null) {
+                const { adminToken } = response.data;
+                if (adminToken) {
                     alert('ADMIN LOGIN PROCESS SUCCESS!!');
-                    sessionStorage.setItem('adminSessionID', response.data.adminSessionID);
-                    dispatch(setIsAdminLoginAction(true));
-                    dispatch(setAdminIdAction(response.data.adminSessionID));
 
-                    navigate('/admin/home');
+                    document.cookie = `adminToken=${adminToken}`;
+                    dispatch(setIsAdminLoginAction(true));
+                    dispatch(setAdminIdAction(aId));
+
+                    navigate('/admin');
 
                 } else {
-                    alert('MEMBER LOGIN PROCESS FAIL!!');
+
+                    alert('ADMIN LOGIN PROCESS FAIL!!');
                     dispatch(setIsAdminLoginAction(false));
                     dispatch(setAdminIdAction(''));
-
                 }
-
             })
             .catch(error => {
                 console.log('[AdminLogin] AXIOS ADMIN LOGIN COMMUNICATION ERROR');
-
             })
-            .finally(data => {
+            .finally(() => {
                 console.log('[AdminLogin] AXIOS ADMIN LOGIN COMMUNICATION COMPLETE');
-
             });
-
-    }
+    };
 
     return (
         <div>
@@ -111,8 +108,8 @@ const AdminLogin = () => {
 
                 <p>ADMIN LOGIN FORM</p>
                 <form name="adminLoginForm">
-                    <input type="text" name="aId" value={aId} onChange={(e) => adminInfoChangeHandler(e)} placeholder="INPUT ADMIN ID" /><br />
-                    <input type="password" name="aPw" value={aPw} onChange={(e) => adminInfoChangeHandler(e)} placeholder="INPUT ADMIN PW" /><br />
+                    <input type="text" name="aId" value={aId} onChange={(e) => adminInfoChangeHandler(e)} placeholder="아이디를 입력하세요." /><br />
+                    <input type="password" name="aPw" value={aPw} onChange={(e) => adminInfoChangeHandler(e)} placeholder="비밀번호를 입력하세요." /><br />
                     <input type="button" value="LOGIN" onClick={adminLoginSubmitBtnClickHandler} />
                     <input type="button" value="RESET" onClick={adminLoginResetBtnClickHandler} />
                 </form>

@@ -3,18 +3,19 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUIdAction, setUPwAction, setIsLoginAction, setUserIdAction } from '../action/loginActions';
-
-// import { SERVER_URL } from '../../util/url';
+import useAxiosGetMember from "../../util/useAxiosGetMember";
 
 axios.defaults.withCredentials = true;
 
 const Login = () => {
 
     const dispatch = useDispatch();
-    const [uId, setUId] = useState(''); // mId와 mPw의 상태를 정의해주어야 합니다.
+    const [uId, setUId] = useState('');
     const [uPw, setUPw] = useState('');
 
     const navigate = useNavigate();
+
+    useAxiosGetMember();
 
     // handler
     const memberInfoChangeHandler = (e) => {
@@ -37,26 +38,24 @@ const Login = () => {
 
         let form = document.memberLoginForm;
         if (uId === '') {
-            alert('INPUT USER ID');
+            alert('아이디를 입력하세요!');
             form.uId.focus();
 
         } else if (uPw === '') {
-            alert('INPUT USER PW');
+            alert('비밀번호를 입력하세요!');
             form.uPw.focus();
 
         } else {
             axiosMemberLogin();
-
         }
-
     }
 
     const loginResetBtnClickHandler = () => {
         console.log('[LOGIN] loginResetBtnClickHandler()');
 
         setUId(''); setUPw('');
-        dispatch(setUIdAction('')); // 상태 업데이트
-        dispatch(setUPwAction('')); // 상태 업데이트
+        dispatch(setUIdAction(''));
+        dispatch(setUPwAction(''));
     }
 
     // axios
@@ -64,45 +63,66 @@ const Login = () => {
 
         console.log('[LOGIN] axiosMemberLogin()');
 
-        axios({
-            // url: `${SERVER_URL.TARGET_URL()}/member/signinConfirm`,
-            url: `http://localhost:3001/member/signinConfirm`,
-            method: 'get',
-            params: {
-                'uId': uId,
-                'uPw': uPw,
-            },
-        })
+        axios.post('http://localhost:3001/member/signinConfirm', {
+            uId: uId,
+            uPw: uPw
+        }, { withCredentials: true })
             .then(response => {
                 console.log('[LOGIN] AXIOS MEMBER_LOGIN COMMUNICATION SUCCESS');
-                console.log('[LOGIN] data ---> ', response.data);
-                console.log('[LOGIN] data.sessionID ---> ', response.data.sessionID);
-
-                if (response.data !== null) {
+                const { userToken } = response.data;
+                if (userToken) {
                     alert('MEMBER LOGIN PROCESS SUCCESS!!');
-                    sessionStorage.setItem('sessionID', response.data.sessionID);
+
+                    document.cookie = `userToken=${userToken}`;
                     dispatch(setIsLoginAction(true));
-                    dispatch(setUserIdAction(response.data.sessionID));
+                    dispatch(setUserIdAction(uId));
+
+                    console.log('dispatch(setUserIdAction(uId) --> ', dispatch(setUserIdAction(uId)));
 
                     navigate('/friend/friendList');
 
                 } else {
+
                     alert('MEMBER LOGIN PROCESS FAIL!!');
                     dispatch(setIsLoginAction(false));
                     dispatch(setUserIdAction(''));
-
                 }
-
             })
             .catch(error => {
                 console.log('[LOGIN] AXIOS MEMBER_LOGIN COMMUNICATION ERROR');
 
             })
-            .finally(data => {
+            .finally(() => {
                 console.log('[LOGIN] AXIOS MEMBER_LOGIN COMMUNICATION COMPLETE');
+            });
+    };
 
+    const handleGoogleLogin = async () => {
+        try {
+            const response = await axios.get('http://localhost:3001/auth/google', {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
 
+            if (response.data && response.data.userToken) {
+                console.log('[LOGIN] response.data ---> ', response.data);
+                const { userToken, userId } = response.data;
+                console.log('[LOGIN] AXIOS GOOGLE MEMBER LOGIN COMMUNICATION SUCCESS');
+                document.cookie = `userToken=${userToken}; path=/`;
+                dispatch(setIsLoginAction(true));
+                dispatch(setUserIdAction(userId));
+
+                navigate('/friend/friendList');
+            } else {
+                alert('MEMBER LOGIN PROCESS FAIL!!');
+                dispatch(setIsLoginAction(false));
+                dispatch(setUserIdAction(''));
+            }
+        } catch (error) {
+            console.log('Error:', error);
+        }
     }
 
     return (
@@ -112,17 +132,18 @@ const Login = () => {
 
                 <p>MEMBER LOGIN FORM</p>
                 <form name="memberLoginForm">
-                    <input type="text" name="uId" value={uId} onChange={(e) => memberInfoChangeHandler(e)} placeholder="INPUT USER ID" /><br />
-                    <input type="password" name="uPw" value={uPw} onChange={(e) => memberInfoChangeHandler(e)} placeholder="INPUT USER PW" /><br />
-                    <input type="button" value="LOGIN" onClick={loginSubmitBtnClickHandler} />
+                    <input type="text" name="uId" value={uId} onChange={(e) => memberInfoChangeHandler(e)} placeholder="아이디를 입력하세요." /><br />
+                    <input type="password" name="uPw" value={uPw} onChange={(e) => memberInfoChangeHandler(e)} placeholder="비밀번호를 입력하세요." /><br />
+                    <input type="button" value="로그인" onClick={loginSubmitBtnClickHandler} />
                     <input type="button" value="RESET" onClick={loginResetBtnClickHandler} />
                 </form>
 
             </div>
             <div>
                 <Link to="/member/join">회원가입</Link><br />
-                <Link to="/admin/home">ADMIN</Link><br />
-                <a href="http://localhost:3001/auth/google">with Google</a>
+                <Link to="/member/findpassword">비밀번호 찾기</Link><br />
+                <Link to="/admin">ADMIN</Link><br />
+                <button onClick={handleGoogleLogin}>with Google</button>
             </div>
         </div>
 

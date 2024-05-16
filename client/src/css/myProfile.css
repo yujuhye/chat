@@ -1,0 +1,214 @@
+.myProfileDetailsContainer {
+    width: 400px;
+    height: 700px;
+    overflow: hidden;
+    position: relative;
+}
+
+.myProfileDetailsFrontImg {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 25px;
+    margin-left: 25px;
+    margin-top: 400px;
+    position: relative;
+}
+
+.myProfileDetailsFrontImg:hover {
+    cursor: pointer;
+}
+
+.myProfileDetailsName {
+    font-size: 1.4em;
+    color: #ffffff;
+}
+
+.editProfileBtn{
+    border: none; 
+    background-color: transparent; 
+    color: #ffffff;
+    text-decoration: none; 
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 50px; 
+}
+
+.editProfileBtn:hover {
+    color: #000000; 
+}
+
+.myProfileEditName {
+    border: none; 
+    border-bottom: 1px solid #696969; 
+    background-color: transparent; 
+    padding: 5px 0; 
+    color: #ffffff; 
+    font-size: 16px; 
+    outline: none;
+    text-align: center;
+    width: 220px; 
+}
+
+.myProfileDetailsBackImg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background-size: contain;  */
+    background-repeat: no-repeat; 
+    background-position: center; 
+}
+
+.myProfileDetailsBackImg:hover {
+    cursor: pointer;
+}
+
+.myProfileDetailsFrontImg, .myProfileDetailsName, .editProfileBtn, input, .myProfileDetailsMsg, label, .backFileLogoWrap, .completeBtn, .imgDropdown {
+    position: relative; 
+    z-index: 2; 
+}
+
+.myProfileDetailsMsg {
+    color: #ffffff;
+}
+
+.imgDropdown {
+    position: absolute;
+    left: 20px;
+}
+
+.dropbtn {
+    background-color: #3498db;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+  
+  .dropdownProfile{
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 100px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-left: 10px;
+  }
+  
+  .imgDropdown:hover .dropdownProfile {
+    display: block;
+  }
+  
+  .dropdownProfile button {
+    color: black;
+    padding: 10px 10px;
+    text-decoration: none;
+    display: block;
+    border: none; 
+    background-color: transparent; 
+    cursor: pointer;
+  }
+  
+  .dropdownProfile button:hover {
+    background-color: #ddd;
+  }
+
+/* modal */
+.modal {
+    position: relative;
+    z-index: 3;
+}
+
+.modalImg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+   
+}
+  
+.modalImg img {
+    width: 500px;
+    height: 600px;
+    align-items: center;
+    margin-top: 180px;
+    position: relative;
+}
+  
+.closeBtn {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.closeBtn:hover {
+   cursor: pointer;
+}
+
+.modalWrap {
+    position: relative;
+}
+
+.prevBtn {
+    position: absolute;
+    cursor: pointer;
+    left: 300px;
+    top: 400px;
+}
+
+.nextBtn {
+    position: absolute;
+    cursor: pointer;
+    right: 300px;
+    top: 400px;
+}
+/* modal */
+
+.backFileLogoWrap {
+    position: relative;
+}
+
+.backImgLogo {
+    position: absolute;
+    right: 8px;
+    top: 7px;
+    margin-right: 10px;
+}
+
+.backImgLogo:hover {
+    cursor: pointer;
+}
+
+.frontImgLogo {
+    position: absolute;
+    top: 480px;
+    right: 130px;
+}
+
+.frontImgLogo:hover {
+    cursor: pointer;
+}
+
+.completeBtn {
+    background-color: transparent; 
+    color: #ffffff;
+    cursor: pointer;
+    margin-top: 40px; 
+
+}
+
+.completeBtn:hover {
+    color: #9df11e; 
+}
+
+
