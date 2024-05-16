@@ -1,6 +1,5 @@
 import { SET_UID, SET_UPW, SET_UEMAIL, SET_UNICKNAME, SET_UFRONTIMG_NAME, SET_IS_LOGIN, SET_USER_ID } from './types';
 
-// export 구문 수정
 export const setUIdAction = (uId) => ({
     type: SET_UID,
     payload: uId

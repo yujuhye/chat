@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import $ from 'jquery';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setUIdAction, setUPwAction, setUEmailAction, setUNicknameAction, setUFrontImgNameAction, setIsLoginAction, setMemberIdAction } from '../action/joinActions';
+import { setUIdAction, setUPwAction, setUEmailAction, setUNicknameAction, setUFrontImgNameAction } from '../action/joinActions';
 
 axios.defaults.withCredentials = true;
-
 
 const Join = () => {
 
@@ -69,23 +68,23 @@ const Join = () => {
         let form = document.memberJoinForm;
 
         if (uId === '') {
-            alert('INPUT USER ID');
+            alert('아이디를 입력하세요!');
             form.uId.focus();
 
         } else if (uPw === '') {
-            alert('INPUT USER PW');
+            alert('비밀번호를 입력하세요!');
             form.uPw.focus();
 
         } else if (uEmail === '') {
-            alert('INPUT USER MAIL');
+            alert('메일을 입력하세요!');
             form.uEmail.focus();
 
         } else if (uNickname === '') {
-            alert('INPUT USER NICKNAME');
+            alert('닉네임을 입력하세요!');
             form.uNickname.focus();
 
         } else {
-            // ajax_member_join();
+
             axiosMemberJoin();
 
         }
@@ -150,15 +149,14 @@ const Join = () => {
 
             <p>MEMBER JOIN FORM</p>
             <form name="memberJoinForm">
-                <input type="text" name="uId" value={uId} onChange={(e) => memberInfoChangeHandler(e)} placeholder="INPUT USER ID" /><br />
-                <input type="password" name="uPw" value={uPw} onChange={(e) => memberInfoChangeHandler(e)} placeholder="INPUT USER PW" /><br />
-                <input type="text" name="uEmail" value={uEmail} onChange={(e) => memberInfoChangeHandler(e)} placeholder="INPUT USER MAIL" /><br />
-                <input type="text" name="uNickname" value={uNickname} onChange={(e) => memberInfoChangeHandler(e)} placeholder="INPUT USER NICKNAME" /><br />
-                <input type="file" name="uFrontImgName" value={uFrontImgName} onChange={(e) => memberInfoChangeHandler(e)} placeholder="SELECT USER PROFILE IMAGE" /><br />
-                <input type="button" value="JOIN" onClick={joinSubmitBtnClickHandler} />
+                <input type="text" name="uId" value={uId} onChange={(e) => memberInfoChangeHandler(e)} placeholder="아이디를 입력하세요." /><br />
+                <input type="password" name="uPw" value={uPw} onChange={(e) => memberInfoChangeHandler(e)} placeholder="비밀번호를 입력하세요." /><br />
+                <input type="text" name="uEmail" value={uEmail} onChange={(e) => memberInfoChangeHandler(e)} placeholder="메일을 입력하세요." /><br />
+                <input type="text" name="uNickname" value={uNickname} onChange={(e) => memberInfoChangeHandler(e)} placeholder="닉네임을 입력하세요." /><br />
+                <input type="file" name="uFrontImgName" value={uFrontImgName} onChange={(e) => memberInfoChangeHandler(e)} placeholder="프로필 이미지를 선택하세요." /><br />
+                <input type="button" value="회원가입" onClick={joinSubmitBtnClickHandler} />
                 <input type="reset" value="RESET" onClick={joinResetBtnClickHandler} />
             </form>
-
 
         </div>
 

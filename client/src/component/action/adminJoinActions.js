@@ -1,6 +1,5 @@
 import { SET_AID, SET_APW, SET_AEMAIL, SET_IS_ADMIN_LOGIN, SET_ADMIN_ID } from './types';
 
-// export 구문 수정
 export const setAIdAction = (aId) => ({
     type: SET_AID,
     payload: aId

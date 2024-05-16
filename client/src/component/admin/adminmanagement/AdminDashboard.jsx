@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import Nav from '../../../include/Nav';
-import useAxiosGetAdmin from "../../../util/useAxiosGetAdmin";
+import React, { useEffect } from 'react';
 
-const ChatTimeStatus = () => {
+import useAxiosGetAdmin from "../../../util/useAxiosGetAdmin";
+import Nav from '../../../include/Nav';
+
+const AdminDashboard = () => {
 
     useAxiosGetAdmin();
 
     return (
+
         <div>
             <Nav />
         </div>
@@ -14,4 +16,4 @@ const ChatTimeStatus = () => {
     );
 };
 
-export default ChatTimeStatus;
+export default AdminDashboard;

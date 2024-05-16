@@ -32,9 +32,7 @@ const AdminJoin = () => {
         } else if (input_name === 'aEmail') {
             setAEmail(input_value);
             dispatch(setAEmailAction(input_value));
-
         }
-
     }
 
     const adminJoinResetBtnClickHandler = () => {
@@ -54,23 +52,20 @@ const AdminJoin = () => {
         let form = document.adminJoinForm;
 
         if (aId === '') {
-            alert('INPUT ADMIN ID');
+            alert('아이디를 입력하세요!');
             form.aId.focus();
 
         } else if (aPw === '') {
-            alert('INPUT ADMIN PW');
+            alert('비밀번호를 입력하세요!');
             form.aPw.focus();
 
         } else if (aEmail === '') {
-            alert('INPUT ADMIN MAIL');
+            alert('이메일을 입력하세요!');
             form.aEmail.focus();
 
         } else {
-
             axiosAdminJoin();
-
         }
-
     }
 
     const axiosAdminJoin = () => {
@@ -105,10 +100,8 @@ const AdminJoin = () => {
                     dispatch(setAEmailAction(''));
 
                 }
-
             })
             .catch(error => {
-
                 console.log('[AdminJoin] AXIOS MEMBER_JOIN COMMUNICATION ERROR');
 
             })
@@ -116,26 +109,20 @@ const AdminJoin = () => {
                 console.log('[AdminJoin] AXIOS MEMBER_JOIN COMMUNICATION FINALLY');
 
             });
-
     }
 
     return (
 
         <div>
-
             <p>ADMIN JOIN FORM</p>
             <form name="adminJoinForm">
-                <input type="text" name="aId" value={aId} onChange={(e) => adminInfoChangeHandler(e)} placeholder="INPUT ADMIN ID" /><br />
-                <input type="password" name="aPw" value={aPw} onChange={(e) => adminInfoChangeHandler(e)} placeholder="INPUT ADMIN PW" /><br />
-                <input type="text" name="aEmail" value={aEmail} onChange={(e) => adminInfoChangeHandler(e)} placeholder="INPUT ADMIN MAIL" /><br />
+                <input type="text" name="aId" value={aId} onChange={(e) => adminInfoChangeHandler(e)} placeholder="아이디를 입력하세요." /><br />
+                <input type="password" name="aPw" value={aPw} onChange={(e) => adminInfoChangeHandler(e)} placeholder="비밀번호를 입력하세요." /><br />
+                <input type="text" name="aEmail" value={aEmail} onChange={(e) => adminInfoChangeHandler(e)} placeholder="메일을 입력하세요." /><br />
                 <input type="button" value="JOIN" onClick={adminJoinSubmitBtnClickHandler} />
                 <input type="reset" value="RESET" onClick={adminJoinResetBtnClickHandler} />
             </form>
-
-
         </div>
-
-
     );
 }
 
