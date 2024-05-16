@@ -1,22 +1,38 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { myProfileAction } from "../action/friendList";
+import { myProfileAction, selectedMyProfileId } from "../action/friendList";
 import axios from "axios";
 
 import  '../../css/profile.css';
 import  '../../css/common.css';
+import { Link } from "react-router-dom";
+import MyProfileDetails from "./MyProfileDetails";
 
 function MyProfile() {
 
     const dispatch = useDispatch();
     const myProfile = useSelector(state => state['friend']['myprofile']);
+    const selectedMine = useSelector(state => state['friend']['selectedMine']);
 
     useEffect(() => {
         console.log('[MyProfile] useEffect');
 
         axiosGetMyProfile();
+
     }, [dispatch]);
 
+    //내 프로필 클릭시
+    const myProfileClickHandler = (myId) => {
+        console.log('myProfileClickHandler()');
+
+        // dispatch(selectedMyProfileId(myId));
+
+        if (selectedMine === myId) {
+            dispatch(selectedMyProfileId(null));
+        } else {
+            dispatch(selectedMyProfileId(myId));
+        }
+    }
 
      //내 프로필 가져오기
      const axiosGetMyProfile = () => {
@@ -38,6 +54,7 @@ function MyProfile() {
                     name: myprofile.USER_NICKNAME,
                     curMsg: myprofile.USER_CUR_MSG,
                     frontImg: myprofile.USER_FRONT_IMG_NAME,
+                    backImg: myprofile.USER_BACK_IMG_NAME,
                 };
                 return obj;
             }, {});
@@ -57,28 +74,43 @@ function MyProfile() {
 
     return(
         <>
-             <h3>나의 프로필</h3>
-             <ul>
-                {Object.keys(myProfile).map((profileId, index) => (
-                    <li key={index} className="profile">
-                        {
-                            myProfile[profileId].frontImg === ''
-                            ?
-                                <>
-                                    <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
-                                </>
-                            :
-                                <>
-                                    <img src={`http://localhost:3001/${myProfile[profileId].id}/${myProfile[profileId].frontImg}`} className="frontProfileImg"/>
-                                </>
-                            
-                        }
-                        <span className="profileName">{myProfile[profileId].name}</span>
-                        {myProfile[profileId].curMsg}
-                    </li>
-                ))}
-            </ul> 
-        </>
+        <div className="myProfileContainer">
+            <div className="myProfileWrap">
+                <ul className="myProfileListWrap">
+                    {Object.keys(myProfile).map((profileId, index) => (
+                        // <div className="myProfileList">
+                        <div className={`myProfileList ${selectedMine === myProfile[profileId].id ? "selected" : ""}`} >
+                        <li key={index} className="myProfile" onClick={()=>myProfileClickHandler(myProfile[profileId].id)}>
+                            {
+                                myProfile[profileId].frontImg === ''
+                                ?
+                                    <>
+                                        <img src="/resource/img/profile_default.png" className="myFrontProfileImg"/>
+                                    </>
+                                :
+                                    <>
+                                        <img src={`http://localhost:3001/${myProfile[profileId].id}/${myProfile[profileId].frontImg}`} className="myFrontProfileImg"/>
+                                    </>
+                            }
+                            <span className="myProfileName">{myProfile[profileId].name}</span>
+                            <span className="myCurMsg">{myProfile[profileId].curMsg}</span>
+                        </li>
+                        </div>
+                        // </div>
+                    ))}
+                </ul>
+            </div>
+            <div className="myProfileDetailsWrap">
+            {
+              selectedMine === null
+              ?
+              <></>
+              :
+              <MyProfileDetails />
+            }
+            </div>
+            </div>
+            </>
     );
 }
 

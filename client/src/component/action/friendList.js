@@ -14,3 +14,19 @@ export const myProfileAction = (data) => {
     }
 }
 
+export const selectedFriendId = (data) => {
+
+    return {
+        type: 'SELECTED_FRIEND_ID',
+        selectedFriend: data
+    }
+}
+
+export const selectedMyProfileId = (data) => {
+
+    return {
+        type: 'SELECTED_MY_ID',
+        selectedMine: data
+    }
+}
+

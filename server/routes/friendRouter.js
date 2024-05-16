@@ -1,5 +1,6 @@
 const express = require('express');
 const friendService = require('../lib/service/friendService');
+const uploads = require('../lib/upload/uploads');
 const router = express.Router();
 
 router.get('/friendList', (req, res) => {
@@ -84,6 +85,146 @@ router.delete('/deletesentReqFriend', (req, res) => {
 
     console.log('/friend/deletesentReqFriend');
     friendService.deletesentReqFriend(req, res);
+
+});
+
+router.get('/blockFriend', (req, res) => {
+
+    console.log('/friend/blockFriend');
+    friendService.blockFriend(req, res);
+
+});
+
+router.put('/releaseBlockFriend', (req, res) => {
+
+    console.log('/friend/releaseBlockFriend');
+    friendService.releaseBlockFriend(req, res);
+
+});
+
+router.put('/hideRequestFriend', (req, res) => {
+
+    console.log('/friend/hideRequestFriend');
+    friendService.hideRequestFriend(req, res);
+
+});
+
+router.get('/matchingReceivedReqFriend', (req, res) => {
+
+    console.log('/friend/matchingReceivedReqFriend');
+    friendService.matchingReceivedReqFriend(req, res);
+
+});
+
+router.put('/myProfileEdit', uploads.UPLOAD_MULTIPROFILE_MIDDLEWARE(), (req, res) => {
+
+    console.log('/friend/myProfileEdit');
+    friendService.myProfileEdit(req, res);
+
+});
+
+router.put('/myBackDefaultImg', (req, res) => {
+
+    console.log('/friend/myBackDefaultImg');
+    friendService.myBackDefaultImg(req, res);
+
+});
+
+router.put('/myBackDefaultImg', (req, res) => {
+
+    console.log('/friend/myBackDefaultImg');
+    friendService.myBackDefaultImg(req, res);
+
+});
+
+router.put('/myFrontDefaultImg', (req, res) => {
+
+    console.log('/friend/myFrontDefaultImg');
+    friendService.myFrontDefaultImg(req, res);
+
+});
+
+router.put('/updateblockFriend', (req, res) => {
+
+    console.log('/friend/updateblockFriend');
+    friendService.updateblockFriend(req, res);
+
+});
+
+router.delete('/deleteFriend', (req, res) => {
+
+    console.log('/friend/deleteFriend');
+    friendService.deleteFriend(req, res);
+
+});
+
+router.delete('/deleteTargetFriend', (req, res) => {
+
+    console.log('/friend/deleteTargetFriend');
+    friendService.deleteTargetFriend(req, res);
+
+});
+
+router.get('/matchHidenFriend', (req, res) => {
+
+    console.log('/friend/matchHidenFriend');
+    friendService.matchHidenFriend(req, res);
+
+});
+
+router.get('/getHiddenFriends', (req, res) => {
+
+    console.log('/friend/getHiddenFriends');
+    friendService.getHiddenFriends(req, res);
+
+});
+
+router.put('/releaseHiddenFriend', (req, res) => {
+
+    console.log('/friend/releaseHiddenFriend');
+    friendService.releaseHiddenFriend(req, res);
+
+});
+
+router.put('/addFavorite', (req, res) => {
+
+    console.log('/friend/addFavorite');
+    friendService.addFavorite(req, res);
+
+});
+
+router.put('/deleteFavorite', (req, res) => {
+
+    console.log('/friend/deleteFavorite');
+    friendService.deleteFavorite(req, res);
+
+});
+
+router.get('/getMyProfileImgs', (req, res) => {
+
+    console.log('/friend/getMyProfileImgs');
+    friendService.getMyProfileImgs(req, res);
+
+});
+
+router.get('/getMyBackImgs', (req, res) => {
+
+    console.log('/friend/getMyBackImgs');
+    friendService.getMyBackImgs(req, res);
+
+});
+
+router.get('/getFriendProfileImgs', (req, res) => {
+
+    console.log('/friend/getFriendProfileImgs');
+    friendService.getFriendProfileImgs(req, res);
+
+});
+
+router.get('/getFriendBackImgs', (req, res) => {
+
+    console.log('/friend/getFriendBackImgs');
+    friendService.getFriendBackImgs(req, res);
 
 });
 

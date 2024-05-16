@@ -1,0 +1,170 @@
+.friendProfileContainer {
+    width: 400px;
+    height: 700px;
+    margin: 20px;
+    margin-top: 95px;
+    overflow: hidden;
+    position: relative;
+}
+
+.friendProfileBackImg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background-size: contain;  */
+    background-repeat: no-repeat; 
+    background-position: center; 
+}
+
+.friendProfileBackImg:hover {
+  cursor: pointer;
+}
+
+.friendProfileFrontImg {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 150px;
+    margin-left: 150px;
+    margin-top: 400px;
+    
+}
+
+.friendProfileFrontImg:hover {
+  cursor: pointer;
+}
+
+.friendProfileName {
+    font-size: 1.4em;
+    color: #ffffff;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.friendProfileMsg {
+    color: #ffffff;
+    text-align: center;
+    margin-top: 8px;
+}
+
+.friendChattingBtn {
+    border: none; 
+    background-color: transparent; 
+    color: #ffffff;
+    text-decoration: none; 
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 40px; 
+    margin-left: 180px;
+}
+
+.friendChattingBtn:hover {
+    color: #000000;
+}
+
+.friendProfileFrontImg, .friendProfileName, .friendProfileMsg, input, .dropdown, .favorite {
+    position: relative; 
+    z-index: 2; 
+}
+
+.dropbtn {
+    background-color: #3498db;
+    color: white;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    margin-top: 10px;
+    margin-left: 10px;
+  }
+  
+  .dropdownContent{
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 100px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    margin-left: 10px;
+  }
+  
+  .dropdown:hover .dropdownContent {
+    display: block;
+  }
+  
+  .dropdownContent button {
+    color: black;
+    padding: 10px 10px;
+    text-decoration: none;
+    display: block;
+    border: none; 
+    background-color: transparent; 
+    cursor: pointer;
+  }
+  
+  .dropdownContent button:hover {
+    background-color: #ddd;
+  }
+
+  .favorite {
+    margin-left: 300px;
+  }
+
+  /* modal */
+.friendModal {
+  position: relative;
+  z-index: 3;
+}
+
+.friendModalImg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+ 
+}
+
+.friendModalImg img {
+  width: 500px;
+  height: 600px;
+  align-items: center;
+  margin-top: 180px;
+  margin-left: 700px;
+  position: relative;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  margin-top: 10px;
+  margin-right: 10px;
+}
+
+.closeBtn:hover {
+ cursor: pointer;
+}
+
+.friendModalWrap {
+  position: relative;
+}
+
+.prevBtn {
+  position: absolute;
+  cursor: pointer;
+  left: 300px;
+  top: 400px;
+}
+
+.nextBtn {
+  position: absolute;
+  cursor: pointer;
+  right: 300px;
+  top: 400px;
+}
+/* modal */
