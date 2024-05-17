@@ -14,7 +14,7 @@ const Nav = () => {
                 <>
                     <Link to="/admin/news">공지사항</Link> &nbsp;
                     <Link to="/admin/userstatus">유저 통계</Link> &nbsp;
-                    <Link to="/admin/chattimestatus">채팅 통계</Link> &nbsp;
+                    <Link to="/admin/chatstatushourly">채팅 통계</Link> &nbsp;
                 </>
                 :
 

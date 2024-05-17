@@ -62,6 +62,7 @@ const adminService = {
 
     adminSignUpConfirm: (req, res) => {
 
+
         console.log('adminSignUpConfirm()');
         let post = req.body;
         console.log('req.body ----> ', req.body);
@@ -98,52 +99,77 @@ const adminService = {
         console.log('newsWriteConfirm()');
 
         let post = req.body;
+        let adminToken = req.headers.authorization;
+        console.log('adminToken --> ', adminToken);
 
-        console.log('req.body ----> ', req.body);
-        console.log('req.user ----> ', req.user);
+        if (!adminToken) {
+            adminToken = req.cookies ? req.cookies['adminToken'] : null;
+        }
 
-        DB.query(
-            `
+        if (adminToken) {
+            console.log('adminToken --> ', adminToken);
+            console.log('The admin session has not expired!!');
+
+            const jwtOptions = {
+                secretOrKey: '1234',
+            };
+
+            jwt.verify(adminToken.split(' ')[1], jwtOptions.secretOrKey, (err, decoded) => {
+                if (err) {
+                    console.error('Error decoding JWT token:', err);
+                    res.status(401).json({ error: 'Invalid token' });
+                    return;
+                }
+
+                const adminId = decoded.id;
+
+                console.log('adminId --> ', adminId);
+
+                DB.query(
+                    `
                 SELECT * FROM ADMIN_IFM 
                 WHERE ADMIN_ID = ?
             `,
-            [req.user.ADMIN_ID],
-            (error, admin) => {
-                if (error) {
-                    console.error('Error fetching admin information:', error);
-                    res.status(500).json({ error: 'Internal Server Error' });
-                } else {
-                    if (admin.length > 0) {
+                    [adminId],
+                    (error, admin) => {
+                        if (error) {
+                            console.error('Error fetching admin information:', error);
+                            res.status(500).json({ error: 'Internal Server Error' });
 
-                        let ADMIN_ID = admin[0].ADMIN_ID;
+                        } else {
+                            if (admin.length > 0) {
 
-                        let sql = `
-                            INSERT INTO NEWS(NEWS_TITLE, NEWS_CONTENT, ADMIN_ID)
-                            VALUES(?, ?, ?)
-                        `;
+                                let ADMIN_ID = admin[0].ADMIN_ID;
 
-                        let state = [post.newsTitle, post.newsContent, ADMIN_ID];
+                                let sql = `
+                                    INSERT INTO NEWS(NEWS_TITLE, NEWS_CONTENT, ADMIN_ID)
+                                    VALUES(?, ?, ?)
+                                `;
 
-                        DB.query(sql, state,
-                            (error, result) => {
-                                if (error) {
-                                    console.error('Error inserting into database:', error);
-                                    res.status(500).json({ error: 'Internal Server Error' });
-                                } else {
-                                    if (result.affectedRows > 0) {
-                                        console.log('result ----> ', result.affectedRows);
-                                        res.json(result.affectedRows);
-                                    } else {
-                                        res.json({ success: false });
-                                    }
-                                }
-                            });
-                    } else {
-                        res.status(404).json({ error: 'Admin not found' });
+                                let state = [post.newsTitle, post.newsContent, ADMIN_ID];
+
+                                DB.query(sql, state,
+                                    (error, result) => {
+                                        if (error) {
+                                            console.error('Error inserting into database:', error);
+                                            res.status(500).json({ error: 'Internal Server Error' });
+                                        } else {
+                                            if (result.affectedRows > 0) {
+                                                console.log('result ----> ', result.affectedRows);
+                                                res.json(result.affectedRows);
+                                            } else {
+                                                res.json({ success: false });
+                                            }
+                                        }
+                                    });
+                            } else {
+                                res.status(404).json({ error: 'Admin not found' });
+                            }
+                        }
                     }
-                }
-            }
-        );
+                );
+            });
+        }
     },
 
     getNews: (req, res) => {
@@ -189,8 +215,8 @@ const adminService = {
         );
     },
 
-    UserStatus: (req, res) => {
-        console.log('UserStatus()');
+    userStatus: (req, res) => {
+        console.log('userStatus()');
 
         DB.query(
             `
@@ -216,6 +242,90 @@ const adminService = {
             }
         );
 
+    },
+
+    chatStatusThreeHourly: (req, res) => {
+        console.log('chatStatusThreeHourly()');
+
+        DB.query(
+            `
+            SELECT 
+                HOUR(CHAT_REG_DATE) AS chatHour,
+                COUNT(*) AS chatCount
+            FROM 
+                CHAT
+            GROUP BY 
+                chatHour
+            ORDER BY 
+                chatHour;
+            `,
+            (error, result) => {
+                if (error || !result) {
+                    console.error('Error fetching three-hourly chat data:', error);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                } else {
+                    console.log('Three-hourly chat data:', result);
+                    res.json(result);
+                }
+            }
+        );
+
+    },
+
+    chatStatusDaily: (req, res) => {
+        console.log('ChatStatusDaily()');
+
+        DB.query(
+            `
+            SELECT 
+                MONTH(CHAT_REG_DATE) AS chatMonth,
+                DAYNAME(CHAT_REG_DATE) AS chatDayOfWeek,
+                COUNT(*) AS chatCount
+            FROM 
+                CHAT
+            GROUP BY 
+                chatMonth, chatDayOfWeek
+            ORDER BY 
+                FIELD(chatDayOfWeek, '월', '화', '수', '목', '금', '토', '일'), 
+                chatMonth;
+            `,
+            (error, result) => {
+                if (error || !result) {
+                    console.error('Error fetching daily chat data:', error);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                } else {
+                    console.log('Daily chat data:', result);
+                    res.json(result);
+                }
+            }
+        );
+    },
+
+    ChatStatusWeekly: (req, res) => {
+        console.log('ChatStatusWeekly()');
+
+        DB.query(
+            `
+            SELECT 
+                YEARWEEK(CHAT_REG_DATE, 1) AS chatWeek,
+                COUNT(*) AS chatCount
+            FROM 
+                CHAT
+            GROUP BY 
+                chatWeek
+            ORDER BY 
+                chatWeek;
+            `,
+            (error, result) => {
+                if (error || !result) {
+                    console.error('Error fetching weekly chat data:', error);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                } else {
+                    console.log('Weekly chat data:', result);
+                    res.json(result);
+                }
+            }
+        );
     }
 }
 

@@ -108,8 +108,6 @@ const Setting = () => {
         axiosMemberDelete();
     }
 
-
-
     const axiosMemberLogout = () => {
         console.log('axiosMemberLogout()');
 
@@ -118,8 +116,8 @@ const Setting = () => {
         axios({
             url: 'http://localhost:3001/member/logoutConfirm',
             method: 'put',
-            data: {
-                userToken: userToken
+            headers: {
+                Authorization: `Bearer ${userToken}`
             }
         })
             .then(response => {
@@ -135,7 +133,6 @@ const Setting = () => {
             .catch(error => {
                 console.log('AXIOS MEMBER LOGOUT THUM COMMUNICATION ERROR');
                 if (error.response && error.response.data && error.response.data.error) {
-                    alert(error.response.data.error);
                     navigate('/member/login');
 
                 } else {
@@ -165,7 +162,9 @@ const Setting = () => {
             method: 'delete',
             data: {
                 userId: userId,
-                userToken: userToken
+            },
+            headers: {
+                Authorization: `Bearer ${userToken}`
             },
             withCredentials: true,
         })
@@ -191,7 +190,6 @@ const Setting = () => {
             .catch(error => {
                 console.log('AXIOS MEMBER DELETE COMMUNICATION ERROR');
                 if (error.response && error.response.data && error.response.data.error) {
-                    alert(error.response.data.error);
                     navigate('/member/login');
 
                 } else {
@@ -201,9 +199,7 @@ const Setting = () => {
             })
             .finally(data => {
                 console.log('AXIOS MEMBER DELETE COMMUNICATION COMPLETE');
-
             });
-
     }
 
     return (

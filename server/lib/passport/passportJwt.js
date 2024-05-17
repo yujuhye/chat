@@ -184,16 +184,18 @@ module.exports = function (app) {
     // Google OAuth 콜백 경로
     app.get('/auth/google/callback',
         passport.authenticate('google', {
-            failureRedirect: 'http://localhost:3000'
+            failureRedirect: '/'
         }),
         function (req, res) {
             const user = { id: req.user.USER_ID };
             console.log('user.id----> ', user.id);
 
-            const userToken = jwt.sign(user, '1234');
+            const userToken = jwt.sign({ id: user.USER_ID, isAdmin: false }, '1234');
+
             console.log('userToken----> ', userToken);
 
-            res.json({ userId: user.id, userToken: userToken });
+            res.cookie('userToken', userToken);
+
         });
     // passport 모듈 반환
     return passport;

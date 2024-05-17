@@ -12,7 +12,6 @@ import AdminLogin from './admin/adminmember/AdminLogin';
 import AdminJoin from './admin/adminmember/AdminJoin';
 import AdminHome from './admin/AdminHome';
 import UserStatus from './admin/adminmanagement/UserStatus';
-import ChatTimeStatus from './admin/adminmanagement/ChatTimeStatus';
 import NewsList from './admin/adminmanagement/NewsList';
 import RequestFriend from './friend/RequestFriend';
 import ManagementFriend from './friend/ManagementFriend';
@@ -21,6 +20,9 @@ import Setting from './member/Setting';
 import MemberModify from './member/MemberModify';
 import FindPassword from './member/FindPassword';
 import AdminDashboard from './admin/adminmanagement/AdminDashboard';
+import ChatStatusHourly from './admin/adminmanagement/ChatStatusHourly';
+import ChatStatusDaily from './admin/adminmanagement/ChatStatusDaily';
+import ChatStatusWeekly from './admin/adminmanagement/ChatStatusWeekly';
 
 axios.defaults.withCredentials = true;
 
@@ -48,7 +50,9 @@ const MainHome = () => {
                 <Route path="/admin/news" element={<NewsList />} />
                 <Route path="/admin/newsform" element={<NewsForm />} />
                 <Route path="/admin/userstatus" element={<UserStatus />} />
-                <Route path="/admin/chattimestatus" element={<ChatTimeStatus />} />
+                <Route path="/admin/chatstatushourly" element={<ChatStatusHourly />} />
+                <Route path="/admin/chatstatusdaily" element={<ChatStatusDaily />} />
+                <Route path="/admin/chatstatusweekly" element={<ChatStatusWeekly />} />
                 <Route path='/friend/friendList' element={<FriendList />} />
                 <Route path='/friend/requestFriend' element={<RequestFriend />} />
             </Routes>

@@ -8,6 +8,7 @@ const MemoryStore = require('memorystore')(session);
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const http = require('http').createServer(app);
+const passport = require('./lib/passport/passportJwt');
 const cookieParser = require('cookie-parser');
 const passport = require('./lib/passport/passportJwt');
 
@@ -51,9 +52,7 @@ const sessionObj = {
 
 app.use(session(sessionObj));
 
-// 05/14 경선 추가
 passport(app);
-// 05/14 경선 추가
 
 app.use(cookieParser());
 

@@ -34,16 +34,36 @@ router.get('/getNews', (req, res) => {
 
 });
 
-router.get('/UserStatus', (req, res) => {
-    console.log('/UserStatus');
-    adminService.UserStatus(req, res);
-
-});
-
 router.get('/getNewsContent', (req, res) => {
     console.log('/getNewsContent');
     adminService.getNewsContent(req, res);
 
 });
+
+router.get('/userStatus', (req, res) => {
+    console.log('/userStatus');
+    adminService.userStatus(req, res);
+
+});
+
+router.get('/chatStatusThreeHourly', (req, res) => {
+    console.log('/chatStatusThreeHourly');
+    adminService.chatStatusThreeHourly(req, res);
+
+});
+
+router.get('/chatStatusDaily', (req, res) => {
+    console.log('/chatStatusDaily');
+    adminService.chatStatusDaily(req, res);
+
+});
+
+router.get('/chatStatusWeekly', (req, res) => {
+    console.log('/chatStatusWeekly');
+    adminService.chatStatusWeekly(req, res);
+
+});
+
+
 
 module.exports = router;

@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUIdAction, setUPwAction, setIsLoginAction, setUserIdAction } from '../action/loginActions';
 import useAxiosGetMember from "../../util/useAxiosGetMember";
+import cookie from 'js-cookie';
+import * as jwt_decode from 'jwt-decode';
 
 axios.defaults.withCredentials = true;
 
@@ -98,32 +100,38 @@ const Login = () => {
     };
 
     const handleGoogleLogin = async () => {
+        // Google OAuth strategy
+
         try {
             const response = await axios.get('http://localhost:3001/auth/google', {
                 withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json'
+            })
+            response.then((response) => {
+                console.log('[LOGIN] response.data ---> ', response);
+                const userToken = cookie.get('userToken');
+
+                if (userToken) {
+                    const decodedToken = jwt_decode(userToken);
+                    const userId = decodedToken.id;
+
+                    console.log('[LOGIN] userId ---> ', userId);
+                    console.log('[LOGIN] userToken ---> ', userToken);
+                    dispatch(setIsLoginAction(true));
+                    dispatch(setUserIdAction(userId));
+
+                    navigate('/friend/friendList');
+                } else {
+                    alert('MEMBER LOGIN PROCESS FAIL!!');
+                    dispatch(setIsLoginAction(false));
+                    dispatch(setUserIdAction(''));
                 }
             });
-
-            if (response.data && response.data.userToken) {
-                console.log('[LOGIN] response.data ---> ', response.data);
-                const { userToken, userId } = response.data;
-                console.log('[LOGIN] AXIOS GOOGLE MEMBER LOGIN COMMUNICATION SUCCESS');
-                document.cookie = `userToken=${userToken}; path=/`;
-                dispatch(setIsLoginAction(true));
-                dispatch(setUserIdAction(userId));
-
-                navigate('/friend/friendList');
-            } else {
-                alert('MEMBER LOGIN PROCESS FAIL!!');
-                dispatch(setIsLoginAction(false));
-                dispatch(setUserIdAction(''));
-            }
         } catch (error) {
             console.log('Error:', error);
         }
-    }
+    };
+
+
 
     return (
         <div>
@@ -143,7 +151,7 @@ const Login = () => {
                 <Link to="/member/join">회원가입</Link><br />
                 <Link to="/member/findpassword">비밀번호 찾기</Link><br />
                 <Link to="/admin">ADMIN</Link><br />
-                <button onClick={handleGoogleLogin}>with Google</button>
+                <a href='#' onClick={handleGoogleLogin}>with Google</a>
             </div>
         </div>
 
