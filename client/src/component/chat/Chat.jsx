@@ -8,7 +8,7 @@ import ChatDetailViewFriendModal from "./ChatDetailViewFriendModal";
 import FileModal from "./FileModal";
 import { fetchUser } from "./fetchFunction";
 import '../../css/common.css';
-import '../../css/chat/chat.css'
+// import '../../css/chat/chat.css'
 
 
 // const socket = io('http://localhost:3001');

@@ -5,7 +5,7 @@ const DBs = {
     DB_LOCAL: () => {
 
         return mysql.createConnection({
-            host: '14.42.124.96',
+            host: '14.42.124.135',
             port: '3306',
             user: 'root',
             password: '1234',

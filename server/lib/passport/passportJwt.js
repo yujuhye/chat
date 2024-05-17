@@ -13,6 +13,7 @@ module.exports = function (app) {
     };
 
     app.use(passport.initialize());
+    app.use(passport.session());
 
     passport.serializeUser(function (user, done) {
         console.log('serializeUser: ', user);
@@ -32,7 +33,7 @@ module.exports = function (app) {
             });
         } else {
             DB.query('SELECT * FROM USER_IFM WHERE USER_ID = ?', [id], (error, user) => {
-                done(error, user[0]);
+                done(error, user[0].USER_ID);
             });
         }
     });
@@ -130,7 +131,6 @@ module.exports = function (app) {
                 }
                 // Generate JWT token
                 const userToken = jwt.sign({ id: user.USER_ID, isAdmin: false }, jwtOptions.secretOrKey);
-
                 return res.json({ userToken });
             });
         })(req, res, next);

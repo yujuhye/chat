@@ -177,7 +177,6 @@ function RequestFriend() {
         .then(response => {
             console.log('axiosSearchFriendById success', response.data);
 
-            
             if(response.data !== null ) {
 
                 const searchFriendObj = response.data.reduce((obj, searchFriend) => {

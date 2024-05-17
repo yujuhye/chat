@@ -1,14 +1,36 @@
 const DB = require('../db/db');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
+
+const getUserID = (req, res) => {
+    const token = req.cookies['userToken'];
+    console.log('토큰 -----> ', token);
+
+    if (!token) {
+        res.status(401).send('Access Denied. No Token Provided.');
+        return null; // 토큰이 없을 때 null 반환
+    }
+
+    try {
+        const decoded = jwt.verify(token, '1234');
+        const userId = decoded.id;
+        console.log(` ★★★★★ User ID is: ${userId}`);
+        return userId; // 여기서 userId 반환
+    } catch (err) {
+        res.status(400).send('Invalid Token');
+        return null; // 유효하지 않은 토큰일 때 null 반환
+    }
+}
 
 const friendService = {
 
     friendList: (req, res) => {
+        const userId = getUserID(req, res);
         
         // let query = req.query;
 
         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
-        [req.user], 
+        [userId], 
         (error, no) => {
 
             if(no !== null && no.length > 0) {
@@ -34,10 +56,10 @@ const friendService = {
     },
     myProfile: (req, res) => {
 
-        // let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT * FROM USER_IFM WHERE USER_ID = ? `, 
-        [req.user], 
+        [userId], 
         (error, user) => {
 
             if(user !== null && user.length > 0) {
@@ -76,9 +98,10 @@ const friendService = {
     matchingFriend: (req, res) => {
 
         let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
-        [req.user], 
+        [userId], 
         (error, no) => {
             if(no !== null && no.length > 0) {
 
@@ -103,16 +126,17 @@ const friendService = {
     requestFriend: (req, res) => {
 
         let post = req.body;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT USER_NO, USER_NICKNAME FROM USER_IFM WHERE USER_ID = ?`, 
-        [req.user], 
+        [userId], 
         (error, results) => {
 
             if(results !== null && results.length > 0){
 
                 DB.query(`INSERT INTO REQUEST_FRIEND(USER_NO, USER_ID, USER_NICKNAME, REQUEST_TARGET_ID, REQUEST_TARGET_NAME, REQUEST_MESSAGE)
                 VALUES(?, ?, ?, ?, ?, ?)`, 
-                [results[0].USER_NO, req.user, results[0].USER_NICKNAME, post.friendId, post.friendName, post.reqMessage], 
+                [results[0].USER_NO, userId, results[0].USER_NICKNAME, post.friendId, post.friendName, post.reqMessage], 
                 (error, result) => {
 
                     if(error) {
@@ -131,9 +155,10 @@ const friendService = {
     matchingRequestFriend: (req, res) => {
 
         let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT * FROM REQUEST_FRIEND WHERE USER_ID = ? AND REQUEST_TARGET_ID = ? AND REQUEST_STATUS = 0`, 
-        [req.user, query.friendId], 
+        [userId, query.friendId], 
         (error, reqStatusFriend) => {
 
             if(reqStatusFriend !== null && reqStatusFriend.length > 0) {
@@ -148,10 +173,10 @@ const friendService = {
     deleteRequestFriend: (req, res) => {
 
         let query = req.query;
-        console.log('query' , query)
+        const userId = getUserID(req, res);
 
         DB.query(`DELETE FROM REQUEST_FRIEND WHERE USER_ID = ? AND REQUEST_TARGET_ID = ? AND REQUEST_STATUS = 0`, 
-        [req.user, query.requestingFriendId], 
+        [userId, query.requestingFriendId], 
         (error, result) => {
 
             if(error) {
@@ -164,6 +189,7 @@ const friendService = {
         })
     },
     getReceivedRequestFriend: (req, res) => {
+        const userId = getUserID(req, res);
 
         const query = `
         SELECT 
@@ -179,7 +205,7 @@ const friendService = {
             rf.REQUEST_REG_DATE DESC
         `;
 
-        DB.query(query , [req.user] ,
+        DB.query(query , [userId] ,
         (error, getReqFriends) => {
 
             if(getReqFriends !== null && getReqFriends.length > 0) {
@@ -196,14 +222,15 @@ const friendService = {
     acceptRequestFriend: (req, res) => {
 
         let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`UPDATE REQUEST_FRIEND SET REQUEST_STATUS = 1, REQUEST_MOD_DATE = NOW() WHERE USER_ID = ? AND REQUEST_TARGET_ID = ?`, 
-        [query.acceptReqfriendId, req.user], 
+        [query.acceptReqfriendId, userId], 
         (error, result) => {
 
             if(result.affectedRows > 0) {
                 DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
-                [req.user], 
+                [userId], 
                 (error, no) => {
 
                     if(no !== null && no.length > 0) {
@@ -233,6 +260,7 @@ const friendService = {
     acceptReqTargetFriend: (req, res) => {
 
         let post = req.body;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
         [post.acceptReqfriendId], 
@@ -241,13 +269,13 @@ const friendService = {
             if(no !== null && no.length > 0) {
 
                 DB.query(`SELECT USER_NICKNAME FROM USER_IFM WHERE USER_ID = ?`, 
-                [req.user], 
+                [userId], 
                 (error, name) => {
 
                     if(name !== null && name.length > 0) {
                         DB.query(`INSERT INTO FRIEND(USER_NO, FRIEND_TARGET_NAME, FRIEND_TARGET_ID)
                         VALUES(?, ?, ?)`, 
-                        [no[0].USER_NO, name[0].USER_NICKNAME, req.user], 
+                        [no[0].USER_NO, name[0].USER_NICKNAME, userId], 
                         (error, result) => {
 
                             if(result.affectedRows > 0) {
@@ -271,6 +299,7 @@ const friendService = {
 
     },
     getSentRequestFriend: (req, res) => {
+        const userId = getUserID(req, res);
 
         const query = `
         SELECT 
@@ -286,7 +315,7 @@ const friendService = {
             rf.REQUEST_REG_DATE DESC
         `;
     
-        DB.query(query , [req.user], 
+        DB.query(query , [userId], 
         (error, sentReqFriends) => {
             if(error) {
                 res.json(null);
@@ -318,9 +347,10 @@ const friendService = {
         })
     },
     blockFriend: (req, res) => {
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
-        [req.user], 
+        [userId], 
         (error, no) => {
 
             if(no !== null && no.length > 0) {
@@ -400,9 +430,10 @@ const friendService = {
     hideRequestFriend: (req, res) => {
 
         let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`UPDATE REQUEST_FRIEND SET REQUEST_STATUS = 2 WHERE USER_ID = ? AND REQUEST_TARGET_ID = ?` ,
-        [query.reqId, req.user], 
+        [query.reqId, userId], 
         (error, result) => {
  
             if(result.affectedRows > 0) {
@@ -419,9 +450,10 @@ const friendService = {
     matchingReceivedReqFriend: (req, res) => {
 
         let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT * FROM REQUEST_FRIEND WHERE USER_ID = ? AND REQUEST_TARGET_ID = ? AND REQUEST_STATUS = 0`, 
-        [query.friendId, req.user], 
+        [query.friendId, userId], 
         (error, recFriend) => {
 
             if(recFriend !== null && recFriend.length > 0) {
@@ -433,8 +465,8 @@ const friendService = {
         })
     },
     myProfileEdit: (req, res) => {
-
         let post = req.body;
+        const userId = getUserID(req, res);
 
         let sql = `UPDATE USER_IFM SET USER_NICKNAME = ?, USER_MOD_DATE = NOW()`;
         let params = [post.profileName]
@@ -467,7 +499,7 @@ const friendService = {
         }
 
         sql += `WHERE USER_ID = ?`
-        params.push(req.user);
+        params.push(userId);
        
         DB.query(sql, params, 
             (error, result) => {
@@ -481,7 +513,7 @@ const friendService = {
                     } else {
 
                         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
-                        [req.user], 
+                        [userId], 
                         (error, no) => {
 
                             if(no !== null && no.length > 0) {
@@ -545,9 +577,10 @@ const friendService = {
 
     },
     myBackDefaultImg: (req, res) => {
-        
+        const userId = getUserID(req, res);
+
         DB.query(`UPDATE USER_IFM SET USER_BACK_IMG_NAME = '' WHERE USER_ID = ?`,
-        [req.user], 
+        [userId], 
         (error, result) => {
 
             if(result.affectedRows > 0) {
@@ -559,9 +592,10 @@ const friendService = {
         })
     },
     myFrontDefaultImg: (req, res) => {
+        const userId = getUserID(req, res);
 
         DB.query(`UPDATE USER_IFM SET USER_FRONT_IMG_NAME = '' WHERE USER_ID = ?`,
-        [req.user], 
+        [userId], 
         (error, result) => {
 
             if(result.affectedRows > 0) {
@@ -576,9 +610,10 @@ const friendService = {
     updateblockFriend: (req, res) => {
 
         let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
-        [req.user], 
+        [userId], 
         (error, no) => {
 
             if(no !== null && no.length > 0) {
@@ -605,9 +640,10 @@ const friendService = {
     deleteFriend: (req, res) => {
 
         let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
-        [req.user], 
+        [userId], 
         (error, no) => {
 
             if(no !== null && no.length > 0) {
@@ -633,6 +669,7 @@ const friendService = {
     deleteTargetFriend: (req, res) => {
 
         let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
         [query.friendId], 
@@ -640,7 +677,7 @@ const friendService = {
 
             if(targetNo !== null && targetNo.length > 0) {
                 DB.query(`DELETE FROM FRIEND WHERE USER_NO = ? AND FRIEND_TARGET_ID = ?`, 
-                [targetNo[0].USER_NO, req.user], 
+                [targetNo[0].USER_NO, userId], 
                 (error, result) => {
 
                     if(result.affectedRows > 0) {
@@ -659,9 +696,10 @@ const friendService = {
     matchHidenFriend: (req, res) => {
 
         let query = req.query;
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT * FROM REQUEST_FRIEND WHERE USER_ID = ? AND REQUEST_TARGET_ID = ? AND REQUEST_STATUS = 2`, 
-        [query.friendId, req.user], 
+        [query.friendId, userId], 
         (error, hidenFriend) => {
 
             if(hidenFriend !== null && hidenFriend.length > 0) {
@@ -675,6 +713,8 @@ const friendService = {
 
     },
     getHiddenFriends: (req, res) => {
+
+        const userId = getUserID(req, res);
 
         const query = `
             SELECT 
@@ -691,7 +731,7 @@ const friendService = {
         `;
 
         DB.query(query, 
-        [req.user], 
+        [userId], 
         (error, hiddenFriends) => {
 
             if(hiddenFriends !== null && hiddenFriends.length > 0) {
@@ -753,9 +793,10 @@ const friendService = {
 
     },
     getMyProfileImgs: (req, res) => {
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
-        [req.user], 
+        [userId], 
         (error, no) => {
             if(no !== null && no.length > 0) {
 
@@ -778,9 +819,10 @@ const friendService = {
 
     },
     getMyBackImgs: (req, res) => {
+        const userId = getUserID(req, res);
 
         DB.query(`SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`, 
-        [req.user], 
+        [userId], 
         (error, no) => {
             if(no !== null && no.length > 0) {
 

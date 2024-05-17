@@ -10,7 +10,7 @@ import ChatTitleNameModModal from "./ChatTitleNameModModal";
 import { fetchUser } from "./fetchFunction";
 import { SERVER_URL } from '../../util/url';
 import '../../css/common.css';
-import '../../css/chat/chatRoom.css';
+// import '../../css/chat/chatRoom.css';
 
 const socket = io('http://localhost:3001');
 // const socket = io('http://14.42.124.96:3001');

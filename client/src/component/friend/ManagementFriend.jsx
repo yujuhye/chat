@@ -1,6 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { IoIosArrowDown, IoIosArrowUp  } from "react-icons/io";
+
+import '../../css/managementFriend.css';
 
 function ManagementFriend() {
 
@@ -8,17 +11,12 @@ function ManagementFriend() {
     const [sentReqFriend, setSentReqFriend] = useState(''); 
     const [blockFriend, setBlockFriend] = useState(''); 
     const [hiddenFriend, setHiddenFriend] = useState('');
+    const [receivedIsOpen, setReceivedIsOpen] = useState(false);
+    const [reqIsOpen, setReqIsOpen] = useState(false);
+    const [blockIsOpen, setBlockIsOpen] = useState(false);
+    const [hiddenIsOpen, sethiddenIsOpen] = useState(false);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-
-        axiosGetReceivedRequestFriend();
-        axiosGetSentRequestFriend();
-        axiosGetBlockFriend();
-        axiosGetHiddenFriends();
-
-    }, []);
 
     //수락 버튼클릭시
     const acceptRequestBtnClickHandler = (recId, recName) => {
@@ -60,6 +58,45 @@ function ManagementFriend() {
         console.log('releaseHiddenFriendClickHandler');
 
         axiosReleaseHiddenFriend(friendNo);
+    }
+
+    //받은요청 클릭시
+    const receivedClickHandler = () => {
+        console.log('receivedClickHandler()');
+
+        if(!receivedIsOpen) {
+            axiosGetReceivedRequestFriend();
+        }
+        setReceivedIsOpen(!receivedIsOpen);
+    }
+
+    //보낸요청 클릭시
+    const requestClickHandler = () => {
+        console.log('requestClickHandler');
+
+        if(!reqIsOpen) {
+            axiosGetSentRequestFriend();
+        }
+        setReqIsOpen(!reqIsOpen);
+    }
+
+    //차단친구 클릭시
+    const blockClickHandler = () => {
+        console.log('blockClickHandler()');
+
+        if(!blockIsOpen) {
+            axiosGetBlockFriend();
+        }
+        setBlockIsOpen(!blockIsOpen);
+    }
+
+    //숨김요청 클릭시
+    const hiddenReqClickHandler = () => {
+        console.log('hiddenReqClickHandler()');
+        if(!hiddenIsOpen) {
+            axiosGetHiddenFriends();
+        }
+        sethiddenIsOpen(!hiddenIsOpen);
     }
     
     //axios
@@ -450,8 +487,9 @@ function ManagementFriend() {
     return(
         <>
             <h2>친구관리</h2>
-            <h3>받은요청</h3>
-            {
+            <h3 className="managementFriend" onClick={receivedClickHandler}>받은요청 {receivedIsOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+            </h3>
+            { receivedIsOpen && (
                 Object.keys(getReqFriend).length > 0 ? (
                     <ul>
                         {Object.keys(getReqFriend).map((getReqFriendid, index) => (
@@ -480,9 +518,10 @@ function ManagementFriend() {
                 ) : (
                     <p>받은요청이 없습니다.</p>
                 )
-            }
-            <h3>보낸요청</h3>
-            {
+            )}
+            <h3 className="managementFriend" onClick={requestClickHandler}>보낸요청 {reqIsOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+            </h3>
+            { reqIsOpen && (
                 Object.keys(sentReqFriend).length > 0 ? (
                 <ul>
                     {Object.keys(sentReqFriend).map((sentReqFriendid, index) => (
@@ -508,9 +547,10 @@ function ManagementFriend() {
             ) : (
             <p>보낸요청이 없습니다.</p>
             )
-            }
-            <h3>차단 친구</h3>
-            {
+            )}
+            <h3 className="managementFriend" onClick={blockClickHandler}>차단 친구 {blockIsOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+            </h3>
+            { blockIsOpen && (
                 Object.keys(blockFriend).length > 0 ? (
                 <ul>
                     {Object.keys(blockFriend).map((blockFriendid, index) => (
@@ -536,9 +576,10 @@ function ManagementFriend() {
             ) : (
             <p>차단친구가 없습니다.</p>
             )
-            }
-             <h3>숨김 요청친구</h3>
-            {
+            )}
+             <h3 className="managementFriend" onClick={hiddenReqClickHandler}>숨김 요청친구 {hiddenIsOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+             </h3>
+            { hiddenIsOpen  && (
                 Object.keys(hiddenFriend).length > 0 ? (
                 <ul>
                     {Object.keys(hiddenFriend).map((hiddenFriendid, index) => (
@@ -564,7 +605,7 @@ function ManagementFriend() {
             ) : (
             <p>숨김친구가 없습니다.</p>
             )
-            }
+            )}
         </>
     );
 }

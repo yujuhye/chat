@@ -10,12 +10,16 @@ import '../../css/common.css'
 import { Link } from "react-router-dom";
 import SideNav from "../../include/SideNav";
 import FriendProfile from "./FriendProfile";
+import useAxiosGetMember from "../../util/useAxiosGetMember";
+import cookie from 'js-cookie';
+import { IoSearchSharp } from "react-icons/io5";
 
 function FriendList() {
 
     const dispatch = useDispatch();
     const friends = useSelector(state => state['friend']['friends']);
     const selectedFriend = useSelector(state => state['friend']['selectedFriend']);
+    const [searchId, setSearchId] = useState('');
 
     useEffect(() => {
         console.log('[FriendList] useEffect');
@@ -23,6 +27,15 @@ function FriendList() {
         axiosGetFriendList();
         
     }, [dispatch]);
+
+     //친구찾기
+     const searchMyFriendChangeHandler = (e) => {
+        console.log('searchMyFriendChangeHandler()');
+
+        if(e.target.name === 'searchMyFriendId') {
+            setSearchId(e.target.value);
+        }
+    }
 
     //친구 프로필 클릭시
     const friendProfileClickHandler = (friendId) => {
@@ -44,9 +57,6 @@ function FriendList() {
         axios({
             url: 'http://localhost:3001/friend/friendList',
             method: 'get',
-            // params: {
-            //     'user_id': 'gildong',
-            // }
         })
         .then(response => {
             console.log('axiosGetFriendList success', response.data);
@@ -105,18 +115,95 @@ function FriendList() {
         return <ul>{favoriteLists}</ul>
     }
 
+    //초성 검색
+    const con2syl = {
+        'ㄱ': '가'.charCodeAt(0),
+        'ㄲ': '까'.charCodeAt(0),
+        'ㄴ': '나'.charCodeAt(0),
+        'ㄷ': '다'.charCodeAt(0),
+        'ㄸ': '따'.charCodeAt(0),
+        'ㄹ': '라'.charCodeAt(0),
+        'ㅁ': '마'.charCodeAt(0),
+        'ㅂ': '바'.charCodeAt(0),
+        'ㅃ': '빠'.charCodeAt(0),
+        'ㅅ': '사'.charCodeAt(0),
+      };
+      const begin = con2syl[searchId] || ( ( searchId.charCodeAt(0) - 12613  ) * 588 + con2syl['ㅅ'] );
+      const end = begin + 587;
+      const pattern = `[${searchId}\\u${begin.toString(16)}-\\u${end.toString(16)}]`;
+
+      function ch2pattern(searchId) {
+        const offset = 44032; 
+        // 한국어 음절
+        if (/[가-힣]/.test(searchId)) {
+          const chCode = searchId.charCodeAt(0) - offset;
+          // 종성이 있으면 문자 그대로
+          if (chCode % 28 > 0) {
+            return searchId;
+          }
+          const begin = Math.floor(chCode / 28) * 28 + offset;
+          const end = begin + 27;
+          return `[\\u${begin.toString(16)}-\\u${end.toString(16)}]`;
+        }
+        // 한글 자음
+        if (/[ㄱ-ㅎ]/.test(searchId)) {
+          const con2syl = {
+            'ㄱ': '가'.charCodeAt(0),
+            'ㄲ': '까'.charCodeAt(0),
+            'ㄴ': '나'.charCodeAt(0),
+            'ㄷ': '다'.charCodeAt(0),
+            'ㄸ': '따'.charCodeAt(0),
+            'ㄹ': '라'.charCodeAt(0),
+            'ㅁ': '마'.charCodeAt(0),
+            'ㅂ': '바'.charCodeAt(0),
+            'ㅃ': '빠'.charCodeAt(0),
+            'ㅅ': '사'.charCodeAt(0),
+          };
+          const begin = con2syl[searchId] || ( ( searchId.charCodeAt(0) - 12613 /* 'ㅅ'의 코드 */ ) * 588 + con2syl['ㅅ'] );
+          const end = begin + 587;
+          return `[${searchId}\\u${begin.toString(16)}-\\u${end.toString(16)}]`;
+        }
+       
+        // return escapeRegExp(searchId);
+      }
+
+    function createFuzzyMatcher(input) {
+        const pattern = input.split('').map(ch2pattern).join('.*?');
+        return new RegExp(pattern);
+      }
+
+    const filteredFriends = Object.values(friends).filter(friend => {
+        const regex = createFuzzyMatcher(searchId);
+        return regex.test(friend.name);
+    });
+
+    const filteredFriendsObject = filteredFriends.reduce((friendobj, friend) => {
+        friendobj[friend.no] = friend;
+        return friendobj;
+    }, {});
+
+
     return(
         <div className="friendListContainer">
         <SideNav />
         <div className="friendListWrap">
         <Nav />
            <h2>친구 목록</h2>
-          <MyProfile />
-           <h3>즐겨찾기</h3>
+           <div className="searchBox">
+                <IoSearchSharp className="searchIcon"/>
+                <input className="searchMyFriend" type="text" name="searchMyFriendId" value={searchId} onChange={(e) => searchMyFriendChangeHandler(e)}  placeholder="친구이름 검색"/>
+           </div>
+           {
+            searchId === '' &&
+            <>
+                <MyProfile />
+                <h3>즐겨찾기</h3>
                 <span>{favoirtefriendLists()}</span>
+            </>
+            }
            <h3>친구</h3>
             <ul>
-                {Object.keys(friends).map((friendId, index) => (
+                {Object.keys(filteredFriendsObject).map((friendId, index) => (
                     // <div className="friendList">
                     <div className={`friendList ${selectedFriend === friends[friendId].id ? "selected" : ""}`} >
                     <li key={index} className="profile" onClick={() =>friendProfileClickHandler(friends[friendId].id)}>
