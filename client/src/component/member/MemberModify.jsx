@@ -171,7 +171,7 @@ const MemberModify = () => {
 
         axios.post('http://localhost:3001/member/modifyConfirm', requestData, {
             headers: {
-                Authorization: userToken
+                Authorization: `Bearer ${userToken}`
             }
         })
             .then(response => {

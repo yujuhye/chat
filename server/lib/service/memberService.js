@@ -166,30 +166,39 @@ const memberService = {
     },
 
     logoutConfirm: (req, res) => {
-        const post = req.body;
 
-        console.log('post.userToken --> ', post.userToken);
-        console.log('req.userToken --> ', req.cookies.userToken);
-
-        if (post.userToken !== req.cookies.userToken) {
-            res.json(null);
+        let userToken = req.headers.authorization;
+        if (!userToken) {
+            console.log('userToken not found in headers');
+            res.status(400).json({ error: 'User token not found' });
             return;
-        } else {
-            console.log('clearCookie Conplete!!');
-            res.clearCookie('userToken');
-            res.json(1);
+        }
+
+        try {
+            const token = userToken.split(' ')[1];
+            console.log('token ----------> ', token);
+            res.clearCookie(token);
+
+            console.log('clearCookie Complete!!');
+            res.json({ message: 'Logout successful' });
+
+        } catch (error) {
+            console.error('Error clearing userToken cookie:', error);
+            res.status(500).json({ error: 'Internal server error' });
         }
     },
 
     memberDeleteConfirm: (req, res) => {
-        const post = req.body;
 
-        console.log('post.userToken --> ', post.userToken);
-        console.log('req.userToken --> ', req.cookies.userToken);
+        let post = req.body;
+        let userToken = req.headers.authorization;
+        if (!userToken) {
+            console.log('userToken not found in headers');
+            res.status(400).json({ error: 'User token not found' });
+            return;
+        }
 
-        if (post.userToken === req.cookies.userToken) {
-            console.log('The session has not expired!!');
-
+        try {
             DB.query(
                 `
                     DELETE FROM USER_IFM WHERE USER_ID = ?
@@ -201,21 +210,22 @@ const memberService = {
                         res.json(0);
 
                     } else {
-                        res.clearCookie('userToken');
-                        res.json(1);
+                        const token = userToken.split(' ')[1];
+                        console.log('token ----------> ', token);
+                        res.clearCookie(token);
+
+                        console.log('clearCookie Complete!!');
+                        res.json({ message: 'MEMBER DELETE successful' });
 
                     }
 
                 }
             );
 
-        } else {
-            console.log('The session has expired!!');
-
-            res.json(0);
-
+        } catch (error) {
+            console.error('Error clearing userToken cookie:', error);
+            res.status(500).json({ error: 'Internal server error' });
         }
-
     },
 
     findPassword: (req, res) => {

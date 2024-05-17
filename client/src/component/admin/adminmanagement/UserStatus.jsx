@@ -19,7 +19,7 @@ const UserStatus = () => {
             const totalMonths = 240;
             const startMonth = totalMonths - (currentPage - 1) * itemsPerPage - 11;
             const endMonth = totalMonths - (currentPage - 1) * itemsPerPage;
-            const response = await axios.get(`http://localhost:3001/admin/UserStatus?startMonth=${startMonth}&endMonth=${endMonth}`);
+            const response = await axios.get(`http://localhost:3001/admin/userStatus?startMonth=${startMonth}&endMonth=${endMonth}`);
             setData(response.data.reverse());
         } catch (error) {
             console.error('Error fetching data:', error);

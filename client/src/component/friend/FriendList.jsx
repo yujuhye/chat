@@ -7,152 +7,165 @@ import MyProfile from "./MyProfile";
 
 import '../../css/profile.css'
 import '../../css/common.css'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SideNav from "../../include/SideNav";
 import FriendProfile from "./FriendProfile";
+import useAxiosGetMember from "../../util/useAxiosGetMember";
+import cookie from 'js-cookie';
 
 function FriendList() {
 
-    const dispatch = useDispatch();
-    const friends = useSelector(state => state['friend']['friends']);
-    const selectedFriend = useSelector(state => state['friend']['selectedFriend']);
+    // const dispatch = useDispatch();
+    // const friends = useSelector(state => state['friend']['friends']);
+    // const selectedFriend = useSelector(state => state['friend']['selectedFriend']);
+    // const navigate = useNavigate();
 
-    useEffect(() => {
-        console.log('[FriendList] useEffect');
+    useAxiosGetMember();
 
-        axiosGetFriendList();
-        
-    }, [dispatch]);
+    // useEffect(() => {
+    //     console.log('[FriendList] useEffect');
 
-    //친구 프로필 클릭시
-    const friendProfileClickHandler = (friendId) => {
-        console.log('friendProfileClickHandler()');
+    //     axiosGetFriendList();
 
-        // dispatch(selectedFriendId(friendId));
-        
-        if (selectedFriend === friendId) {
-            dispatch(selectedFriendId(null));
-        } else {
-            dispatch(selectedFriendId(friendId));
-        }
-    }
+    // }, [dispatch]);
 
-    //친구리스트 불러오기
-    const axiosGetFriendList = () => {
-        console.log('axiosGetFriendList');
+    // //친구 프로필 클릭시
+    // const friendProfileClickHandler = (friendId) => {
+    //     console.log('friendProfileClickHandler()');
 
-        axios({
-            url: 'http://localhost:3001/friend/friendList',
-            method: 'get',
-            // params: {
-            //     'user_id': 'gildong',
-            // }
-        })
-        .then(response => {
-            console.log('axiosGetFriendList success', response.data);
+    //     // dispatch(selectedFriendId(friendId));
 
-            const friendsObj = response.data.reduce((obj, friend) => {
-                obj[friend.FRIEND_NO] = {
-                    no: friend.FRIEND_NO,
-                    name: friend.FRIEND_TARGET_NAME,
-                    id: friend.FRIEND_TARGET_ID,
-                    favorite: friend.FRIEND_FAVORITES,
-                    frontImg: friend.USER_FRONT_IMG_NAME,
-                    backImg: friend.USER_BACK_IMG_NAME,
-                    curMsg: friend.USER_CUR_MSG,
-                };
-                return obj;
-            }, {});
+    //     if (selectedFriend === friendId) {
+    //         dispatch(selectedFriendId(null));
+    //     } else {
+    //         dispatch(selectedFriendId(friendId));
+    //     }
+    // }
 
-            dispatch(friendListsAction(friendsObj));
+    // //친구리스트 불러오기
+    // const axiosGetFriendList = () => {
+    //     console.log('axiosGetFriendList');
+    //     const userToken = cookie.get('userToken');
+    //     const userId = cookie.get('userId');
+    //     axios({
+    //         url: 'http://localhost:3001/friend/friendList?`',
+    //         method: 'get',
+    //         headers: {
+    //             Authorization: `Bearer ${userToken}` // 사용자 토큰을 헤더에 포함
+    //         },
+    //         params: {
+    //             userId: userId // 사용자 ID를 쿼리 파라미터로 보냄
+    //         }
 
-        })
-        .catch(error => {
-            console.log('axiosGetFriendList error');
-            
-        })
-        .finally(data => {
-            console.log('axiosGetFriendList complete');
-            
-        });
-    }
+    //     })
+    //         .then(response => {
+    //             console.log('axiosGetFriendList success', response.data);
 
-    //즐겨찾기 친구 필터링
-    const favoirtefriendLists = () => {
-        console.log('render favoirtefriendLists()');
+    //             const friendsObj = response.data.reduce((obj, friend) => {
+    //                 obj[friend.FRIEND_NO] = {
+    //                     no: friend.FRIEND_NO,
+    //                     name: friend.FRIEND_TARGET_NAME,
+    //                     id: friend.FRIEND_TARGET_ID,
+    //                     favorite: friend.FRIEND_FAVORITES,
+    //                     frontImg: friend.USER_FRONT_IMG_NAME,
+    //                     backImg: friend.USER_BACK_IMG_NAME,
+    //                     curMsg: friend.USER_CUR_MSG,
+    //                 };
+    //                 return obj;
+    //             }, {});
 
-        const favoriteLists = Object.keys(friends).filter((friendId) => friends[friendId].favorite === 1).map((friendId, index) => (
-            <div className="friendList">
-            <li key={index} className="profile" onClick={() =>friendProfileClickHandler(friends[friendId].id)}>
-                 {
-                        friends[friendId].frontImg === ''
-                        ?
-                            <>
-                                <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
-                            </>
-                            :
-                            <>
-                                <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImg"/>
-                            </>
-                            
-                }
-                <span className="profileName">{friends[friendId].name}</span>
-                {friends[friendId].curMsg}
-            </li>
-            </div>
-        ));
+    //             dispatch(friendListsAction(friendsObj));
 
-        return <ul>{favoriteLists}</ul>
-    }
+    //         })
+    //         .catch(error => {
+    //             console.log('AXIOS MEMBER LOGOUT THUM COMMUNICATION ERROR');
 
-    return(
+    //         })
+    //         .finally(data => {
+    //             console.log('axiosGetFriendList complete');
+
+    //         });
+    // }
+
+    // //즐겨찾기 친구 필터링
+    // const favoirtefriendLists = () => {
+    //     console.log('render favoirtefriendLists()');
+
+    //     const favoriteLists = Object.keys(friends).filter((friendId) => friends[friendId].favorite === 1).map((friendId, index) => (
+    //         <div className="friendList">
+    //             <li key={index} className="profile" onClick={() => friendProfileClickHandler(friends[friendId].id)}>
+    //                 {
+    //                     friends[friendId].frontImg === ''
+    //                         ?
+    //                         <>
+    //                             <img src="/resource/img/profile_default.png" className="frontProfileImg" />
+    //                         </>
+    //                         :
+    //                         <>
+    //                             <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImg" />
+    //                         </>
+
+    //                 }
+    //                 <span className="profileName">{friends[friendId].name}</span>
+    //                 {friends[friendId].curMsg}
+    //             </li>
+    //         </div>
+    //     ));
+
+    //     return <ul>{favoriteLists}</ul>
+    // }
+
+    return (
         <div className="friendListContainer">
-        <SideNav />
-        <div className="friendListWrap">
-        <Nav />
-           <h2>친구 목록</h2>
-          <MyProfile />
-           <h3>즐겨찾기</h3>
+            <Nav />
+
+
+            {/* <SideNav />
+            <div className="friendListWrap">
+                <Nav />
+                <h2>친구 목록</h2>
+                <MyProfile />
+                <h3>즐겨찾기</h3>
                 <span>{favoirtefriendLists()}</span>
-           <h3>친구</h3>
-            <ul>
-                {Object.keys(friends).map((friendId, index) => (
-                    // <div className="friendList">
-                    <div className={`friendList ${selectedFriend === friends[friendId].id ? "selected" : ""}`} >
-                    <li key={index} className="profile" onClick={() =>friendProfileClickHandler(friends[friendId].id)}>
-                        
-                        {
-                            friends[friendId].frontImg === ''
-                            ?
-                                <>
-                                    <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
-                                </>
-                            :
-                                <>
-                                    <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImg"/>
-                                </>
-                            
-                        }
-                        <span className="profileName">{friends[friendId].name}</span>
-                        {friends[friendId].curMsg}
-                    </li>
-                    </div>
-                    // </div>
-                ))}
-            </ul>
+                <h3>친구</h3>
+                <ul>
+                    {Object.keys(friends).map((friendId, index) => (
+                        // <div className="friendList">
+                        <div className={`friendList ${selectedFriend === friends[friendId].id ? "selected" : ""}`} >
+                            <li key={index} className="profile" onClick={() => friendProfileClickHandler(friends[friendId].id)}>
+
+                                {
+                                    friends[friendId].frontImg === ''
+                                        ?
+                                        <>
+                                            <img src="/resource/img/profile_default.png" className="frontProfileImg" />
+                                        </>
+                                        :
+                                        <>
+                                            <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImg" />
+                                        </>
+
+                                }
+                                <span className="profileName">{friends[friendId].name}</span>
+                                {friends[friendId].curMsg}
+                            </li>
+                        </div>
+                        // </div>
+                    ))}
+                </ul>
             </div>
             <div className="friendProfileDetailsWrap">
-            {
-                selectedFriend === null 
-                ?
-                <></>
-                :
-                <>
-                <FriendProfile />
-                </>
-            }
-            </div>
-         </div>
+                {
+                    selectedFriend === null
+                        ?
+                        <></>
+                        :
+                        <>
+                            <FriendProfile />
+                        </>
+                }
+            </div> */}
+        </div>
     );
 }
 

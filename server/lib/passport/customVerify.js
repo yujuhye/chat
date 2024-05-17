@@ -7,13 +7,14 @@ const secretKey = '1234';
 function verifyJWT(req, res, next) {
 
     const token = req.headers.authorization;
+    console.log('token ---> ', token);
 
     if (!token) {
         return res.status(401).json({ error: '로그인되지 않았습니다.' });
     }
 
     try {
-        const payload = jwt.verify(token, secretKey);
+        const payload = jwt.verify(token.split(' ')[1], secretKey);
 
         if (payload) {
             console.log('토큰이 유효합니다.');

@@ -7,6 +7,10 @@ import roomsReducer from './roomsReducer';
 import chatReducer from './chatReducer';
 import adminLoginReducer from './adminLoginReducer';
 import adminJoinReducer from './adminJoinReducer';
+import newsReducer from './newsReducer';
+import memberModifyReducer from './memberModifyReducer';
+import findPasswordReducer from './findPasswordReducer';
+import fileReducer from './fileReducer';
 
 export const reducer = combineReducers({
     join: joinReducer,
@@ -21,6 +25,6 @@ export const reducer = combineReducers({
     adminlogin: adminLoginReducer,
     file: fileReducer,
     news: newsReducer
- 
+
 
 });

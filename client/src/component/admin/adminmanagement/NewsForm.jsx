@@ -52,7 +52,8 @@ const NewsForm = () => {
 
     const axiosNews = () => {
 
-        const adminToken = cookie.get('userToken');
+        const adminToken = cookie.get('adminToken');
+        console.log('[NewsForm] adminToken ---> ', adminToken);
 
         const requestData = {
             newsTitle: newsTitle,
@@ -61,14 +62,15 @@ const NewsForm = () => {
         };
 
         axios({
-            url: `http://localhost:3001/admin/newsWriteConfirm`,
+            url: `http://localhost:3001/admin/newsWriteConfirm?`,
             method: 'post',
             data: requestData,
             withCredentials: true,
             headers: {
-                Authorization: adminToken
+                Authorization: `Bearer ${adminToken}`
             }
         })
+
             .then(response => {
 
                 console.log('[NewsForm] AXIOS NEWS WRITE COMMUNICATION SUCCESS');

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from "react-router-dom";
 
 import '../css/common.css';
+import { useSelector } from 'react-redux';
 
 const Nav = () => {
 
@@ -9,11 +10,11 @@ const Nav = () => {
 
     return (
         <nav>
-                {isAdminLogin ?
+            {isAdminLogin ?
                 <>
                     <Link to="/admin/news">공지사항</Link> &nbsp;
                     <Link to="/admin/userstatus">유저 통계</Link> &nbsp;
-                    <Link to="/admin/chattimestatus">채팅 통계</Link> &nbsp;
+                    <Link to="/admin/chatstatushourly">채팅 통계</Link> &nbsp;
                 </>
                 :
 
@@ -26,7 +27,7 @@ const Nav = () => {
                     <Link to="/chatRoom/list">chat</Link> &nbsp;
                 </>
             }
-            
+
         </nav>
     );
 };

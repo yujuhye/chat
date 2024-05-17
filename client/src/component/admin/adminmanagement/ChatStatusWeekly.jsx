@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Nav from '../../../include/Nav';
 import useAxiosGetAdmin from "../../../util/useAxiosGetAdmin";
 
-const ChatTimeStatus = () => {
+const ChatStatusWeekly = () => {
 
     useAxiosGetAdmin();
 
@@ -14,4 +14,4 @@ const ChatTimeStatus = () => {
     );
 };
 
-export default ChatTimeStatus;
+export default ChatStatusWeekly;

@@ -1,24 +1,28 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { setIsLoginAction, setUserIdAction } from '../component/action/loginActions';
-import { setIsAdminLoginAction, setAdminIdAction } from '../component/action/adminLoginActions';
+import { useSelector } from 'react-redux';
+
 import axios from "axios";
 import Login from './member/Login';
 import Join from './member/Join';
 import FriendList from './friend/FriendList';
 import ChatRoom from './chat/ChatRoom';
 import Chat from './chat/Chat';
-import Nav from '../include/Nav';
 import AdminLogin from './admin/adminmember/AdminLogin';
 import AdminJoin from './admin/adminmember/AdminJoin';
 import AdminHome from './admin/AdminHome';
-import CleanCenter from './admin/adminmanagement/CleanCenter';
 import UserStatus from './admin/adminmanagement/UserStatus';
-import ChatTimeStatus from './admin/adminmanagement/ChatTimeStatus';
-import News from './admin/adminmanagement/News';
+import NewsList from './admin/adminmanagement/NewsList';
 import RequestFriend from './friend/RequestFriend';
 import ManagementFriend from './friend/ManagementFriend';
+import NewsForm from './admin/adminmanagement/NewsForm';
+import Setting from './member/Setting';
+import MemberModify from './member/MemberModify';
+import FindPassword from './member/FindPassword';
+import AdminDashboard from './admin/adminmanagement/AdminDashboard';
+import ChatStatusHourly from './admin/adminmanagement/ChatStatusHourly';
+import ChatStatusDaily from './admin/adminmanagement/ChatStatusDaily';
+import ChatStatusWeekly from './admin/adminmanagement/ChatStatusWeekly';
 
 axios.defaults.withCredentials = true;
 
@@ -28,7 +32,7 @@ const MainHome = () => {
 
     return (
         <BrowserRouter>
-            
+
             <Routes>
                 <Route path="/" element={isLogin ? <Navigate to="/friend/friendList" /> : <Login />} />
                 <Route path="/member/findpassword" element={<FindPassword />} />
@@ -43,10 +47,12 @@ const MainHome = () => {
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
                 <Route path="/admin/adminlogin" element={<AdminLogin />} />
                 <Route path="/admin/adminjoin" element={<AdminJoin />} />
-                <Route path="/admin/news" element={<News />} />
+                <Route path="/admin/news" element={<NewsList />} />
                 <Route path="/admin/newsform" element={<NewsForm />} />
                 <Route path="/admin/userstatus" element={<UserStatus />} />
-                <Route path="/admin/chattimestatus" element={<ChatTimeStatus />} />
+                <Route path="/admin/chatstatushourly" element={<ChatStatusHourly />} />
+                <Route path="/admin/chatstatusdaily" element={<ChatStatusDaily />} />
+                <Route path="/admin/chatstatusweekly" element={<ChatStatusWeekly />} />
                 <Route path='/friend/friendList' element={<FriendList />} />
                 <Route path='/friend/requestFriend' element={<RequestFriend />} />
             </Routes>

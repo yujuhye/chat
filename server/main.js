@@ -8,6 +8,7 @@ const MemoryStore = require('memorystore')(session);
 const bcrypt = require('bcrypt');
 const cors = require('cors');
 const http = require('http').createServer(app);
+const passport = require('./lib/passport/passportJwt');
 const cookieParser = require('cookie-parser');
 
 // Express에 CORS 미들웨어 적용
@@ -50,22 +51,9 @@ const sessionObj = {
 
 app.use(session(sessionObj));
 
-// 05/14 경선 추가
 passport(app);
-// 05/14 경선 추가
 
 app.use(cookieParser());
-
-// 05/16 경선 추가
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    next();
-});
-// 05/16 경선 추가
-
 
 app.get('/', (req, res) => {
     console.log('/');
