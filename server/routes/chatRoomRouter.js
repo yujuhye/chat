@@ -1,13 +1,15 @@
 const express = require('express');
 const chatRoomService = require('../lib/service/chatRoomService');
 const router = express.Router();
+const verifyJWT = require('../lib/passport/customVerify');
 
 // 리스트, 방이름 수정, 방 나가기, 메시지, 메시지 내용
 // chat room list
 router.get('/list', (req, res) => {
+    const userId = req.cookies['userToken'];
 
     console.log('/chatRoom/list');
-    console.log('/chatRoom/list -----> ', req.user);
+    console.log('/chatRoom/list -----> ', userId);
     chatRoomService.list(req, res);
 
 });

@@ -1,6 +1,5 @@
 const DB = require('../lib/db/db');
 
-
 async function fetchMessagesFromDatabase(roomId, userNo) {
     console.log('[socket] fetchMessagesFromDatabase roomId -----> ', roomId);
     console.log('[socket] fetchMessagesFromDatabase userNo -----> ', userNo);
@@ -22,7 +21,7 @@ async function fetchMessagesFromDatabase(roomId, userNo) {
             C.CHAT_REG_DATE ASC
         `;
 
-        DB.query(chatDataSql, [userNo, roomId, userNo], (err, results) => {
+        DB.query(chatDataSql, [roomId, userNo], (err, results) => {
             if (err) {
                 reject(err);
                 return;
@@ -204,7 +203,9 @@ module.exports = function(io) {
         // 방 입장
         socket.on('joinRoom', async (roomId,userNo) => {
             socket.join(roomId);
+            console.log('★★입장★★');
             console.log(`User joined room: ${roomId}`);
+            console.log(`User joined user: ${userNo}`);
             
             // 데이터베이스에서 해당 방의 기존 메시지들을 불러옵니다.
             const messages = await fetchMessagesFromDatabase(roomId, userNo);
@@ -217,6 +218,29 @@ module.exports = function(io) {
 
         });
 
+        // 파일 전송 후 방에 참여한 사람들에게 바로 보이게 하기
+        socket.on('submitFile', async (data) => {      
+            const messages = await fetchMessagesFromDatabase(data.roomId, data.userNo);
+        
+            // 마지막 메시지를 가져오기
+            const lastMessage = messages[messages.length - 1];
+        
+            // 마지막 메시지에 fileName 추가
+            let updatedMessages = { ...lastMessage};
+        
+            let chatInfo = {
+                // userId: data.userId,
+                // fileName: data.fileName,
+                // fileUrl: data.fileUrl,
+                messages: updatedMessages,
+            }
+        
+            console.log('File file************* -----> ', chatInfo);
+        
+            // 방에 있는 모든 사용자에게 파일 정보와 추가 정보 전송
+            socket.to(data.roomId).emit('receiveFile', chatInfo);
+        });          
+
         // 읽음 처리
         socket.on('updateReadCnt', async (roomId, userInfos) => {
             console.log('읽음 처리 >>>>> roomId -----> ', roomId);
@@ -224,9 +248,13 @@ module.exports = function(io) {
 
             
         });
+
         // 메시지 전송
         socket.on('sendMessage', (data) => {
-            const { sender, content, roomId } = data;
+            const { sender, content, roomId, userNo } = data;
+        
+            console.log('sender -----> ', data.sender);
+            console.log('userNo -----> ', data.userNo);
         
             const now = new Date();
             now.setHours(now.getHours() + 9); // KST 시간으로 조정
@@ -239,70 +267,55 @@ module.exports = function(io) {
                     console.error('Error inserting message into database', err);
                     return;
                 }
-                console.log('Message inserted successfully', result);
-        
-                // USER_NO를 찾기 위한 쿼리를 추가합니다.
-                let findUserNoSql = `SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`;
-                DB.query(findUserNoSql, [sender], (err, userResult) => {
+
+                console.log('메시지 전송 성공!!!!! -----> ', result);
+
+                let sql = `SELECT USER_NO FROM CHAT_PARTICIPANT WHERE ROOM_NO = ?`;
+                DB.query(sql, [roomId], (err, users) => {
                     if (err) {
-                        console.error('Error retrieving user number', err);
-                        return;
-                    }
-                    let senderUserNo;
-                    if (userResult.length > 0) {
-                        senderUserNo = userResult[0].USER_NO;
-                    } else {
-                        console.log('Unable to find USER_NO for sender USER_ID:', sender);
+                        console.error('오류오류!!! -----> ', err);
                         return;
                     }
         
-                    let sql = `SELECT USER_NO FROM CHAT_PARTICIPANT WHERE ROOM_NO = ?`;
-                    DB.query(sql, [roomId], (err, users) => {
-                        if (err) {
-                            console.error('Error querying users in room', err);
-                            return;
-                        }
+                    let usersInRoom = users.map(user => user.USER_NO);
         
-                        let usersInRoom = users.map(user => user.USER_NO);
-        
-                        usersInRoom.forEach(user => {
-                            let readStatus = user === senderUserNo ? 1 : 0; // senderUserNo를 사용하여 비교
-                            console.log('읽음 읽지 않음 처리 -----> user : ', user);
-                            console.log('읽음 읽지 않음 처리 -----> senderUserNo : ', senderUserNo); // 로그 수정
-                            let sql = `INSERT INTO CHAT_READ_STATUS(CHAT_NO, USER_NO, READ_STATUS) VALUES(?, ?, ?)`;
-                            DB.query(sql, [result.insertId, user, readStatus], (err, insertResult) => {
-                                if (err) {
-                                    console.error('CHAT_READ_STATUS 업데이트 오류 발생 -----> ', err);
-                                    return;
-                                }
-                                console.log('CHAT_READ_STATUS 업데이트 성공 -----> ', insertResult);
-                            });
-                        });
-        
-                        // 메시지를 보낸 후 읽지 않은 사용자의 수를 계산
-                        let unreadCountSql = `SELECT COUNT(USER_NO) AS UNREAD_COUNT FROM CHAT_READ_STATUS WHERE READ_STATUS = 0 AND CHAT_NO = ? AND USER_NO != ?`;
-                        DB.query(unreadCountSql, [result.insertId, senderUserNo], (err, unreadResult) => { // senderUserNo를 사용하여 업데이트
+                    usersInRoom.forEach(user => {
+                        let readStatus = user === userNo ? 1 : 0; // userNo를 사용하여 비교
+                        console.log('읽음 읽지 않음 처리 -----> user : ', user);
+                        console.log('읽음 읽지 않음 처리 -----> senderUserNo : ', userNo); // 로그 수정
+                        let sql = `INSERT INTO CHAT_READ_STATUS(CHAT_NO, USER_NO, READ_STATUS) VALUES(?, ?, ?)`;
+                        DB.query(sql, [result.insertId, user, readStatus], (err, insertResult) => {
                             if (err) {
-                                console.error('UNREAD_COUNT 쿼리 오류 발생 -----> ', err);
+                                console.error('CHAT_READ_STATUS 업데이트 오류 발생 -----> ', err);
                                 return;
                             }
-                            console.log('UNREAD_COUNT 쿼리 실행 성공 -----> ', unreadResult);
-        
-                            const messageToSend = {
-                                sender: sender,
-                                content: content,
-                                sentAt: kst,
-                                status: 0,
-                                readStatus: false,
-                                unreadCount: unreadResult[0].UNREAD_COUNT, // 읽지 않은 사용자의 수를 추가합니다.
-                            };
-        
-                            io.to(roomId).emit('receiveMessage', messageToSend);
+                            console.log('CHAT_READ_STATUS 업데이트 성공 -----> ', insertResult);
                         });
+                    });
+        
+                    // 메시지를 보낸 후 읽지 않은 사용자의 수를 계산
+                    let unreadCountSql = `SELECT COUNT(USER_NO) AS UNREAD_COUNT FROM CHAT_READ_STATUS WHERE READ_STATUS = 0 AND CHAT_NO = ? AND USER_NO != ?`;
+                    DB.query(unreadCountSql, [result.insertId, userNo], (err, unreadResult) => { // userNo를 사용하여 업데이트
+                        if (err) {
+                            console.error('UNREAD_COUNT 쿼리 오류 발생 -----> ', err);
+                            return;
+                        }
+                        console.log('UNREAD_COUNT 쿼리 실행 성공 -----> ', unreadResult);
+        
+                        const messageToSend = {
+                            sender: sender,
+                            content: content,
+                            sentAt: kst,
+                            status: 0,
+                            readStatus: false,
+                            unreadCount: unreadResult[0].UNREAD_COUNT, // 읽지 않은 사용자의 수를 추가
+                        };
+        
+                        io.to(roomId).emit('receiveMessage', messageToSend);
                     });
                 });
             });
-        });        
+        });           
         
         // 채팅방 떠남
         socket.on('leaveRoom', function(data){
@@ -361,23 +374,29 @@ module.exports = function(io) {
         });
 
         // 채팅방 즐겨 찾기
-        socket.on('likeRoom', ({roomId, userNo}) => {
-            console.log('채팅방 즐겨 찾기 이벤트 roomId -----> ', roomId);
-            console.log('채팅방 즐겨 찾기 이벤트 userNo -----> ', userNo);
+        socket.on('likeRoom', (data) => {
+            console.log('채팅방 즐겨 찾기 이벤트 roomId -----> ', data.id);
+            console.log('채팅방 즐겨 찾기 이벤트 userNo -----> ', data.no);
+
+            let roomNo = data.id;
+            let userNo = data.no;
 
             let chatRoomLikeSql =
             `
                 UPDATE 
                     CHAT_PARTICIPANT 
                 SET 
-                    PARTI_BOOKMARK = 1 
-                WHERE
+                    PARTI_BOOKMARK = CASE 
+                                        WHEN PARTI_BOOKMARK = 1 THEN 0 
+                                        ELSE 1 
+                                    END 
+                WHERE 
                     ROOM_NO = ? 
                 AND 
                     USER_NO = ?
             `;
 
-            DB.query(chatRoomLikeSql, [roomId, userNo], (err, chatRoomLikeResult) => {
+            DB.query(chatRoomLikeSql, [roomNo, userNo], (err, chatRoomLikeResult) => {
                 if(err) {
                     console.log('채팅방 즐겨찾기 중 오류가 발생했습니다 -----> ', err);
                 } else {
@@ -395,43 +414,44 @@ module.exports = function(io) {
 
             let refreshSql = 
             `
-                SELECT 
-                    CR.ROOM_NO, 
-                    CR.ROOM_DEFAULT_NAME, 
-                    CR.ROOM_PERSONNEL,
-                    CP.PARTI_NO,
-                    CP.USER_NICKNAME,
-                    CP.USER_NO,
-                    CP.PARTI_CUSTOMZING_NAME,
-                    CP.PARTI_BOOKMARK,
-                    CP.PARTI_REG_DATE,
-                    CASE 
-                        WHEN CM.CHAT_CONDITION = 0 THEN CM.LAST_CHAT_TEXT
-                        WHEN CM.CHAT_CONDITION = 1 THEN "(이미지)"
-                        WHEN CM.CHAT_CONDITION = 2 THEN "(영상)"
-                        WHEN CM.CHAT_CONDITION = 3 THEN "(파일)"
-                        ELSE "(새로운 채팅방입니다.)"
-                    END AS LAST_CHAT_TEXT,
-                    CM.LAST_CHAT_REG_DATE
-                FROM 
-                    CHAT_PARTICIPANT CP
-                INNER JOIN 
-                    CHAT_ROOM CR ON CP.ROOM_NO = CR.ROOM_NO
-                LEFT JOIN 
-                    (
-                        SELECT 
-                            ROOM_NO, 
-                            CHAT_TEXT AS LAST_CHAT_TEXT,
-                            CHAT_CONDITION,
-                            CHAT_REG_DATE AS LAST_CHAT_REG_DATE,
-                            ROW_NUMBER() OVER(PARTITION BY ROOM_NO ORDER BY CHAT_REG_DATE DESC) AS rn
-                        FROM 
-                            CHAT
-                    ) CM ON CR.ROOM_NO = CM.ROOM_NO AND CM.rn = 1
-                WHERE 
-                    CP.USER_NO = ?
-                ORDER BY 
-                    CM.LAST_CHAT_REG_DATE DESC
+            SELECT 
+                CR.ROOM_NO, 
+                CR.ROOM_DEFAULT_NAME, 
+                CR.ROOM_PERSONNEL,
+                CP.PARTI_NO,
+                CP.USER_NICKNAME,
+                CP.USER_NO,
+                CP.PARTI_CUSTOMZING_NAME,
+                CP.PARTI_BOOKMARK,
+                CP.PARTI_REG_DATE,
+                CASE 
+                    WHEN CM.CHAT_CONDITION = 0 THEN CM.LAST_CHAT_TEXT
+                    WHEN CM.CHAT_CONDITION = 1 THEN "(이미지)"
+                    WHEN CM.CHAT_CONDITION = 2 THEN "(영상)"
+                    WHEN CM.CHAT_CONDITION = 3 THEN "(파일)"
+                    ELSE "(새로운 채팅방입니다.)"
+                END AS LAST_CHAT_TEXT,
+                CM.LAST_CHAT_REG_DATE
+            FROM 
+                CHAT_PARTICIPANT CP
+            INNER JOIN 
+                CHAT_ROOM CR ON CP.ROOM_NO = CR.ROOM_NO
+            LEFT JOIN 
+                (
+                    SELECT 
+                        ROOM_NO, 
+                        CHAT_TEXT AS LAST_CHAT_TEXT,
+                        CHAT_CONDITION,
+                        CHAT_REG_DATE AS LAST_CHAT_REG_DATE,
+                        ROW_NUMBER() OVER(PARTITION BY ROOM_NO ORDER BY CHAT_REG_DATE DESC) AS rn
+                    FROM 
+                        CHAT
+                ) CM ON CR.ROOM_NO = CM.ROOM_NO AND CM.rn = 1
+            WHERE 
+                CP.USER_NO = ?
+            ORDER BY 
+                CP.PARTI_BOOKMARK DESC,
+                CM.LAST_CHAT_REG_DATE DESC   
             `;
 
            DB.query(refreshSql, [userNo], (err, rooms) => {

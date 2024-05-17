@@ -2,9 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams } from 'react-router-dom';
 import { fetchUser } from "./fetchFunction";
 import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { fileSend, fileSendSuccess, fileSendFail } from '../action/file';
+import io from 'socket.io-client';
 import axios from 'axios';
 import '../../css/common.css'
+
+const socket = io('http://localhost:3001');
 
 const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFileModal }) => {
     const selectImgFile = useRef("");
@@ -16,6 +20,7 @@ const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFi
     const dispatch = useDispatch();
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [userInfo, setUserInfo] = useState(0);
+    const sendSuccess = useSelector(state => state.file.sendSuccess);
 
     // handler
     // 파일 선택
@@ -77,6 +82,7 @@ const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFi
         });
     };
 
+    // 이미지
     const axiosImgFileSubmit = (files, user, dispatch) => {
         console.log('axiosImgFile()');
 
@@ -100,9 +106,28 @@ const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFi
         })
         .then(response => {
             console.log('파일 전송 성공!');
+            //alert('파일 전송 성공!');
             console.log('then file submit success! -----> ', response.data);
+            
+            let submitInfo = {
+                roomId: user.roomId,
+                userId: user.userId,
+                userNo: user.userNo,
+                fileName: response.data.fileName,  // 서버로부터 받은 파일명
+                fileUrl: response.data.fileUrl     // 서버로부터 받은 파일 URL
+            }
+
+            // socket
+            socket.emit('submitFile', submitInfo);
+            socket.on('roomInfo', function(roomInfo) {
+                
+                console.log('받은 채팅방 정보:', roomInfo);
+       
+            });
+
             dispatch(fileSendSuccess(response.data)); // 파일 전송 성공 action dispatch
             setIsShowFileModal(false);
+
         })
         .catch(error => {
             console.log('파일 전송 실패!');
@@ -137,6 +162,23 @@ const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFi
         .then(response => {
             console.log('파일 전송 성공!');
             console.log('file submit success! -----> ', response.data);
+
+            let submitInfo = {
+                roomId: user.roomId,
+                userId: user.userId,
+                userNo: user.userNo,
+                fileName: response.data.fileName,  // 서버로부터 받은 파일명
+                fileUrl: response.data.fileUrl     // 서버로부터 받은 파일 URL
+            }
+
+            // socket
+            socket.emit('submitFile', submitInfo);
+            socket.on('roomInfo', function(roomInfo) {
+                
+                console.log('받은 채팅방 정보:', roomInfo);
+       
+            });
+
             setIsShowFileModal(false);
             dispatch(fileSendSuccess(response.data));
         })
@@ -174,6 +216,23 @@ const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFi
         .then(response => {
             console.log('파일 전송 성공!');
             console.log('file submit success! -----> ', response.data);
+
+            let submitInfo = {
+                roomId: user.roomId,
+                userId: user.userId,
+                userNo: user.userNo,
+                fileName: response.data.fileName,  // 서버로부터 받은 파일명
+                fileUrl: response.data.fileUrl     // 서버로부터 받은 파일 URL
+            }
+
+            // socket
+            socket.emit('submitFile', submitInfo);
+            socket.on('roomInfo', function(roomInfo) {
+                
+                console.log('받은 채팅방 정보:', roomInfo);
+       
+            });
+            
             setIsShowFileModal(false);
             dispatch(fileSendSuccess(response.data));
         })
@@ -186,6 +245,18 @@ const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFi
 
     }
 
+    useEffect(() => {
+        socket.on('chatImgUploaded', (data) => {
+            // 채팅 화면을 갱신하는 로직을 여기에 작성합니다.
+            console.log('New image uploaded:', data);
+            // 예를 들어, 새로운 메시지를 채팅 리스트에 추가하는 등의 작업을 수행합니다.
+        });
+    
+        return () => {
+            socket.off('chatImgUploaded');
+        };
+    }, [socket]);
+    
     return(
         <div className="fileModal">
             <input type="file" accept="image/*" name="chat_img_name" style={{ display: "none" }} multiple ref={selectImgFile} onChange={fileSelectChangeEventHandler}/>

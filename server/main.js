@@ -17,7 +17,7 @@ app.use(cors({
     credentials: true // 쿠키를 포함시키기 위해 필요
 }));
 
-// Socket.IO 설정
+// Socket.IO 설정 -- 20240516 수정
 const io = require('socket.io')(http, {
     cors: {
         origin: "http://localhost:3000", // 프론트엔드 서버 주소
@@ -44,7 +44,7 @@ const sessionObj = {
     store: new MemoryStore({
         checkPeriod: maxAge
     }),
-    cookie: {
+    cookie: { 
         maxAge: maxAge,
     },
 }
@@ -66,7 +66,6 @@ app.use((req, res, next) => {
     next();
 });
 // 05/16 경선 추가
-
 
 app.get('/', (req, res) => {
     console.log('/');

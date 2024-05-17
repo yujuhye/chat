@@ -10,11 +10,7 @@ import { fetchUser } from "./fetchFunction";
 import '../../css/common.css';
 // import '../../css/chat/chat.css'
 
-
-// const socket = io('http://localhost:3001');
-// const socket = io('http://14.42.124.96:3001');
-const ENDPOINT = 'http://localhost:3001';
-const socket = io(ENDPOINT);
+const socket = io('http://localhost:3001');
 
 const Chat = () => {
     const { roomId } = useParams();
@@ -31,7 +27,6 @@ const Chat = () => {
     const [isMenuOpen, setIsMenuOpen]                                   = useState(false); // 아래로 내려오는 메뉴
     const [searchChatKey, setSearChatKey]                               = useState('');
     const [searchResult, setSearchResult]                               = useState('');
-    const [socketMsg, setSocketMsg]                                     = useState([]);
 
     const toggleMenu = () => {
         console.log('toggleMenu()');
@@ -59,24 +54,30 @@ const Chat = () => {
         setMessages((prevMessages) => [...prevMessages, newMessage]); //newMessage를 추가
     };
 
-    // 화면에 메시지 보이기
+    // 파일
     useEffect(() => {
+        // 방에 참가
+        socket.emit('joinRoom', roomId);
 
-        socket.on('userJoined', (data) => {
-            const joinMessage = `User No. ${data.userNo} has joined the room: ${data.message}`;
-            setMessages((prevMessages) => [...prevMessages, joinMessage]);
-        });
+        // 파일 정보 수신
+        const handleReceiveFile = (data) => {
+            console.log('파일 정보 수신:', data);
 
-        socket.on('userLeft', (data) => {
-            const leaveMessage = `User No. ${data.userNo} has left the room: ${data.message}`;
-            setMessages((prevMessages) => [...prevMessages, leaveMessage]);
-        });
-
-        return () => {
-            socket.disconnect();
+            const newMessage = {
+                ...data.messages, // 기존 마지막 메시지 정보
+            };
+            
+            setMessages(prevMessages => [...prevMessages, newMessage]);
         };
-    }, []);
-    
+
+        socket.on('receiveFile', handleReceiveFile);
+
+        // 정리: 컴포넌트 언마운트 시 소켓 연결 해제
+        return () => {
+            socket.off('receiveFile', handleReceiveFile);
+        };
+    }, [roomId, socket]);
+
     useEffect(() => {
         const handleMessageReceive = (messages) => {
             console.log(' ***** 채팅 로그 확인해보장 -----> ',messages);
@@ -95,7 +96,7 @@ const Chat = () => {
         //socket.emit('updateReadCnt', roomId, participants);
     
     }, [participants]);
-    
+
     useEffect(() => {
         roomDetails(roomId);
         
@@ -127,11 +128,12 @@ const Chat = () => {
 
     const sendMessage = () => {
         if (!inputMessage.trim()) return;
-        socket.emit('sendMessage', { 
-            sender: joinUserInfo[0]?.USER_NICKNAME, 
-            content: inputMessage, 
-            roomId, 
-        });
+        console.log('현재 방에 있는 사람 정보 -----> ', joinUserInfo);
+        socket.emit('sendMessage', { sender: joinUserInfo[0]?.USER_NICKNAME, userNo:joinUserInfo[0]?.USER_NO,  content: inputMessage, roomId, }, (error) => {
+            if (error) {
+                alert(error);
+            }
+        });        
         setInputMessage("");
     };
 
@@ -198,9 +200,10 @@ const Chat = () => {
             if(response.data) {
                 console.log('getJoinUser success!');
                 console.log('현재 방에 참여한 유저 목록 -----> ', response.data);
+
                 const loggedInUserNo = joinUserInfo[0].USER_NO;
                 console.log('현재 로그인한 사람의 USER_NO ----->', loggedInUserNo);       
-                // 서버로부터 받은 데이터를 기준으로 정렬 로직을 수행
+                
                 const sortedParticipants = response.data.sort((a, b) => {
                     if (a.USER_NO === loggedInUserNo) return -1; // 본인이면 배열의 앞쪽으로
                     if (b.USER_NO === loggedInUserNo) return 1;  // 다른 사람이면 본인 뒤로
@@ -212,13 +215,14 @@ const Chat = () => {
             }
         })
         .catch(error => {
-            console.log('getJoinUser fail!', error);
+            console.log('getJoinUser fail! -----> ', error);
         });
     }
-
+    
     useEffect(() => {
         if (roomId && joinUserInfo) {
           getJoinUser(joinUserInfo);
+          console.log('*********** joinUserInfo *********',joinUserInfo);
         }
       }, [roomId, joinUserInfo]);
 
@@ -379,12 +383,11 @@ const Chat = () => {
                                         <>
                                             <video width="320" height="240" controls>
                                                 <source src={`http://localhost:3001/${msg.CHAT_VIDEO_NAME}`} type="video/mp4" />
-                                                Your browser does not support the video tag.
                                             </video>
                                             &nbsp;&nbsp;
                                             {msg.CHAT_REG_DATE}
                                             <br />
-                                            <button onClick={() => window.open(`http://localhost:3001/${msg.CHAT_VIDEO_NAME}`, '_blank')}>Download Video</button>
+                                            <button onClick={() => window.open(`http://localhost:3001/${msg.CHAT_VIDEO_NAME}`, '_blank')}>Download</button>
                                         </>
                                     )}
                                     {msg.CHAT_CONDITION === 3 && (

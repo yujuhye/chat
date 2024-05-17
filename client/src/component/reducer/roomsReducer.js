@@ -18,12 +18,11 @@ export default function roomsReducer(state = initialState, action) {
                 rooms: state.rooms.filter(room => room.id !== action.payload),
             };
 
-        case 'FAVORITE_ROOM':
-            // 올바른 필드인 rooms에 결과를 할당
+         case 'FAVORITE_ROOM':
             return {
                 ...state,
                 rooms: state.rooms.map(room => 
-                    room.id === action.id ? {...room, isFavorite: !room.isFavorite} : room
+                    room.id === action.payload.roomId ? {...room, isFavorite: true} : room // 즐겨찾기 상태를 true로 설정
                 )
             };
 

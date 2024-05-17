@@ -67,6 +67,18 @@ const ChatRoom = () => {
         };
     }, [socket, dispatch, userInfo.USER_NO]);
 
+    useEffect(() => {
+        socket.on('updateChatList', (chatList) => {
+            console.log(chatList); // 받은 데이터 확인
+            dispatch(setRooms(chatList));
+
+        });
+        
+        return () => {
+            socket.off('updateChatList');
+        };
+    }, [socket, dispatch]);
+    
     // handler
     const handleFriendInviteModalClose = () => {
         console.log('handleFriendInviteModalClose()');
@@ -137,36 +149,52 @@ const ChatRoom = () => {
 
     // 좋아요
     useEffect(() => {
+        // 사용자 정보를 불러오기
+        const userInfo = async () => {
+            try {
+                const userData = await fetchUser();
+                setUserInfo(userData);
+            } catch (error) {
+                alert(error.message);
+            }
+        };
+    
+        userInfo(); // 함수 호출
+
         // 좋아요 처리 결과를 받는 이벤트 리스너 설정
         const likeMessageResult = (result) => {
+            let user = {
+                userNo: userInfo.USER_NO,
+            }
             if (result.success) {
                 console.log('좋아요 처리 성공');
-                // 필요한 추가 처리 로직
+                socket.emit('request room list', user);
             } else {
                 console.error('좋아요 처리 실패: ', result.error);
             }
         };
     
-        socket.on('likeMessageResult', likeMessageResult);
+        socket.on('chatLikeOkResult', likeMessageResult);
+        socket.on('update room list', (rooms) => {
+            console.log('방 목록이 업데이트 되었습니다.');
+            dispatch(setRooms(rooms));
+            console.log('방 목록이 업데이트 되었습니다-----', dispatch(setRooms(rooms)));
+        });
     
         // 컴포넌트 언마운트 시 이벤트 리스너 해제
         return () => {
             socket.off('likeMessageResult', likeMessageResult);
         };
-    }, [socket]); // 의존성 배열에 socket 추가    
+    }, [socket, dispatch, userInfo.USER_NO]); // 의존성 배열에 socket 추가    
 
-    const favoriteRoom = (roomId, userNo) => {
-
+    const favoriteRoom = (id, no) => {
         let chatLikeInfo = {
-            roomId: roomId,
-            userNo: userNo,
+            id: id,
+            no: no,
         }
         socket.emit('likeRoom', chatLikeInfo);
-
         console.log('채팅방 즐겨찾기 이벤트 -----> ', chatLikeInfo);
-
-        dispatch(setFavoriteRoom(roomId, userNo));
-        
+        dispatch(setFavoriteRoom(id)); // 인자를 객체로 전달
     };
 
     const chatBtnClickHandler = () => {
@@ -338,7 +366,10 @@ const ChatRoom = () => {
                                 <span className="lastChatRegDate">{room.LAST_CHAT_REG_DATE}</span>
                                 <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); modifyRoomName(room.ROOM_NO, room.PARTI_CUSTOMZING_NAME, room.USER_NO);}} className="chatTitleNameModifyBtn">MOD</a>
                                 <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); leaveRoom(room.ROOM_NO, room.USER_NO);}} className="chatDeleteBtn">DEL</a>
-                                <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); favoriteRoom(room.ROOM_NO, room.USER_NO);}} className="chatBookmarkBtn">LIKE</a>
+                                <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); favoriteRoom(room.ROOM_NO, room.USER_NO);}} className="chatBookmarkBtn">
+                                    {room.PARTI_BOOKMARK === 1 ? 'UNLIKE' : 'LIKE'}
+                                </a>
+
                             </li>
                             
                             ))}
