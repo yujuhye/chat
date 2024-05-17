@@ -19,9 +19,9 @@ export const setLeaveRoom = (id) => ({
     
 });
 
-export const setFavoriteRoom = (id) => ({
+export const setFavoriteRoom = (data) => ({
 
     type: 'FAVORITE_ROOM',
-    payload: id,
+    payload: data,
     
 });

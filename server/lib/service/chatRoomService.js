@@ -1,91 +1,105 @@
 const DB = require('../db/db');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
+
+const getUserID = (req, res) => {
+    const token = req.cookies['userToken'];
+    console.log('토큰 -----> ', token);
+
+    if (!token) {
+        res.status(401).send('Access Denied. No Token Provided.');
+        return null; // 토큰이 없을 때 null 반환
+    }
+
+    try {
+        const decoded = jwt.verify(token, '1234');
+        const userId = decoded.id;
+        console.log(` ★★★★★ User ID is: ${userId}`);
+        return userId; // 여기서 userId 반환
+    } catch (err) {
+        res.status(400).send('Invalid Token');
+        return null; // 유효하지 않은 토큰일 때 null 반환
+    }
+}
 
 const chatRoomService = {
-
     list: (req, res) => {
-        console.log('chat list user -----> ', req.user);
-    
-        // 먼저 user_id에 해당하는 user_no를 찾는 쿼리
+        const userId = getUserID(req, res);
+        
         DB.query(`
             SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?
-        `, [req.user], (err, result) => {
+        `, [userId], (err, result) => {
             if (err) {
-                
                 console.log('오류 발생 ------> ', err);
                 res.json(null);
-
             } else {
-                // USER_NO를 찾은 후 해당 번호를 사용하여 채팅 리스트 쿼리 실행
-                const userNo = result[0].USER_NO; // 결과값에서 USER_NO 추출
-                console.log('chat list userNo -----> ', userNo);
-    
-                DB.query(
-                `
-                SELECT 
-                    CR.ROOM_NO, 
-                    CR.ROOM_DEFAULT_NAME, 
-                    CR.ROOM_PERSONNEL,
-                    CP.PARTI_NO,
-                    CP.USER_NICKNAME,
-                    CP.USER_NO,
-                    CP.PARTI_CUSTOMZING_NAME,
-                    CP.PARTI_BOOKMARK,
-                    CP.PARTI_REG_DATE,
-                    CASE 
-                        WHEN CM.CHAT_CONDITION = 0 THEN CM.LAST_CHAT_TEXT
-                        WHEN CM.CHAT_CONDITION = 1 THEN "(이미지)"
-                        WHEN CM.CHAT_CONDITION = 2 THEN "(영상)"
-                        WHEN CM.CHAT_CONDITION = 3 THEN "(파일)"
-                        ELSE "(새로운 채팅방입니다.)"
-                    END AS LAST_CHAT_TEXT,
-                    CM.LAST_CHAT_REG_DATE
-                FROM 
-                    CHAT_PARTICIPANT CP
-                INNER JOIN 
-                    CHAT_ROOM CR ON CP.ROOM_NO = CR.ROOM_NO
-                LEFT JOIN 
-                    (
-                        SELECT 
-                            ROOM_NO, 
-                            CHAT_TEXT AS LAST_CHAT_TEXT,
-                            CHAT_CONDITION,
-                            CHAT_REG_DATE AS LAST_CHAT_REG_DATE,
-                            ROW_NUMBER() OVER(PARTITION BY ROOM_NO ORDER BY CHAT_REG_DATE DESC) AS rn
-                        FROM 
-                            CHAT
-                    ) CM ON CR.ROOM_NO = CM.ROOM_NO AND CM.rn = 1
-                WHERE 
-                    CP.USER_NO = ?
-                ORDER BY 
-                    CM.LAST_CHAT_REG_DATE DESC            
-                `, [userNo, userNo], (err, rooms) => { 
-    
-                    if(err) {
+                if(result.length > 0) {
+                    const userNo = result[0].USER_NO;
+                    console.log('chat list userNo -----> ', userNo);
 
-                        console.log('오류 발생 ------> ', err);
-                        res.json(null);
-
-                    } else {
-
-                        res.json({
-                            rooms: rooms, 
-                        });
-
-                    }
-    
-                });
+                    DB.query(`
+                    SELECT 
+                        CR.ROOM_NO, 
+                        CR.ROOM_DEFAULT_NAME, 
+                        CR.ROOM_PERSONNEL,
+                        CP.PARTI_NO,
+                        CP.USER_NICKNAME,
+                        CP.USER_NO,
+                        CP.PARTI_CUSTOMZING_NAME,
+                        CP.PARTI_BOOKMARK,
+                        CP.PARTI_REG_DATE,
+                        CASE 
+                            WHEN CM.CHAT_CONDITION = 0 THEN CM.LAST_CHAT_TEXT
+                            WHEN CM.CHAT_CONDITION = 1 THEN "(이미지)"
+                            WHEN CM.CHAT_CONDITION = 2 THEN "(영상)"
+                            WHEN CM.CHAT_CONDITION = 3 THEN "(파일)"
+                            ELSE "(새로운 채팅방입니다.)"
+                        END AS LAST_CHAT_TEXT,
+                        CM.LAST_CHAT_REG_DATE
+                    FROM 
+                        CHAT_PARTICIPANT CP
+                    INNER JOIN 
+                        CHAT_ROOM CR ON CP.ROOM_NO = CR.ROOM_NO
+                    LEFT JOIN 
+                        (
+                            SELECT 
+                                ROOM_NO, 
+                                CHAT_TEXT AS LAST_CHAT_TEXT,
+                                CHAT_CONDITION,
+                                CHAT_REG_DATE AS LAST_CHAT_REG_DATE,
+                                ROW_NUMBER() OVER(PARTITION BY ROOM_NO ORDER BY CHAT_REG_DATE DESC) AS rn
+                            FROM 
+                                CHAT
+                        ) CM ON CR.ROOM_NO = CM.ROOM_NO AND CM.rn = 1
+                    WHERE 
+                        CP.USER_NO = ?
+                    ORDER BY 
+                        CP.PARTI_BOOKMARK DESC,
+                        CM.LAST_CHAT_REG_DATE DESC                          
+                    `, [userNo, userNo], (err, rooms) => { 
+                        if(err) {
+                            console.log('오류 발생 ------> ', err);
+                            res.json(null);
+                        } else {
+                            res.json({
+                                rooms: rooms, 
+                            });
+                        }
+                    });
+                } else {
+                    console.log('결과가 없습니다.');
+                    res.json(null);
+                }
             }
         });
-    },    
+    },
     getFriendList: (req, res) => {
-        console.log('getFriendList -----> ', req.user);
-    
-        // USER_ID를 사용하여 USER_NO를 찾는 쿼리
+        const userId = getUserID(req, res);
+
         let findUserNoSql = `
             SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?
         `;
-        DB.query(findUserNoSql, [req.user], (err, result) => {
+        DB.query(findUserNoSql, [userId], (err, result) => {
             if (err) {
                 res.status(500).json({error: "USER_NO를 찾는 중 데이터베이스 오류가 발생했습니다."});
             } else {
@@ -154,13 +168,13 @@ const chatRoomService = {
         res.render('deleteChatRoom');
     },
     getUserInfo: (req, res) => {
-        console.log('getFriendList -----> ',req.user);
+        const userId = getUserID(req, res);
 
         let sql = 
         `
             SELECT * FROM USER_IFM WHERE USER_ID = ?
         `;
-        DB.query(sql, [req.user], (err, user) => {
+        DB.query(sql, [userId], (err, user) => {
 
             if(err) {
                 
@@ -175,6 +189,7 @@ const chatRoomService = {
 
     },
     searChatRoom: (req, res) => {
+        const userId = getUserID(req, res);
         let query = req.query;
     
         let sql = `
@@ -184,7 +199,7 @@ const chatRoomService = {
             ) AND PARTI_CUSTOMZING_NAME LIKE CONCAT('%', ?, '%')
         `;
         // req.user와 query.parti_customzing_name을 인자로 전달
-        DB.query(sql, [req.user, query.parti_customzing_name], (err, chats) => {
+        DB.query(sql, [userId, query.parti_customzing_name], (err, chats) => {
             if(err) {
                 console.log('검색 오류 -----> ', err);
                 res.json(null);

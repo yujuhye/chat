@@ -1,12 +1,36 @@
 const DB = require('../db/db');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
+//const socket = require('../../socket/socket');
+
+const getUserID = (req, res) => {
+    const token = req.cookies['userToken'];
+    console.log('토큰 -----> ', token);
+
+    if (!token) {
+        res.status(401).send('Access Denied. No Token Provided.');
+        return null; // 토큰이 없을 때 null 반환
+    }
+
+    try {
+        const decoded = jwt.verify(token, '1234');
+        const userId = decoded.id;
+        console.log(` ★★★★★ User ID is: ${userId}`);
+        return userId; // 여기서 userId 반환
+    } catch (err) {
+        res.status(400).send('Invalid Token');
+        return null; // 유효하지 않은 토큰일 때 null 반환
+    }
+}
 
 const chatService = {
     details: (req, res) => {
         let query = req.query;
         let roomNo = query.roomId;
+        const userId = getUserID(req, res);
 
         console.log('[chatService] details.roomNo -----> ', roomNo);
+        console.log('[chatService] details.userId -----> ', userId);
 
         let userNo = 
         `
@@ -66,7 +90,7 @@ const chatService = {
         `;
 
         // 사용자 번호(userNo) 조회 쿼리 실행
-        DB.query(userNo, [req.user], (error, results) => {
+        DB.query(userNo, [userId], (error, results) => {
             if (error) {
                 console.error('DB query error:', error);
                 res.status(500).send('Database query failed');
@@ -129,15 +153,15 @@ const chatService = {
                     });
                 }); 
             } else {
-                res.status(404).send('User not found');
+                //res.status(404).send('User not found');
+                console.log('회원 못참음');
             }
         });
     },
     getJoinUser: (req, res) => {
         console.log('[chatService] getJoinUser()');
 
-        let user = req.user;
-        let roomNo = req.query.roomId; // URL의 쿼리 파라미터에서 roomId를 가져옵니다.
+        let roomNo = req.query.roomId;
         console.log('getJoinUser roomNo -----> ', roomNo);
 
         let sql = 
@@ -147,7 +171,7 @@ const chatService = {
             FROM 
                 CHAT_PARTICIPANT 
             WHERE 
-            ROOM_NO = ?
+                ROOM_NO = ?
         `;
 
         DB.query(sql, [roomNo], (err, friends) => { // roomNo를 쿼리에 전달합니다.
@@ -203,9 +227,7 @@ const chatService = {
                 (?, ?, 1, ?)        
         `;
     
-        // req.files를 통해 업로드된 파일들의 배열에 접근
         req.files.forEach(file => {
-            // USER_NICKNAME 조회
             DB.query(userInfoSelectSql, [post.userNo], (err, userInfoResult) => {
                 if (err) {
                     console.log("사용자 정보 조회 중 에러 발생 -----> ", err);
@@ -216,13 +238,11 @@ const chatService = {
                     const userNickname = userInfoResult[0].USER_NICKNAME;
                     console.log("유저 닉네임 조회 -----> ", userNickname);
     
-                    // CHAT 테이블에 데이터 삽입
                     DB.query(submitImgSql, [post.roomId, userNickname, file.filename], (err, chatResult) => {
                         if (err) {
                             console.log("채팅 이미지 전송 중 에러 발생 -----> ", err);
     
                             if(file !== undefined) {
-                                // fs.unlink(`C:\\ChatSquare\\chat\\upload\\chatImg\\${post.userId}\\${file.filename}`, (error) => {
                                 fs.unlink(`C:\\ChatSquare\\chat\\upload\\chat\\${file.filename}`, (error) => {
                                     console.log('오류 발생 -----> ', error);
                                     console.log('UPLOADED FILE DELETE COMPLETED!!');
@@ -231,9 +251,8 @@ const chatService = {
                             res.json(null);
                         } else {
                             console.log('채팅 이미지 전송 result ----->', chatResult);
-                            const chatNo = chatResult.insertId; // 여기서 CHAT_NO를 얻음
+                            const chatNo = chatResult.insertId;
     
-                            // CHAT_IMAGE 테이블에 데이터 삽입, 여기서 chatNo를 직접 사용
                             let chatImgTableInsertSql =
                             `
                                 INSERT INTO CHAT_IMAGE
@@ -244,10 +263,20 @@ const chatService = {
                             DB.query(chatImgTableInsertSql, [chatNo, post.userNo, file.filename], (err, chatImgResult) => {
                                 if (err) {
                                     console.log("CHAT_IMAGE 테이블 삽입 중 에러 발생 -----> ", err);
-                                    
+                                    res.json(null);
                                 } else {
                                     console.log('CHAT_IMAGE 테이블 삽입 결과 ----->', chatImgResult);
-                                    res.json(chatImgResult.affectedRows);
+    
+                                    // 파일 URL 생성 (여기서는 서버 URL과 업로드 경로를 기반으로 생성)
+                                    const fileUrl = `C:\\ChatSquare\\chat\\upload\\chat\\${file.filename}`;
+                                    
+                                    const responseData = {
+                                        affectedRows: chatImgResult.affectedRows,
+                                        fileName: file.filename,
+                                        fileUrl: fileUrl
+                                    };
+                                    
+                                    res.json(responseData);
                                 }
                             });
                         }
@@ -255,7 +284,7 @@ const chatService = {
                 }
             });
         });
-    },    
+    },     
     submitVideoFiles: (req, res) => {
         let post = req.body;
         console.log('채팅 영상 전송 files ----->', post.chat_video_name);
@@ -325,7 +354,17 @@ const chatService = {
                                     
                                 } else {
                                     console.log('CHAT_VIDEO_NAME 테이블 삽입 결과 ----->', chatVideoResult);
-                                    res.json(chatVideoResult.affectedRows);
+
+                                    // 파일 URL 생성 (여기서는 서버 URL과 업로드 경로를 기반으로 생성)
+                                    const fileUrl = `C:\\ChatSquare\\chat\\upload\\chat\\${file.filename}`;
+                                    
+                                    const responseData = {
+                                        affectedRows: chatVideoResult.affectedRows,
+                                        fileName: file.filename,
+                                        fileUrl: fileUrl
+                                    };
+                                    
+                                    res.json(responseData);
                                 }
                             });
                         }
@@ -403,7 +442,17 @@ const chatService = {
                                     
                                 } else {
                                     console.log('CHAT_FILE_NAME 테이블 삽입 결과 ----->', chatFileResult);
-                                    res.json(chatFileResult.affectedRows);
+
+                                    // 파일 URL 생성 (여기서는 서버 URL과 업로드 경로를 기반으로 생성)
+                                    const fileUrl = `C:\\ChatSquare\\chat\\upload\\chat\\${file.filename}`;
+                                    
+                                    const responseData = {
+                                        affectedRows: chatFileResult.affectedRows,
+                                        fileName: file.filename,
+                                        fileUrl: fileUrl
+                                    };
+                                    
+                                    res.json(responseData);
                                 }
                             });
                         }
