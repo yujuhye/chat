@@ -146,16 +146,15 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
  
     const newChatStartBtnClickHandler = () => {
         const newChatData = {
-            room_default_name: chatName, // 사용자가 입력한 채팅방 이름
-            participants: selectedFriendDetails, // 참여자 정보
-            userInfo: userInfo, // 채팅방 생성 유저
+            room_default_name: chatName, 
+            participants: selectedFriendDetails, 
+            userInfo: userInfo, 
         };
     
         console.log('[friends modal] newChatData -----> ', newChatData);
         console.log('[friends modal] selectedFriendDetails -----> ', selectedFriendDetails);
         console.log('[friends modal] userInfo -----> ', userInfo);
         socket.emit('createRoom', newChatData);
-        // 필요한 추가 로직(예: 상태 초기화 등)
         fetchRooms();
         socket.on('update room list', fetchRooms);
 

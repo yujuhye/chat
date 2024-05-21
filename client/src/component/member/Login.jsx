@@ -7,6 +7,10 @@ import useAxiosGetMember from "../../util/useAxiosGetMember";
 import cookie from 'js-cookie';
 import { GoogleLogin } from '@react-oauth/google';
 import '../../css/member/login.css';
+import * as jwt_decode from 'jwt-decode';
+import io from 'socket.io-client'; // 0519 추가
+const socket = io('http://localhost:3001'); // 0519 추가
+
 
 axios.defaults.withCredentials = true;
 const CLIENT_ID = 'here!!!!';
@@ -49,6 +53,12 @@ const Login = () => {
                     cookie.set('userToken', userToken);
                     dispatch(setIsLoginAction(true));
                     dispatch(setUserIdAction(uId));
+
+
+                    console.log('dispatch(setUserIdAction(uId) --> ', dispatch(setUserIdAction(uId)));
+                    // 0519 소켓 서버에 로그인 이벤트 보내기
+                    socket.emit('login', uId);
+
                     navigate('/friend/friendList');
                 } else {
                     alert('MEMBER LOGIN PROCESS FAIL!!');

@@ -24,7 +24,9 @@ const Nav = () => {
                     <Link to="/friend/requestFriend">친구추가</Link> &nbsp;
                     <Link to="/friend/managementFriend">친구관리</Link> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <Link to="/member/setting">설정</Link> &nbsp;
-                    <Link to="/chatRoom/list">chat</Link> &nbsp;
+                    {/* <Link to="/chatRoom/list">chat</Link> &nbsp; */}
+                    {/* 추가 부분 */}
+                    <Link to="/chatPage">Chat Page</Link> &nbsp; 
                 </>
             }
 

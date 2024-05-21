@@ -1,14 +1,20 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { setRooms, setLeaveRoom, setFavoriteRoom } from '../action/chatRoom';
+import io from 'socket.io-client';
 import axios from "axios"; 
 import '../../css/common.css'
 
-const ChatDetailViewFriendModal = (props) => {
-    const { participants, handleFriendInviteModalClose, isShowChatInviteFriendModal, setIsShowChatInviteFriendModal, socket, roomId  } = props;
+const socket = io('http://localhost:3001');
 
+const ChatDetailViewFriendModal = (props) => {
+    const { participants, handleFriendInviteModalClose, isShowChatInviteFriendModal, setIsShowChatInviteFriendModal, socket, selectedRoom  } = props;
+
+    const dispatch = useDispatch();
+    const rooms = useSelector(state => state['room']['rooms']);
     const [friends, setFriends] = useState([]);
     const [selectedFriends, setSelectedFriends] = useState([]);
     const [selectedFriendDetails, setSelectedFriendDetails] = useState([]);
-    const [roomUsers, setRoomUsers] = useState([]);
 
     // handler
     const fetchFriends = () => {
@@ -39,6 +45,56 @@ const ChatDetailViewFriendModal = (props) => {
     useEffect(() => {
         fetchFriends();
     }, []);
+    
+    // useEffect(() => {
+    //     const refreshChatListListener = async () => {
+    //         try {
+    //             const response = await axios.get('http://localhost:3001/chatRoom/list');
+    //             console.log('chat list : ', response.data);
+    //             console.log('채팅 리스트 room : ', response.data.rooms);
+        
+    //             // 가져온 채팅방 목록을 리덕스 스토어에 설정
+    //             dispatch(setRooms(response.data.rooms));
+    //         } catch (error) {
+    //             console.error("채팅방 목록을 불러오는데 실패했습니다.", error);
+    //         }
+    //     };
+    
+    //     socket.on('refreshChatList', refreshChatListListener);
+    
+    //     // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거
+    //     return () => {
+    //         socket.off('refreshChatList', refreshChatListListener);
+    //     };
+    // }, [socket, dispatch]); // socket이나 dispatch가 변경되면 useEffect를 재실행
+
+    useEffect(() => {
+        const refreshChatListListener = () => {
+            const fetchRooms = async () => {
+                try {
+                    const response = await axios.get('http://localhost:3001/chatRoom/list');
+                    console.log('chat list : ', response.data); 
+                    console.log('채팅 리스트 room : ', response.data.rooms); 
+    
+                    // 가져온 채팅방 목록을 리덕스 스토어에 설정
+                    dispatch(setRooms(response.data.rooms));
+                
+                } catch (error) {
+                    console.error("채팅방 목록을 불러오는데 실패했습니다.", error);
+                }
+            };
+            
+            fetchRooms();
+        };
+      
+        socket.on('refreshChatList', refreshChatListListener);
+      
+        // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거
+        return () => {
+          socket.off('refreshChatList', refreshChatListListener);
+        };
+      }, []); 
+  
 
     if (!isShowChatInviteFriendModal) return null; // 모달을 표시하지 않을 경우 렌더링하지 않음
 
@@ -60,6 +116,7 @@ const ChatDetailViewFriendModal = (props) => {
 
     const chatInviteFriendClickHandler = () => {
         console.log('chatInviteFriendClickHandler()');
+        const roomId = selectedRoom.ROOM_NO;
 
         const inviteFriend = {
             selectedFriends: selectedFriends,
@@ -77,7 +134,8 @@ const ChatDetailViewFriendModal = (props) => {
         socket.emit('invite room', inviteFriend);
 
         setIsShowChatInviteFriendModal(false);
-    }
+        
+    }   
 
     return (
         <div className="friendWrap">

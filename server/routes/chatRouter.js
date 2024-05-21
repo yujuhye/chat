@@ -35,4 +35,10 @@ router.post('/submitFiles', uploads.UPLOAD_CHAT_FILE_MIDDLEWARE(), (req, res) =>
     chatService.submitFiles(req, res);
 });
 
+// 프로필
+router.get('/profile', (req, res) => {
+    console.log('/chat/profile');
+    chatService.profile(req, res);
+});
+
 module.exports = router;

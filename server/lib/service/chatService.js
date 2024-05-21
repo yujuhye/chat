@@ -73,20 +73,21 @@ const chatService = {
 
         let chatHistoryQuery = 
         `
-            SELECT
-                C.*
-            FROM
-                CHAT AS C
-            JOIN
-                CHAT_PARTICIPANT AS CP ON C.ROOM_NO = CP.ROOM_NO
-            WHERE
-                C.ROOM_NO = ? 
-            AND 
-                CP.USER_NO = ? 
-            AND 
-                C.CHAT_REG_DATE > CP.PARTI_REG_DATE
-            ORDER BY
-                C.CHAT_REG_DATE ASC
+        SELECT
+            C.*, CP.USER_NO
+        FROM
+            CHAT AS C
+        JOIN
+            CHAT_PARTICIPANT AS CP ON C.ROOM_NO = CP.ROOM_NO
+        LEFT JOIN
+            FRIEND F ON CP.USER_NO = F.USER_NO AND F.FRIEND_TARGET_ID = C.USER_NICKNAME AND F.FRIEND_IS_BLOCK = 1
+        WHERE
+            C.ROOM_NO = ? 
+            AND CP.USER_NO = ? 
+            AND C.CHAT_REG_DATE > CP.PARTI_REG_DATE
+            AND (F.FRIEND_NO IS NULL OR F.FRIEND_IS_BLOCK = 0)
+        ORDER BY
+            C.CHAT_REG_DATE ASC    
         `;
 
         // 사용자 번호(userNo) 조회 쿼리 실행
@@ -97,10 +98,9 @@ const chatService = {
                 return;
             }
             if (results.length > 0) {
-                let userNo = results[0].USER_NO; // 사용자 번호 추출
+                let userNo = results[0].USER_NO;
 
-                // 첫 번째 쿼리 실행: userRoomsQuery
-                DB.query(userRoomsQuery, [userNo], (error, userRoomsResults) => { // [user]를 [userNo]로 변경
+                DB.query(userRoomsQuery, [userNo], (error, userRoomsResults) => { 
                     if (error) {
                         console.error('DB query error:', error);
                         res.status(500).send('Database query failed');
@@ -110,7 +110,6 @@ const chatService = {
                     let userRooms = userRoomsResults;
                     console.log('[chatService] userRooms -----> ', userRooms);
 
-                    // 다음 쿼리 실행: roomDetailsQuery
                     DB.query(roomDetailsQuery, [roomNo], (error, roomDetailsResults) => {
                         if (error) {
                             console.error('DB query error:', error);
@@ -120,8 +119,7 @@ const chatService = {
                         let roomDetails = roomDetailsResults[0];
                         console.log('[chatService] roomDetails -----> ', roomDetails);
 
-                        // 다음 쿼리 실행: participantsQuery
-                        DB.query(participantsQuery, [roomNo, userNo], (error, participantsResults) => { // [user]를 [userNo]로 변경
+                        DB.query(participantsQuery, [roomNo, userNo], (error, participantsResults) => { 
                             if (error) {
                                 console.error('DB query error:', error);
                                 res.status(500).send('Database query failed');
@@ -131,7 +129,6 @@ const chatService = {
                             let participants = participantsResults;
                             console.log('[chatService] participants -----> ', participants);
 
-                            // 다음 쿼리 실행: chatHistoryQuery
                             DB.query(chatHistoryQuery, [roomNo, userNo], (error, chatHistoryResults) => {
                                 if (error) {
                                     console.error('DB query error:', error);
@@ -142,7 +139,6 @@ const chatService = {
                                 let chatHistory = chatHistoryResults;
                                 console.log('[chatService] chatHistory -----> ', chatHistory);
 
-                                // 최종 결과 응답
                                 res.json({
                                     roomDetails: roomDetails,
                                     participants: participants,
@@ -153,7 +149,6 @@ const chatService = {
                     });
                 }); 
             } else {
-                //res.status(404).send('User not found');
                 console.log('회원 못참음');
             }
         });
@@ -174,7 +169,7 @@ const chatService = {
                 ROOM_NO = ?
         `;
 
-        DB.query(sql, [roomNo], (err, friends) => { // roomNo를 쿼리에 전달합니다.
+        DB.query(sql, [roomNo], (err, friends) => { 
             if(err) {
                 console.error('DB query error:', err);
                 res.status(500).send('Database query failed');
@@ -460,7 +455,63 @@ const chatService = {
                 }
             });
         });
-    },    
+    },  
+    profile: (req, res) => {
+        console.log('profile!');
+        const selectedUserNo = req.query.selectedUserNo; // 선택한 참여자 번호
+        const userId = getUserID(req, res);              // 현재 로그인한 사람의 아이디
+    
+        console.log('selected user no!!!!!!!! -----> ', selectedUserNo);
+        console.log('user id!!!!!!!! -----> ', userId);
+    
+        // 로그인한 사용자의 userNo를 조회하는 쿼리
+        let userNoSql = `SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`;
+    
+        DB.query(userNoSql, [userId], (userNoError, result) => {
+            if (userNoError) {
+                console.log('userNo 조회 오류!!!!!!!! -----> ', userNoError);
+                res.status(500).json({ error: 'Internal Server Error' });
+                return;
+            }
+    
+            if (result.length > 0) {
+                const userNo = result[0].USER_NO;
+    
+                // 선택한 사용자의 프로필 정보 조회
+                DB.query(`SELECT * FROM USER_IFM WHERE USER_NO = ?`, [selectedUserNo], (error, user) => {
+                    if (user !== null && user.length > 0) {
+                        console.log('user no 성공!!!!!!!! -----> ', user[0]);
+    
+                        // 친구 상태 확인
+                        DB.query(`SELECT * FROM FRIEND WHERE USER_NO = ? AND FRIEND_TARGET_ID = ?`, 
+                        [userNo, user[0].USER_ID], (friendError, friend) => {
+                            if (friendError) {
+                                console.log('friend query error!!!! -----> ', friendError);
+                                res.status(500).json({ error: 'Internal Server Error' });
+                                return;
+                            }
+    
+                            const isFriend = friend !== null && friend.length > 0;
+                            const userProfile = {
+                                ...user[0],
+                                isFriend: isFriend
+                            };
+    
+                            console.log('차단 여부 확인  >>>>> ', userProfile);
+    
+                            res.json(userProfile);
+                        });
+                    } else {
+                        console.log('user no 오류!!!!!!!! -----> ', error);
+                        res.json(null);
+                    }
+                });
+            } else {
+                console.log('user id로 user no를 찾을 수 없습니다.');
+                res.status(404).json({ error: '유저 없음' });
+            }
+        });
+    }
 };
 
 module.exports = chatService;

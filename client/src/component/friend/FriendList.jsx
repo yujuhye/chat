@@ -13,6 +13,8 @@ import FriendProfile from "./FriendProfile";
 import useAxiosGetMember from "../../util/useAxiosGetMember";
 import cookie from 'js-cookie';
 import { IoSearchSharp } from "react-icons/io5";
+import { escapeRegExp } from "lodash";
+import SocketAlarm from "./SocketAlarm";
 
 function FriendList() {
 
@@ -20,6 +22,7 @@ function FriendList() {
     const friends = useSelector(state => state['friend']['friends']);
     const selectedFriend = useSelector(state => state['friend']['selectedFriend']);
     const [searchId, setSearchId] = useState('');
+    useAxiosGetMember();
 
     useEffect(() => {
         console.log('[FriendList] useEffect');
@@ -164,12 +167,12 @@ function FriendList() {
           return `[${searchId}\\u${begin.toString(16)}-\\u${end.toString(16)}]`;
         }
        
-        // return escapeRegExp(searchId);
+        return escapeRegExp(searchId);
       }
 
     function createFuzzyMatcher(input) {
         const pattern = input.split('').map(ch2pattern).join('.*?');
-        return new RegExp(pattern);
+        return new RegExp(pattern, 'i');
       }
 
     const filteredFriends = Object.values(friends).filter(friend => {
@@ -189,6 +192,7 @@ function FriendList() {
         <div className="friendListWrap">
         <Nav />
            <h2>친구 목록</h2>
+           <SocketAlarm />
            <div className="searchBox">
                 <IoSearchSharp className="searchIcon"/>
                 <input className="searchMyFriend" type="text" name="searchMyFriendId" value={searchId} onChange={(e) => searchMyFriendChangeHandler(e)}  placeholder="친구이름 검색"/>

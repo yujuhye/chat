@@ -198,7 +198,6 @@ const chatRoomService = {
                 SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?
             ) AND PARTI_CUSTOMZING_NAME LIKE CONCAT('%', ?, '%')
         `;
-        // req.user와 query.parti_customzing_name을 인자로 전달
         DB.query(sql, [userId, query.parti_customzing_name], (err, chats) => {
             if(err) {
                 console.log('검색 오류 -----> ', err);

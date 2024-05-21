@@ -25,12 +25,10 @@ import ChatStatusDaily from './admin/adminmanagement/ChatStatusDaily';
 import ChatStatusWeekly from './admin/adminmanagement/ChatStatusWeekly';
 import ChatStatusMonthly from './admin/adminmanagement/ChatStatusMonthly';
 import ChatStatusPeriod from './admin/adminmanagement/ChatStatusPeriod';
-
-//2024/05/20 경선 추가
+import ChatPage from './chat/ChatPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-const CLIENT_ID = 'here!!!!';
-//2024/05/20 경선 추가
 
+const CLIENT_ID = 'here!!!!';
 
 axios.defaults.withCredentials = true;
 
@@ -41,7 +39,6 @@ const MainHome = () => {
     return (
         <GoogleOAuthProvider clientId={CLIENT_ID}>
             <BrowserRouter>
-
                 <Routes>
                     <Route path="/" element={isLogin ? <Navigate to="/friend/friendList" /> : <Login />} />
                     <Route path="/member/findpassword" element={<FindPassword />} />
@@ -51,6 +48,7 @@ const MainHome = () => {
                     <Route path="/member/setting" element={<Setting />} />
                     <Route path='/chatRoom/list' element={<ChatRoom />}></Route>
                     <Route path='/chat/details/:roomId' element={<Chat />}></Route>
+                    <Route path='/chatPage' element={<ChatPage />}></Route>
                     <Route path='/friend/managementFriend' element={<ManagementFriend />}></Route>
                     <Route path="/admin" element={<AdminHome />} />
                     <Route path="/admin/dashboard" element={<AdminDashboard />} />
@@ -62,12 +60,8 @@ const MainHome = () => {
                     <Route path="/admin/chatstatushourly" element={<ChatStatusHourly />} />
                     <Route path="/admin/chatstatusdaily" element={<ChatStatusDaily />} />
                     <Route path="/admin/chatstatusweekly" element={<ChatStatusWeekly />} />
-
-                    {/* 2024/05/20 경선 추가 */}
                     <Route path="/admin/chatstatusmonthly" element={<ChatStatusMonthly />} />
                     <Route path="/admin/chatstatusperiod" element={<ChatStatusPeriod />} />
-                    {/* 2024/05/20 경선 추가 */}
-
                     <Route path='/friend/friendList' element={<FriendList />} />
                     <Route path='/friend/requestFriend' element={<RequestFriend />} />
                 </Routes>

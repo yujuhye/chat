@@ -228,4 +228,18 @@ router.get('/getFriendBackImgs', (req, res) => {
 
 });
 
+router.get('/getSavednotification', (req, res) => {
+
+    console.log('/friend/getSavednotification');
+    friendService.getSavednotification(req, res);
+
+});
+
+router.put('/updateNotificationRead', (req, res) => {
+
+    console.log('/friend/updateNotificationRead');
+    friendService.updateNotificationRead(req, res);
+
+});
+
 module.exports = router;
