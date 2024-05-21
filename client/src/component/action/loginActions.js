@@ -19,3 +19,8 @@ export const setUserIdAction = (userId) => ({
     type: SET_USER_ID,
     payload: userId
 });
+
+export const setUserNoAction = (userNo) => ({
+    type: 'SET_USER_NO',
+    payload: userNo
+});

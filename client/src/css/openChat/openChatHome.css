@@ -1,0 +1,11 @@
+.openChatContainer {
+    display: flex;
+}
+
+.sideMenu {
+    margin-right: auto;
+}
+
+.navMenu {
+    margin-bottom: 30px;
+}

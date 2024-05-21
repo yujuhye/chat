@@ -29,6 +29,7 @@ const io = require('socket.io')(http, {
 // Socket.IO 설정을 위한 socket.js 모듈 호출
 require('./socket/socket')(io);
 require('./socket/alarm')(io);  //0520주해추가
+require('./socket/open')(io);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // 문제가 있을 시 확인 후 수정해야할듯
