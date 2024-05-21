@@ -1,0 +1,41 @@
+.notificationContainer {
+    position: relative;
+}
+
+.notificationIcon{
+    position: relative;
+}
+
+.notificationBadge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    border-radius: 50%;
+}
+
+.reqNotifications {
+    position: absolute;
+    top: 35px; 
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px; 
+    max-height: 500px;
+    overflow-y: auto; 
+    z-index: 2; 
+}
+
+.notification {
+    margin-bottom: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.notification:hover {
+    background-color: #f0f0f0;
+}

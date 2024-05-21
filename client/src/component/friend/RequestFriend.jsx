@@ -3,16 +3,20 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { originFriendInfoAction, requestFriendAction } from "../action/requestFriendAction";
+import socketIOClientByFriend from "socket.io-client";
 
 import '../../css/profile.css';
 import '../../css/common.css';
+import useAxiosGetMember from "../../util/useAxiosGetMember";
+
+const server = "http://localhost:3001";
 
 function RequestFriend() {
-
+    useAxiosGetMember();
     const dispatch = useDispatch();
     const originFriendInfo = useSelector(state => state['requestFriend']['originFriend']);  //나와 친구일경우 멤버정보
     const requstingFriend = useSelector(state => state['requestFriend']['requestingFriend']);  //요청했는데 대기중인경우의 멤버정보
-
+    const userId = useSelector(state => state.login.userId);
     const navigate = useNavigate();
     
     const [uId, setUId] = useState('');
@@ -20,7 +24,7 @@ function RequestFriend() {
     const [searchFriendInfo, setSearchFriendInfo] = useState('');    //서칭한친구정보
     const [friendStatus, setFriendStatus] = useState(null);
     const [requestMessage, setRequestMessage] = useState('');
-    const [showMessageBtn, setShowMessageBtn] = useState(false);
+    // const [showMessageBtn, setShowMessageBtn] = useState(false);
     const [selectSearchId, setSelectSearchId] = useState('');      //서칭아이디중 클릭
     // const [showStatus, setShowStatus] = useState(false);
     // const [selectedSearchIdInfo, setSelectedSearchIdInfo] = useState({});
@@ -95,22 +99,22 @@ function RequestFriend() {
     }
 
     //요청메세지
-    const requestMessageChangeHandler =(e) => {
-        console.log('requestMessage ChangeHandler');
+    // const requestMessageChangeHandler =(e) => {
+    //     console.log('requestMessage ChangeHandler');
     
-        if(e.target.name === 'reqMessage') {
-            setRequestMessage(e.target.value);
-        }
+    //     if(e.target.name === 'reqMessage') {
+    //         setRequestMessage(e.target.value);
+    //     }
     
-    }
+    // }
 
     //요청메세지버튼 클릭시
-    const requestMessageBtnClickHandler = () => {
-        console.log('requestMessageBtn ClickHandler');
+    // const requestMessageBtnClickHandler = () => {
+    //     console.log('requestMessageBtn ClickHandler');
 
-        setShowMessageBtn(prev => !prev);
+    //     setShowMessageBtn(prev => !prev);
 
-    }
+    // }
 
     //친구요청 버튼 클릭시
     const requestFriendBtnClickHandler = (reqId, reqName) => {
@@ -249,7 +253,18 @@ function RequestFriend() {
                 dispatch(originFriendInfoAction(originFriendObj));
 
             } else {
-                axiosMatchRequestFriend(no);
+                if(userId === selectSearchId) {
+                    setSearchFriendInfo(prevState => ({
+                        ...prevState,
+                        [no]: {
+                            ...prevState[no],
+                            friendStatus: 'myself', 
+                        }
+                    }));
+                } else {
+                    axiosMatchRequestFriend(no);
+                }
+                
             }
 
         })
@@ -408,7 +423,7 @@ function RequestFriend() {
                         friendStatus: 'hiddenFriend', 
                     }
                 }));
-				
+            
     
             } else {
                 setSearchFriendInfo(prevState => ({
@@ -437,19 +452,10 @@ function RequestFriend() {
     function axiosRequestFriend(reqId, reqName) {
         console.log('axiosRequestFriend()');
 
-        // const friendIds = Object.keys(searchFriendInfo).map(searchFriendInfoId => searchFriendInfo[searchFriendInfoId].searchId);
-        // const friendId = friendIds[0];
-        // const friendNames = Object.keys(searchFriendInfo).map(searchFriendInfoId => searchFriendInfo[searchFriendInfoId].searchName);
-        // const friendName = friendNames[0];
-
-        // const selectedFriendInfo = Object.values(searchFriendInfo).find(searchFriend => searchFriend.searchId === selectSearchId);
-        // const selectedId = selectedFriendInfo.searchId;
-        // const selectedName = selectedFriendInfo.searchName;
 
         let formData = {
             'friendId': reqId,
             'friendName': reqName,
-            'reqMessage': requestMessage,
         }
 
         axios({
@@ -461,10 +467,12 @@ function RequestFriend() {
             console.log('axiosRequestFriend success', response.data);
 
             
-            if(response.data > 0 ) {
+            if(response.data !== null ) {
 
                 alert('친구요청에 성공하였습니다.');
                 navigate('/friend/friendList');
+                const socket = socketIOClientByFriend(server);
+                socket.emit('send_friend_request', { targetId: reqId, fromName: response.data, fromId: userId});
     
             } else {
                 alert('친구요청에 실패하였습니다.');
@@ -628,7 +636,6 @@ function RequestFriend() {
                 navigate('/friend/managementFriend');
             }
 
-
         })
         .catch(error => {
             console.log('axiosAcceptRequestFriend error');
@@ -690,6 +697,12 @@ function RequestFriend() {
                     <Link to="/chat/chatView/:roomId">채팅</Link>
                     </div>
                     :
+                    searchFriendInfo[searchFriendInfoId].friendStatus === 'myself'
+                    ?
+                    <div>
+                    <Link to="#">나와의 채팅</Link>
+                    </div>
+                    :
                     searchFriendInfo[searchFriendInfoId].friendStatus === 'blockFriend' 
                     ?
                     <p>차단된 아이디입니다</p>
@@ -714,14 +727,14 @@ function RequestFriend() {
                     :
                     searchFriendInfo[searchFriendInfoId].friendStatus === 'notFriend' ? 
                         <>
-                            <input type="button" value="요청메세지" onClick={requestMessageBtnClickHandler}/>
+                            {/* <input type="button" value="요청메세지" onClick={requestMessageBtnClickHandler}/>
                             {
                             showMessageBtn 
                             ?   
                             <input type="text" name="reqMessage" onChange={(e) => requestMessageChangeHandler(e)} placeholder="요청메세지를 입력하세요" />
                             :
                             <></>
-                            }
+                            } */}
                             <br />
                             <input type="button" onClick={() =>requestFriendBtnClickHandler(searchFriendInfo[searchFriendInfoId].searchId, searchFriendInfo[searchFriendInfoId].searchName)}  value="친구요청"/>
                         </>

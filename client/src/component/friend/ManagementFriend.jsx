@@ -487,7 +487,7 @@ function ManagementFriend() {
     return(
         <>
             <h2>친구관리</h2>
-            <h3 className="managementFriend" onClick={receivedClickHandler}>받은요청 {receivedIsOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+            <h3 className="managementFriend" onClick={receivedClickHandler}>받은요청 {receivedIsOpen ?  <IoIosArrowUp /> : <IoIosArrowDown />}
             </h3>
             { receivedIsOpen && (
                 Object.keys(getReqFriend).length > 0 ? (
@@ -519,7 +519,7 @@ function ManagementFriend() {
                     <p>받은요청이 없습니다.</p>
                 )
             )}
-            <h3 className="managementFriend" onClick={requestClickHandler}>보낸요청 {reqIsOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+            <h3 className="managementFriend" onClick={requestClickHandler}>보낸요청 {reqIsOpen ?  <IoIosArrowUp /> : <IoIosArrowDown />}
             </h3>
             { reqIsOpen && (
                 Object.keys(sentReqFriend).length > 0 ? (
@@ -548,7 +548,7 @@ function ManagementFriend() {
             <p>보낸요청이 없습니다.</p>
             )
             )}
-            <h3 className="managementFriend" onClick={blockClickHandler}>차단 친구 {blockIsOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+            <h3 className="managementFriend" onClick={blockClickHandler}>차단 친구 {blockIsOpen ?  <IoIosArrowUp /> : <IoIosArrowDown />}
             </h3>
             { blockIsOpen && (
                 Object.keys(blockFriend).length > 0 ? (
@@ -577,7 +577,7 @@ function ManagementFriend() {
             <p>차단친구가 없습니다.</p>
             )
             )}
-             <h3 className="managementFriend" onClick={hiddenReqClickHandler}>숨김 요청친구 {hiddenIsOpen ? <IoIosArrowDown /> : <IoIosArrowUp />}
+             <h3 className="managementFriend" onClick={hiddenReqClickHandler}>숨김 요청친구 {hiddenIsOpen ?  <IoIosArrowUp /> : <IoIosArrowDown />}
              </h3>
             { hiddenIsOpen  && (
                 Object.keys(hiddenFriend).length > 0 ? (
