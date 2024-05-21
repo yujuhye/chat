@@ -1,10 +1,13 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+const { OAuth2Client } = require('google-auth-library');
 const DB = require('../db/db');
 const bcrypt = require('bcrypt');
 const shortid = require('shortid');
 const jwt = require('jsonwebtoken');
+
+const CLIENT_ID = 'here!!!!';
+const client = new OAuth2Client(CLIENT_ID);
 
 module.exports = function (app) {
 
@@ -94,7 +97,6 @@ module.exports = function (app) {
                 });
         }));
 
-
     // admin sign-in
     app.post('/admin/adminSigninConfirm', (req, res, next) => {
         passport.authenticate('admin-local', { session: false }, (err, admin, info) => {
@@ -137,66 +139,43 @@ module.exports = function (app) {
     });
 
     // Google OAuth strategy
-    let googleCredential = require('../config/google.json');
+    app.post('/auth/google', async (req, res) => {
+        const { token } = req.body;
 
-    passport.use(new GoogleStrategy({
-        clientID: googleCredential.web.client_id,
-        clientSecret: googleCredential.web.client_secret,
-        callbackURL: googleCredential.web.redirect_uris[0],
-    },
-        function (accessToken, refreshToken, profile, done) {
-            console.log('GoogleStrategy ---> ', accessToken, refreshToken, profile);
-            console.log('profile.id ---> ', profile.id);
-            console.log('emails.value ---> ', profile.emails[0].value);
-
-            let email = profile.emails[0].value;
+        try {
+            const ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: CLIENT_ID,
+            });
+            const payload = ticket.getPayload();
+            const email = payload.email;
 
             DB.query(`SELECT * FROM USER_IFM WHERE USER_EMAIL = ?`, [email], (error, member) => {
-                console.log('-----> 0');
                 if (member.length > 0) {
-                    DB.query(`UPDATE USER_IFM SET USER_PASSPROT_ID = ? WHERE USER_EMAIL = ?`, [profile.id, email], (error, result) => {
-                        done(null, member[0]);
+                    DB.query(`UPDATE USER_IFM SET USER_PASSPROT_ID = ? WHERE USER_EMAIL = ?`, [payload.sub, email], (error, result) => {
+                        const userToken = jwt.sign({ id: member[0].USER_ID, isAdmin: false }, '1234');
+                        res.json({ token: userToken });
                     });
                 } else {
                     let uId = shortid.generate();
                     let uPw = shortid.generate();
                     let uEmail = email;
                     let uNickname = '--';
-                    let uPassportId = profile.id;
+                    let uPassportId = payload.sub;
 
                     DB.query(`INSERT INTO USER_IFM(USER_ID, USER_PW, USER_EMAIL, USER_NICKNAME, USER_PASSPROT_ID) VALUES(?,?,?,?,?)`,
                         [uId, bcrypt.hashSync(uPw, 10), uEmail, uNickname, uPassportId],
                         (error, result) => {
-                            done(null, { USER_ID: uId });
+                            const userToken = jwt.sign({ id: uId, isAdmin: false }, '1234');
+                            res.json({ token: userToken });
                         });
                 }
             });
-
-        }));
-
-    // Google OAuth 로그인 경로
-    app.get('/auth/google',
-        passport.authenticate('google', {
-            scope: ['https://www.googleapis.com/auth/plus.login', 'email']
+        } catch (error) {
+            res.status(400).send('Error verifying token');
         }
-        ));
+    });
 
-    // Google OAuth 콜백 경로
-    app.get('/auth/google/callback',
-        passport.authenticate('google', {
-            failureRedirect: '/'
-        }),
-        function (req, res) {
-            const user = { id: req.user.USER_ID };
-            console.log('user.id----> ', user.id);
-
-            const userToken = jwt.sign({ id: user.USER_ID, isAdmin: false }, '1234');
-
-            console.log('userToken----> ', userToken);
-
-            res.cookie('userToken', userToken);
-
-        });
     // passport 모듈 반환
     return passport;
 };

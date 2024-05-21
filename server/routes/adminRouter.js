@@ -52,15 +52,21 @@ router.get('/chatStatusThreeHourly', (req, res) => {
 
 });
 
-router.get('/chatStatusDaily', (req, res) => {
-    console.log('/chatStatusDaily');
-    adminService.chatStatusDaily(req, res);
+router.get('/chatStatusMonthly', (req, res) => {
+    console.log('/chatStatusMonthly');
+    adminService.chatStatusMonthly(req, res);
 
 });
 
-router.get('/chatStatusWeekly', (req, res) => {
-    console.log('/chatStatusWeekly');
+router.get('/chatStatusWeekly/:month', (req, res) => {
+    console.log('/chatStatusWeekly/:month');
     adminService.chatStatusWeekly(req, res);
+
+});
+
+router.get('/chatStatusDaily/:week', (req, res) => {
+    console.log('/chatStatusDaily/:week');
+    adminService.chatStatusDaily(req, res);
 
 });
 

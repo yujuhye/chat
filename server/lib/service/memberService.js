@@ -9,7 +9,6 @@ const { emailAuth } = require('../config/findpasswordAuthInfo');
 const memberService = {
 
     getMember: (req, res) => {
-
         let userToken = req.headers.authorization;
         if (!userToken) {
             userToken = req.cookies ? req.cookies['userToken'] : null;
@@ -33,10 +32,7 @@ const memberService = {
                 const uId = decoded.id;
 
                 DB.query(
-                    `
-                        SELECT * FROM USER_IFM 
-                        WHERE USER_ID = ?
-                    `,
+                    `SELECT * FROM USER_IFM WHERE USER_ID = ?`,
                     [uId],
                     (error, member) => {
                         if (error) {
@@ -60,84 +56,58 @@ const memberService = {
         }
     },
 
-
     signUpConfirm: (req, res) => {
-
         let post = req.body;
 
         let sql = `
             INSERT INTO USER_IFM(USER_ID, USER_PW, USER_EMAIL, USER_NICKNAME ${(req.file !== undefined) ? `, USER_FRONT_IMG_NAME` : ``})
             VALUES(?, ?, ?, ? ${(req.file !== undefined) ? `, ?` : ``})
         `
-
         let state = [post.uId, bcrypt.hashSync(post.uPw, 10), post.uEmail, post.uNickname];
         if (req.file !== undefined) state.push(req.file.filename);
 
-        DB.query(sql, state,
-            (error, result) => {
-
-                console.log('result ---> ', result);
-
-                if (error) {
-
-                    if (req.file !== undefined) {
-                        fs.unlink(`C:\\member\\upload\\profile_thums\\${post.uId}\\${req.file.filename}`, (error) => {
-                            console.log('UPLOADED FILE DELETE COMPLETED!!');
-
-                        });
-                    }
-
-                    res.json(null);
-
-                } else {
-
-                    DB.query(
-                        `
-                        SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?
-                        `,
-                        [post.uId],
-                        (error, rows) => {
-                            if (rows.length >= 0) {
-                                let USER_NO = rows[0].USER_NO;
-
-                                console.log('USER_NO ---> ', USER_NO);
-                                if (req.file !== undefined) {
-
-                                    DB.query(
-                                        `
-                                        INSERT INTO PROFILE_IMG(USER_NO, PROFILE_NAME, PROFILE_DIVIDE) 
-                                        VALUES(?, ?, ?)
-                                    `,
-                                        [USER_NO, req.file.filename, 0],
-                                        (error, result) => {
-
-                                            res.json(result.affectedRows);
-
-                                        }
-                                    )
-
-                                } else {
-
-                                    res.json(result.affectedRows);
-
-                                }
-                            } else {
-                                console.error('Error fetching USER_NO for the newly registered user.');
-                                res.json(null);
-                            }
-                        }
-
-                    )
-
+        DB.query(sql, state, (error, result) => {
+            console.log('result ---> ', result);
+            if (error) {
+                if (req.file !== undefined) {
+                    fs.unlink(`C:\\member\\upload\\profile_thums\\${post.uId}\\${req.file.filename}`, (error) => {
+                        console.log('UPLOADED FILE DELETE COMPLETED!!');
+                    });
                 }
+                res.json(null);
+            } else {
+                DB.query(
+                    `SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`,
+                    [post.uId],
+                    (error, rows) => {
+                        if (rows.length >= 0) {
+                            let USER_NO = rows[0].USER_NO;
 
-            });
+                            console.log('USER_NO ---> ', USER_NO);
+                            if (req.file !== undefined) {
+                                DB.query(
+                                    `INSERT INTO PROFILE_IMG(USER_NO, PROFILE_NAME, PROFILE_DIVIDE) 
+                                    VALUES(?, ?, ?)`,
+                                    [USER_NO, req.file.filename, 0],
+                                    (error, result) => {
+                                        res.json(result.affectedRows);
+                                    }
+                                )
+                            } else {
+                                res.json(result.affectedRows);
+                            }
+                        } else {
+                            console.error('Error fetching USER_NO for the newly registered user.');
+                            res.json(null);
+                        }
+                    }
+                )
+            }
+        });
     },
 
     modifyConfirm: (req, res) => {
-
         let post = req.body;
-
         let sql = `
             UPDATE USER_IFM SET USER_PW = ?, USER_EMAIL = ?, USER_NICKNAME = ?, USER_MOD_DATE = NOW() WHERE USER_ID = ? 
         `;
@@ -148,9 +118,8 @@ const memberService = {
             if (error) {
                 res.json(null);
             } else {
-                DB.query(`
-                    SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?
-                    `,
+                DB.query(
+                    `SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`,
                     [post.mId],
                     (error, rows) => {
                         if (!error && rows.length > 0) {
@@ -166,7 +135,6 @@ const memberService = {
     },
 
     logoutConfirm: (req, res) => {
-
         let userToken = req.headers.authorization;
         if (!userToken) {
             console.log('userToken not found in headers');
@@ -177,11 +145,12 @@ const memberService = {
         try {
             const token = userToken.split(' ')[1];
             console.log('token ----------> ', token);
-            res.clearCookie(token);
+
+            // Clear your application's cookies
+            res.clearCookie('userToken');
 
             console.log('clearCookie Complete!!');
             res.json({ message: 'Logout successful' });
-
         } catch (error) {
             console.error('Error clearing userToken cookie:', error);
             res.status(500).json({ error: 'Internal server error' });
@@ -189,7 +158,6 @@ const memberService = {
     },
 
     memberDeleteConfirm: (req, res) => {
-
         let post = req.body;
         let userToken = req.headers.authorization;
         if (!userToken) {
@@ -200,28 +168,23 @@ const memberService = {
 
         try {
             DB.query(
-                `
-                    DELETE FROM USER_IFM WHERE USER_ID = ?
-                `,
+                `DELETE FROM USER_IFM WHERE USER_ID = ?`,
                 [post.userId],
                 (error, result) => {
-
                     if (error) {
                         res.json(0);
-
                     } else {
                         const token = userToken.split(' ')[1];
                         console.log('token ----------> ', token);
-                        res.clearCookie(token);
+
+                        // Clear your application's cookies
+                        res.clearCookie('userToken');
 
                         console.log('clearCookie Complete!!');
                         res.json({ message: 'MEMBER DELETE successful' });
-
                     }
-
                 }
             );
-
         } catch (error) {
             console.error('Error clearing userToken cookie:', error);
             res.status(500).json({ error: 'Internal server error' });
@@ -240,18 +203,14 @@ const memberService = {
         let checkUserParams = [post.yourId, post.yourEmail];
         console.log('checkUserParams ---> ', checkUserParams);
 
-
         DB.query(checkUserQuery, checkUserParams, (error, result) => {
-
             if (error) {
                 console.error('회원 확인 중 오류 발생:', error);
                 res.json(null);
-
             } else {
                 if (result.length === 0) {
                     console.log('일치하는 회원 없음');
                     res.json({ error: '아이디와 이메일이 일치하지 않거나 존재하지 않습니다.' });
-
                 } else {
                     console.log('일치하는 회원 찾음');
                     let newPassword = createNewPassword();
@@ -262,7 +221,6 @@ const memberService = {
                         if (updateError) {
                             console.error('비밀번호 업데이트 에러:', updateError);
                             res.json(null);
-
                         } else {
                             console.log('업데이트된 행 수:', updateResult.affectedRows);
                             sendNewPasswordByMail(post.yourEmail, newPassword);
@@ -279,7 +237,7 @@ const createNewPassword = () => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let newPassword = '';
     for (let i = 0; i < 8; i++) {
-        newPassword += characters.charAt(Math.floor(Math.random() * characters.length));
+        newPassword += characters.charAt(Math.random() * characters.length);
     }
     console.log('새로 생성된 비밀번호:', newPassword);
     return newPassword;

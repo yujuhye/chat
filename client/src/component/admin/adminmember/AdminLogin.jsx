@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAIdAction, setAPwAction, setIsAdminLoginAction, setAdminIdAction } from '../../action/adminLoginActions';
 import cookie from 'js-cookie';
+import '../../../css/admin/adminmember/adminlogin.css';
 
 axios.defaults.withCredentials = true;
 
@@ -102,24 +103,20 @@ const AdminLogin = () => {
     };
 
     return (
-        <div>
-            <div>
-                <img src='/resource/img/logo.jpg' />
-
-                <p>ADMIN LOGIN FORM</p>
+        <div className="loginContainer">
+            <div className="loginForm">
+                <img src='/resource/img/logo.jpg' alt="Logo" className="loginLogo" />
+                <p>CHAT SQUARE ADMIN</p>
                 <form name="adminLoginForm">
-                    <input type="text" name="aId" value={aId} onChange={(e) => adminInfoChangeHandler(e)} placeholder="아이디를 입력하세요." /><br />
-                    <input type="password" name="aPw" value={aPw} onChange={(e) => adminInfoChangeHandler(e)} placeholder="비밀번호를 입력하세요." /><br />
+                    <input type="text" name="aId" value={aId} onChange={adminInfoChangeHandler} placeholder="아이디를 입력하세요." /><br />
+                    <input type="password" name="aPw" value={aPw} onChange={adminInfoChangeHandler} placeholder="비밀번호를 입력하세요." /><br />
                     <input type="button" value="LOGIN" onClick={adminLoginSubmitBtnClickHandler} />
-                    <input type="button" value="RESET" onClick={adminLoginResetBtnClickHandler} />
-                </form>
 
+                </form>
             </div>
-            <div>
-                <Link to="/admin/AdminJoin">회원가입</Link><br />
+            <div className="loginFooter">
             </div>
         </div>
-
     );
 };
 

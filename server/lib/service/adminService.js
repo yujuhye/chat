@@ -272,37 +272,40 @@ const adminService = {
 
     },
 
-    chatStatusDaily: (req, res) => {
-        console.log('ChatStatusDaily()');
+    chatStatusMonthly: (req, res) => {
+        console.log('chatStatusMonthly()');
 
         DB.query(
             `
             SELECT 
+                YEAR(CHAT_REG_DATE) AS chatYear,
                 MONTH(CHAT_REG_DATE) AS chatMonth,
-                DAYNAME(CHAT_REG_DATE) AS chatDayOfWeek,
                 COUNT(*) AS chatCount
             FROM 
                 CHAT
             GROUP BY 
-                chatMonth, chatDayOfWeek
+                chatYear, chatMonth
             ORDER BY 
-                FIELD(chatDayOfWeek, '월', '화', '수', '목', '금', '토', '일'), 
-                chatMonth;
+                chatYear, chatMonth;
             `,
             (error, result) => {
                 if (error || !result) {
-                    console.error('Error fetching daily chat data:', error);
+                    console.error('Error fetching monthly chat data:', error);
                     res.status(500).json({ error: 'Internal Server Error' });
                 } else {
-                    console.log('Daily chat data:', result);
+                    console.log('Monthly chat data:', result);
                     res.json(result);
                 }
             }
         );
     },
 
-    ChatStatusWeekly: (req, res) => {
+    chatStatusWeekly: (req, res) => {
         console.log('ChatStatusWeekly()');
+
+        const monthParam = req.params.month;
+        const [year, month] = monthParam.split('.').map(Number);
+        console.log('Received year:', year, 'Received month:', month);
 
         DB.query(
             `
@@ -311,22 +314,58 @@ const adminService = {
                 COUNT(*) AS chatCount
             FROM 
                 CHAT
+            WHERE 
+                YEAR(CHAT_REG_DATE) = ? AND MONTH(CHAT_REG_DATE) = ?
             GROUP BY 
                 chatWeek
             ORDER BY 
                 chatWeek;
             `,
+            [year, month],
             (error, result) => {
                 if (error || !result) {
-                    console.error('Error fetching weekly chat data:', error);
+                    console.error('Error fetching weekly chat data for month:', error);
                     res.status(500).json({ error: 'Internal Server Error' });
                 } else {
-                    console.log('Weekly chat data:', result);
+                    console.log('Weekly chat data for month:', result);
                     res.json(result);
                 }
             }
         );
-    }
+    },
+
+    chatStatusDaily: (req, res) => {
+        console.log('ChatStatusDaily()');
+
+        const week = req.params.week;
+        console.log('Received week:', week);
+
+        DB.query(
+            `
+            SELECT 
+                DAYOFWEEK(CHAT_REG_DATE) AS chatDay,
+                COUNT(*) AS chatCount
+            FROM 
+                CHAT
+            WHERE 
+                YEARWEEK(CHAT_REG_DATE, 1) = ?
+            GROUP BY 
+                chatDay
+            ORDER BY 
+                chatDay;
+            `,
+            [week],
+            (error, result) => {
+                if (error || !result) {
+                    console.error('Error fetching daily chat data for week:', error);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                } else {
+                    console.log('Daily chat data for week:', result);
+                    res.json(result);
+                }
+            }
+        );
+    },
 }
 
 module.exports = adminService;

@@ -23,6 +23,14 @@ import AdminDashboard from './admin/adminmanagement/AdminDashboard';
 import ChatStatusHourly from './admin/adminmanagement/ChatStatusHourly';
 import ChatStatusDaily from './admin/adminmanagement/ChatStatusDaily';
 import ChatStatusWeekly from './admin/adminmanagement/ChatStatusWeekly';
+import ChatStatusMonthly from './admin/adminmanagement/ChatStatusMonthly';
+import ChatStatusPeriod from './admin/adminmanagement/ChatStatusPeriod';
+
+//2024/05/20 경선 추가
+import { GoogleOAuthProvider } from '@react-oauth/google';
+const CLIENT_ID = 'here!!!!';
+//2024/05/20 경선 추가
+
 
 axios.defaults.withCredentials = true;
 
@@ -31,33 +39,41 @@ const MainHome = () => {
     const isLogin = useSelector(state => state.login.isLogin);
 
     return (
-        <BrowserRouter>
+        <GoogleOAuthProvider clientId={CLIENT_ID}>
+            <BrowserRouter>
 
-            <Routes>
-                <Route path="/" element={isLogin ? <Navigate to="/friend/friendList" /> : <Login />} />
-                <Route path="/member/findpassword" element={<FindPassword />} />
-                <Route path="/member/join" element={<Join />} />
-                <Route path="/member/login" element={<Login />} />
-                <Route path="/member/modify" element={<MemberModify />} />
-                <Route path="/member/setting" element={<Setting />} />
-                <Route path='/chatRoom/list' element={<ChatRoom />}></Route>
-                <Route path='/chat/details/:roomId' element={<Chat />}></Route>
-                <Route path='/friend/managementFriend' element={<ManagementFriend />}></Route>
-                <Route path="/admin" element={<AdminHome />} />
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/adminlogin" element={<AdminLogin />} />
-                <Route path="/admin/adminjoin" element={<AdminJoin />} />
-                <Route path="/admin/news" element={<NewsList />} />
-                <Route path="/admin/newsform" element={<NewsForm />} />
-                <Route path="/admin/userstatus" element={<UserStatus />} />
-                <Route path="/admin/chatstatushourly" element={<ChatStatusHourly />} />
-                <Route path="/admin/chatstatusdaily" element={<ChatStatusDaily />} />
-                <Route path="/admin/chatstatusweekly" element={<ChatStatusWeekly />} />
-                <Route path='/friend/friendList' element={<FriendList />} />
-                <Route path='/friend/requestFriend' element={<RequestFriend />} />
-            </Routes>
+                <Routes>
+                    <Route path="/" element={isLogin ? <Navigate to="/friend/friendList" /> : <Login />} />
+                    <Route path="/member/findpassword" element={<FindPassword />} />
+                    <Route path="/member/join" element={<Join />} />
+                    <Route path="/member/login" element={<Login />} />
+                    <Route path="/member/modify" element={<MemberModify />} />
+                    <Route path="/member/setting" element={<Setting />} />
+                    <Route path='/chatRoom/list' element={<ChatRoom />}></Route>
+                    <Route path='/chat/details/:roomId' element={<Chat />}></Route>
+                    <Route path='/friend/managementFriend' element={<ManagementFriend />}></Route>
+                    <Route path="/admin" element={<AdminHome />} />
+                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                    <Route path="/admin/adminlogin" element={<AdminLogin />} />
+                    <Route path="/admin/adminjoin" element={<AdminJoin />} />
+                    <Route path="/admin/news" element={<NewsList />} />
+                    <Route path="/admin/newsform" element={<NewsForm />} />
+                    <Route path="/admin/userstatus" element={<UserStatus />} />
+                    <Route path="/admin/chatstatushourly" element={<ChatStatusHourly />} />
+                    <Route path="/admin/chatstatusdaily" element={<ChatStatusDaily />} />
+                    <Route path="/admin/chatstatusweekly" element={<ChatStatusWeekly />} />
 
-        </BrowserRouter>
+                    {/* 2024/05/20 경선 추가 */}
+                    <Route path="/admin/chatstatusmonthly" element={<ChatStatusMonthly />} />
+                    <Route path="/admin/chatstatusperiod" element={<ChatStatusPeriod />} />
+                    {/* 2024/05/20 경선 추가 */}
+
+                    <Route path='/friend/friendList' element={<FriendList />} />
+                    <Route path='/friend/requestFriend' element={<RequestFriend />} />
+                </Routes>
+
+            </BrowserRouter>
+        </GoogleOAuthProvider>
     );
 };
 

@@ -1,160 +1,126 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUIdAction, setUPwAction, setIsLoginAction, setUserIdAction } from '../action/loginActions';
 import useAxiosGetMember from "../../util/useAxiosGetMember";
 import cookie from 'js-cookie';
-import * as jwt_decode from 'jwt-decode';
+import { GoogleLogin } from '@react-oauth/google';
+import '../../css/member/login.css';
 
 axios.defaults.withCredentials = true;
+const CLIENT_ID = 'here!!!!';
 
 const Login = () => {
-
     const dispatch = useDispatch();
     const [uId, setUId] = useState('');
     const [uPw, setUPw] = useState('');
-
     const navigate = useNavigate();
-
     useAxiosGetMember();
 
-    // handler
     const memberInfoChangeHandler = (e) => {
-        console.log('[LOGIN] memberInfoChangeHandler()');
-
-        let input_name = e.target.name;
-        let input_value = e.target.value;
-        if (input_name === 'uId') {
-            setUId(input_value);
-            dispatch(setUIdAction(input_value));
-        } else if (input_name === 'uPw') {
-            setUPw(input_value);
-            dispatch(setUPwAction(input_value));
-
+        const { name, value } = e.target;
+        if (name === 'uId') {
+            setUId(value);
+            dispatch(setUIdAction(value));
+        } else if (name === 'uPw') {
+            setUPw(value);
+            dispatch(setUPwAction(value));
         }
-    }
+    };
 
     const loginSubmitBtnClickHandler = () => {
-        console.log('[LOGIN] loginSubmitBtnClickHandler()');
-
-        let form = document.memberLoginForm;
         if (uId === '') {
             alert('아이디를 입력하세요!');
-            form.uId.focus();
-
         } else if (uPw === '') {
             alert('비밀번호를 입력하세요!');
-            form.uPw.focus();
-
         } else {
             axiosMemberLogin();
         }
-    }
+    };
 
-    const loginResetBtnClickHandler = () => {
-        console.log('[LOGIN] loginResetBtnClickHandler()');
 
-        setUId(''); setUPw('');
-        dispatch(setUIdAction(''));
-        dispatch(setUPwAction(''));
-    }
-
-    // axios
     const axiosMemberLogin = () => {
-
-        console.log('[LOGIN] axiosMemberLogin()');
-
-        axios.post('http://localhost:3001/member/signinConfirm', {
-            uId: uId,
-            uPw: uPw
-        }, { withCredentials: true })
+        axios.post('http://localhost:3001/member/signinConfirm', { uId, uPw }, { withCredentials: true })
             .then(response => {
-                console.log('[LOGIN] AXIOS MEMBER_LOGIN COMMUNICATION SUCCESS');
                 const { userToken } = response.data;
                 if (userToken) {
                     alert('MEMBER LOGIN PROCESS SUCCESS!!');
-
-                    document.cookie = `userToken=${userToken}`;
+                    cookie.set('userToken', userToken);
                     dispatch(setIsLoginAction(true));
                     dispatch(setUserIdAction(uId));
-
-                    console.log('dispatch(setUserIdAction(uId) --> ', dispatch(setUserIdAction(uId)));
-
                     navigate('/friend/friendList');
-
                 } else {
-
                     alert('MEMBER LOGIN PROCESS FAIL!!');
                     dispatch(setIsLoginAction(false));
                     dispatch(setUserIdAction(''));
                 }
             })
-            .catch(error => {
+            .catch(() => {
                 console.log('[LOGIN] AXIOS MEMBER_LOGIN COMMUNICATION ERROR');
-
-            })
-            .finally(() => {
-                console.log('[LOGIN] AXIOS MEMBER_LOGIN COMMUNICATION COMPLETE');
             });
     };
 
-    const handleGoogleLogin = async () => {
-        // Google OAuth strategy
-
+    const onGoogleLoginSuccess = async (response) => {
         try {
-            const response = await axios.get('http://localhost:3001/auth/google', {
-                withCredentials: true,
-            })
-            response.then((response) => {
-                console.log('[LOGIN] response.data ---> ', response);
-                const userToken = cookie.get('userToken');
-
-                if (userToken) {
-                    const decodedToken = jwt_decode(userToken);
-                    const userId = decodedToken.id;
-
-                    console.log('[LOGIN] userId ---> ', userId);
-                    console.log('[LOGIN] userToken ---> ', userToken);
-                    dispatch(setIsLoginAction(true));
-                    dispatch(setUserIdAction(userId));
-
-                    navigate('/friend/friendList');
-                } else {
-                    alert('MEMBER LOGIN PROCESS FAIL!!');
-                    dispatch(setIsLoginAction(false));
-                    dispatch(setUserIdAction(''));
-                }
-            });
+            const res = await axios.post('http://localhost:3001/auth/google', { token: response.credential });
+            const { token } = res.data;
+            if (token) {
+                alert('Google Login Successful!');
+                cookie.set('userToken', token);
+                dispatch(setIsLoginAction(true));
+                dispatch(setUserIdAction('GoogleUser'));
+                navigate('/friend/friendList');
+            }
         } catch (error) {
-            console.log('Error:', error);
+            console.error('Error sending token to backend:', error);
         }
     };
 
-
+    const onGoogleLoginFailure = (response) => {
+        console.log('Google Login failed:', response);
+    };
 
     return (
-        <div>
-            <div>
-                <img src='/resource/img/logo.jpg' />
-
-                <p>MEMBER LOGIN FORM</p>
+        <div className="loginContainer">
+            <div className="loginForm">
+                <img src='/resource/img/logo.jpg' alt="Logo" className="loginLogo" />
+                <p>CHAT SQUARE</p>
                 <form name="memberLoginForm">
-                    <input type="text" name="uId" value={uId} onChange={(e) => memberInfoChangeHandler(e)} placeholder="아이디를 입력하세요." /><br />
-                    <input type="password" name="uPw" value={uPw} onChange={(e) => memberInfoChangeHandler(e)} placeholder="비밀번호를 입력하세요." /><br />
+                    <input type="text" name="uId" value={uId} onChange={memberInfoChangeHandler} placeholder="아이디를 입력하세요." /><br />
+                    <input type="password" name="uPw" value={uPw} onChange={memberInfoChangeHandler} placeholder="비밀번호를 입력하세요." /><br />
                     <input type="button" value="로그인" onClick={loginSubmitBtnClickHandler} />
-                    <input type="button" value="RESET" onClick={loginResetBtnClickHandler} />
                 </form>
 
+                <div className="googleLoginButton">
+                    <GoogleLogin
+                        clientId={CLIENT_ID}
+                        onSuccess={onGoogleLoginSuccess}
+                        onFailure={onGoogleLoginFailure}
+                        render={(renderProps) => (
+                            <button
+                                onClick={renderProps.onClick}
+                                disabled={renderProps.disabled}
+                                style={{ width: '100%', height: '50px', fontSize: '1rem' }}
+                            >
+                                Login with Google
+                            </button>
+                        )}
+                    />
+                </div>
             </div>
-            <div>
-                <Link to="/member/join">회원가입</Link><br />
-                <Link to="/member/findpassword">비밀번호 찾기</Link><br />
-                <Link to="/admin">ADMIN</Link><br />
-                <a href='#' onClick={handleGoogleLogin}>with Google</a>
-            </div>
-        </div>
 
+            <div className="loginFooter">
+                <div className="left">
+                    <Link to="/admin">ADMIN</Link>
+                </div>
+                <div className="right">
+                    <Link to="/member/join">회원가입</Link>
+                    <Link to="/member/findpassword">비밀번호 찾기</Link>
+                </div>
+            </div>
+
+        </div>
     );
 };
 

@@ -144,23 +144,22 @@ const Join = () => {
     }
 
     return (
-
-        <div>
-
-            <p>MEMBER JOIN FORM</p>
-            <form name="memberJoinForm">
-                <input type="text" name="uId" value={uId} onChange={(e) => memberInfoChangeHandler(e)} placeholder="아이디를 입력하세요." /><br />
-                <input type="password" name="uPw" value={uPw} onChange={(e) => memberInfoChangeHandler(e)} placeholder="비밀번호를 입력하세요." /><br />
-                <input type="text" name="uEmail" value={uEmail} onChange={(e) => memberInfoChangeHandler(e)} placeholder="메일을 입력하세요." /><br />
-                <input type="text" name="uNickname" value={uNickname} onChange={(e) => memberInfoChangeHandler(e)} placeholder="닉네임을 입력하세요." /><br />
-                <input type="file" name="uFrontImgName" value={uFrontImgName} onChange={(e) => memberInfoChangeHandler(e)} placeholder="프로필 이미지를 선택하세요." /><br />
-                <input type="button" value="회원가입" onClick={joinSubmitBtnClickHandler} />
-                <input type="reset" value="RESET" onClick={joinResetBtnClickHandler} />
-            </form>
-
+        <div className="joinContainer">
+            <div className="joinForm">
+                <p>MEMBER JOIN FORM</p>
+                <form name="memberJoinForm">
+                    <input type="text" name="uId" value={uId} onChange={memberInfoChangeHandler} placeholder="아이디를 입력하세요." /><br />
+                    <input type="password" name="uPw" value={uPw} onChange={memberInfoChangeHandler} placeholder="비밀번호를 입력하세요." /><br />
+                    <input type="text" name="uEmail" value={uEmail} onChange={memberInfoChangeHandler} placeholder="메일을 입력하세요." /><br />
+                    <input type="text" name="uNickname" value={uNickname} onChange={memberInfoChangeHandler} placeholder="닉네임을 입력하세요." /><br />
+                    <input type="file" name="uFrontImgName" value={uFrontImgName} onChange={memberInfoChangeHandler} placeholder="프로필 이미지를 선택하세요." /><br />
+                    <input type="button" value="회원가입" onClick={joinSubmitBtnClickHandler} />
+                    <input type="reset" value="RESET" onClick={joinResetBtnClickHandler} />
+                </form>
+            </div>
         </div>
-
     );
 };
+
 
 export default Join;
