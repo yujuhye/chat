@@ -23,6 +23,7 @@ import AdminDashboard from './admin/adminmanagement/AdminDashboard';
 import ChatStatusHourly from './admin/adminmanagement/ChatStatusHourly';
 import ChatStatusDaily from './admin/adminmanagement/ChatStatusDaily';
 import ChatStatusWeekly from './admin/adminmanagement/ChatStatusWeekly';
+import ChatPage from './chat/ChatPage';
 
 axios.defaults.withCredentials = true;
 
@@ -42,6 +43,8 @@ const MainHome = () => {
                 <Route path="/member/setting" element={<Setting />} />
                 <Route path='/chatRoom/list' element={<ChatRoom />}></Route>
                 <Route path='/chat/details/:roomId' element={<Chat />}></Route>
+                {/* 추가 부분 */}
+                <Route path='/chatPage' element={<ChatPage />}></Route>
                 <Route path='/friend/managementFriend' element={<ManagementFriend />}></Route>
                 <Route path="/admin" element={<AdminHome />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />

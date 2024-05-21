@@ -10,7 +10,6 @@ const cors = require('cors');
 const http = require('http').createServer(app);
 const passport = require('./lib/passport/passportJwt');
 const cookieParser = require('cookie-parser');
-const passport = require('./lib/passport/passportJwt');
 
 // Express에 CORS 미들웨어 적용
 app.use(cors({

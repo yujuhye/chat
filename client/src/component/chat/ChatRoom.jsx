@@ -4,20 +4,20 @@ import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { setRooms, setLeaveRoom, setFavoriteRoom } from '../action/chatRoom';
-import { setNewChatDetails } from '../action/chat';
 import FriendListModal from "./FriendListModal";
 import ChatTitleNameModModal from "./ChatTitleNameModModal";
 import { fetchUser } from "./fetchFunction";
 import { SERVER_URL } from '../../util/url';
 import '../../css/common.css';
-// import '../../css/chat/chatRoom.css';
+import '../../css/chat/chatRoom.css';
 
 const socket = io('http://localhost:3001');
 // const socket = io('http://14.42.124.96:3001');
 
-const ChatRoom = () => {
+const ChatRoom = ({ handleRoomSelect }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const searchInputRef = useRef(null);
     const rooms = useSelector(state => state['room']['rooms']);
     const newChatInfo = useSelector(state => state['chat']['newChatInfo']);
     const [selectedRoomNo, setSelectedRoomNo] = useState('');    
@@ -29,6 +29,12 @@ const ChatRoom = () => {
     const [userNo, setUserNo] = useState(0);
     const [searchKey, setSearchKey] = useState('');
     const [searchResult, setSearchResult] = useState('');
+    
+    const handleChatRoomClick = (chatRoomId) => {
+        console.log('chatRoomId -----> ', chatRoomId);
+        const room = { ROOM_NO: chatRoomId.ROOM_NO, };
+        handleRoomSelect(room); // 상위 컴포넌트로 선택된 채팅방 정보 전달
+    };
 
     // 채팅 리스트 불러오기
     useEffect(() => {
@@ -185,7 +191,7 @@ const ChatRoom = () => {
         return () => {
             socket.off('likeMessageResult', likeMessageResult);
         };
-    }, [socket, dispatch, userInfo.USER_NO]); // 의존성 배열에 socket 추가    
+    }, [socket, dispatch, userInfo.USER_NO]); 
 
     const favoriteRoom = (id, no) => {
         let chatLikeInfo = {
@@ -194,7 +200,7 @@ const ChatRoom = () => {
         }
         socket.emit('likeRoom', chatLikeInfo);
         console.log('채팅방 즐겨찾기 이벤트 -----> ', chatLikeInfo);
-        dispatch(setFavoriteRoom(id)); // 인자를 객체로 전달
+        dispatch(setFavoriteRoom(id)); 
     };
 
     const chatBtnClickHandler = () => {
@@ -203,18 +209,11 @@ const ChatRoom = () => {
     };
 
     const modifyRoomName = (roomNo, chatName, userNo) => {
-        setSelectedRoomNo(roomNo); // 선택된 방 번호를 상태에 저장
+        setSelectedRoomNo(roomNo);
         setUserNo(userNo);
-        setIsShowChatTitleNameModModal(true); // 모달을 보여주는 상태를 true로 변경
+        setIsShowChatTitleNameModModal(true); 
         setChatTitleName(chatName)
     };
-
-    // 채팅방 입장
-    const chatRoomViewClickHandler = (room) => {
-        console.log('chatRoomViewClickHandler()');
-        console.log('roon no : ', room);
-        navigate(`/chat/details/${room.ROOM_NO}`, { state: { roomInfo: room, } });
-    }
 
     // 채팅방 이름
     const modifyChatTitleName = (e) => {
@@ -246,7 +245,7 @@ const ChatRoom = () => {
             method: 'post',
             data: data,
             headers: {
-                'Content-Type': 'application/json', // 명시적으로 JSON으로 설정 (하지만 axios에서 기본적으로 설정됨)
+                'Content-Type': 'application/json', 
             },
         })
         .then(response => {
@@ -294,6 +293,13 @@ const ChatRoom = () => {
 
     const chatRoomSearchBtnClickHandler = () => {
         console.log('chatRoomSearchBtnClickHandler()');
+
+        if(!searchKey.trim()) {
+            alert("검색어를 입력해주세요.");
+            searchInputRef.current.focus(); // input으로 포커스 이동
+            return;
+        }
+
         let params  = {
             parti_customzing_name: searchKey,
         }
@@ -312,8 +318,8 @@ const ChatRoom = () => {
                 setSearchResult(response.data); // 검색 결과를 상태에 저장
                 if(response.data.length === 0) {
                     alert('검색 결과가 없습니다.');
-                    setSearchKey(""); // 안먹힘 -> 방법 찾기
                 }
+                setSearchKey("");
             } else {
                 console.log('then 실패 ----->');
                 setSearchResult([]); // 검색 결과가 없으면 빈 배열을 저장
@@ -334,7 +340,7 @@ const ChatRoom = () => {
             <div id="chatListWrap">
                 <h2 className="joinChatRoomList">참여한 채팅방 목록</h2>
                 <div className="chatRoomSearch">
-                    <input type="text" name="parti_customzing_name" onChange={(e)=>chatRoomSearchInputChangeHandler(e)} />
+                    <input type="text" name="parti_customzing_name" value={searchKey} onChange={(e)=>chatRoomSearchInputChangeHandler(e)} ref={searchInputRef} />
                     <input type="button" onClick={chatRoomSearchBtnClickHandler} value="SEARCH"/>
                 </div>
                 <div className="chatRoomBtnWrap">
@@ -346,7 +352,7 @@ const ChatRoom = () => {
                         <ul>
                             {searchResult.map((room) => (
                                 <li key={room.ROOM_NO}>
-                                    <a href="#" onClick={() => chatRoomViewClickHandler(room)} className="chatTitleName">{room.PARTI_CUSTOMZING_NAME}</a>
+                                    <a href="#" onClick={() => handleChatRoomClick(room)} className="chatTitleName">{room.PARTI_CUSTOMZING_NAME}</a>
                                     <span className="lastChatText">{room.LAST_CHAT_TEXT}</span>
                                     <span className="lastChatRegDate">{room.LAST_CHAT_REG_DATE}</span>
                                 </li>
@@ -359,19 +365,26 @@ const ChatRoom = () => {
                     rooms.length > 0 ? (
                         <ul>
                             {rooms.map((room) => (
-                                <li key={room.ROOM_NO} onClick={()=>chatRoomViewClickHandler(room)} style={{cursor: 'pointer'}}>
-                                <a href="#" className="chatTitleName" onClick={()=>chatRoomViewClickHandler(room)}>{room.PARTI_CUSTOMZING_NAME}</a>
-                                <span className="joinRoomCnt">{room.ROOM_PERSONNEL}</span> &nbsp;&nbsp;
-                                <span className="lastChatText">{room.LAST_CHAT_TEXT}</span>
-                                <span className="lastChatRegDate">{room.LAST_CHAT_REG_DATE}</span>
-                                <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); modifyRoomName(room.ROOM_NO, room.PARTI_CUSTOMZING_NAME, room.USER_NO);}} className="chatTitleNameModifyBtn">MOD</a>
-                                <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); leaveRoom(room.ROOM_NO, room.USER_NO);}} className="chatDeleteBtn">DEL</a>
-                                <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); favoriteRoom(room.ROOM_NO, room.USER_NO);}} className="chatBookmarkBtn">
-                                    {room.PARTI_BOOKMARK === 1 ? 'UNLIKE' : 'LIKE'}
-                                </a>
-
-                            </li>
-                            
+                                <li key={room.ROOM_NO} 
+                                    onClick={() => handleChatRoomClick(room)} 
+                                    style={{cursor: 'pointer'}}>
+                                    <span className="joinRoomCnt">{room.ROOM_NO}</span> &nbsp;&nbsp;
+                                    <a href="#" className="chatTitleName" 
+                                    onClick={() => handleChatRoomClick(room)}>
+                                        {room.PARTI_CUSTOMZING_NAME}
+                                    </a>
+                                    <span className="joinRoomCnt">{room.ROOM_PERSONNEL}</span> &nbsp;&nbsp;
+                                    <span className="lastChatText">{room.LAST_CHAT_TEXT}</span>
+                                    <span className="lastChatRegDate">{room.LAST_CHAT_REG_DATE}</span>
+                                    <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); modifyRoomName(room.ROOM_NO, room.PARTI_CUSTOMZING_NAME, room.USER_NO);}} 
+                                    className="chatTitleNameModifyBtn">MOD</a>
+                                    <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); leaveRoom(room.ROOM_NO, room.USER_NO);}} 
+                                    className="chatDeleteBtn">DEL</a>
+                                    <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); favoriteRoom(room.ROOM_NO, room.USER_NO);}} 
+                                    className="chatBookmarkBtn">
+                                        {room.PARTI_BOOKMARK === 1 ? 'UNLIKE' : 'LIKE'}
+                                    </a>
+                                </li>
                             ))}
                         </ul>
                     ) : (

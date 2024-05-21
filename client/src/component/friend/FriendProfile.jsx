@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import '../../css/friendProfile.css';
@@ -7,6 +7,8 @@ import axios from "axios";
 import Favorite from "./Favorite";
 import { IoMdClose, IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
+import io from 'socket.io-client';
+const socket = io('http://localhost:3001');
 
 function FriendProfile() {
 
@@ -23,6 +25,79 @@ function FriendProfile() {
     const friendDetails = Object.values(friends).find(friend => friend.id === selectedFriendId);
 
     console.log('friendDetails: ',friendDetails);
+
+    const [userInfo, setUserInfo] = useState('');
+
+    // 컴포넌트가 마운트될 때 사용자 정보를 가져옴
+    useEffect(() => {
+        fetchUser();
+    }, []);
+
+    const fetchUser = () => {
+        axios({
+            url: `http://localhost:3001/chatRoom/getUserInfo`,
+            method: 'get',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (response.data) {
+                setUserInfo(response.data);
+                console.log('user info -----> ', response.data);
+            } else {
+                console.log('[채팅] user 정보를 불러오는 데 실패했습니다.');
+            }
+        })
+        .catch(error => {
+            console.log(`[채팅] fetchUser Error: ${error.message}`);
+        });
+    };
+
+    // 채팅 버튼 클릭 핸들러
+    const chatBtnClickHandel = (friendNo, friendName) => {
+        if (!userInfo) {
+            alert('사용자 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+            return;
+        }
+
+        console.log('유저 정보!', userInfo);
+        console.log('chatBtnClickHandel()', userInfo, friendNo, friendName);
+        createChatRoom(userInfo, friendNo, friendName);
+        
+    };
+
+    // 채팅방 생성 로직 (소켓 통신)
+    const createChatRoom = (userInfo, friendNo, friendName) => {
+        const roomName = `${userInfo.USER_NICKNAME}, ${friendName}`;
+
+        socket.emit('chatRoomCreated', {
+            userInfo,
+            friendNo,
+            friendName,
+            roomName,
+        });
+    };
+
+    // 소켓 이벤트 리스너 설정
+    useEffect(() => {
+        fetchUser();
+
+        socket.on('roomCreated', (data) => {
+            console.log('Chat room created', data);
+        });
+
+        socket.on('error', (error) => {
+            console.error('Error creating chat room:', error);
+        });
+
+        return () => {
+            socket.off('roomCreated');
+            socket.off('error');
+        };
+    }, []);
+
+    ///// 여기까지 채팅
 
     if(!selectedFriendId || !friendDetails) {
         return null;
@@ -332,7 +407,7 @@ function FriendProfile() {
                 {friendDetails.curMsg}
              </div>
              <div>
-                <input className="friendChattingBtn" type="button" name="friendChatting" value="채팅"/>
+             <input className="friendChattingBtn" type="button" name="friendChatting" value="채팅" onClick={()=>chatBtnClickHandel(friendDetails.no, friendDetails.name)}/>
              </div>
         </div>
     );

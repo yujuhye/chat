@@ -4,13 +4,14 @@ import { fetchUser } from "./fetchFunction";
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { fileSend, fileSendSuccess, fileSendFail } from '../action/file';
+import { setRooms, setLeaveRoom, setFavoriteRoom } from '../action/chatRoom';
 import io from 'socket.io-client';
 import axios from 'axios';
 import '../../css/common.css'
 
 const socket = io('http://localhost:3001');
 
-const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFileModal }) => {
+const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFileModal }) => {
     const selectImgFile = useRef("");
     const selectVideoFile = useRef("");
     const selectFile = useRef("");
@@ -21,6 +22,32 @@ const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFi
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [userInfo, setUserInfo] = useState(0);
     const sendSuccess = useSelector(state => state.file.sendSuccess);
+
+    useEffect(() => {
+        const refreshChatListListener = () => {
+          const fetchRooms = async () => {
+            try {
+              const response = await axios.get('http://localhost:3001/chatRoom/list');
+              console.log('파일 전송 후 확인 : ', response.data);
+              console.log('파일 전송 후 확인 : ', response.data.rooms);
+      
+              // 가져온 채팅방 목록을 리덕스 스토어에 설정
+              dispatch(setRooms(response.data.rooms));
+            } catch (error) {
+              console.error("채팅방 목록을 불러오는데 실패했습니다.", error);
+            }
+          };
+      
+          fetchRooms();
+        };
+      
+        socket.on('refreshChatList', refreshChatListListener);
+      
+        // 컴포넌트가 언마운트될 때 이벤트 리스너를 제거
+        return () => {
+          socket.off('refreshChatList', refreshChatListListener);
+        };
+    }, [socket, dispatch]);
 
     // handler
     // 파일 선택
@@ -40,6 +67,8 @@ const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFi
 
     // 파일 전송
     const fileSendBtnClickHandler = async () => {
+        const roomId = selectedRoom.ROOM_NO;
+
         console.log('fileSend()');
         dispatch(fileSend());
 
@@ -247,9 +276,7 @@ const FileModal = ({ fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFi
 
     useEffect(() => {
         socket.on('chatImgUploaded', (data) => {
-            // 채팅 화면을 갱신하는 로직을 여기에 작성합니다.
-            console.log('New image uploaded:', data);
-            // 예를 들어, 새로운 메시지를 채팅 리스트에 추가하는 등의 작업을 수행합니다.
+            console.log('업로드 :', data);
         });
     
         return () => {
