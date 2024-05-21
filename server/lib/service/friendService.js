@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const getUserID = (req, res) => {
     const token = req.cookies['userToken'];
-    console.log('토큰 -----> ', token);
+    // console.log('토큰 -----> ', token);
 
     if (!token) {
         res.status(401).send('Access Denied. No Token Provided.');
@@ -14,7 +14,7 @@ const getUserID = (req, res) => {
     try {
         const decoded = jwt.verify(token, '1234');
         const userId = decoded.id;
-        console.log(` ★★★★★ User ID is: ${userId}`);
+        // console.log(` ★★★★★ User ID is: ${userId}`);
         return userId; // 여기서 userId 반환
     } catch (err) {
         res.status(400).send('Invalid Token');
@@ -124,7 +124,6 @@ const friendService = {
 
     },
     requestFriend: (req, res) => {
-
         let post = req.body;
         const userId = getUserID(req, res);
 
@@ -142,12 +141,27 @@ const friendService = {
                     if(error) {
                         res.json(null);
 
-                    } else {
-                        res.json(result.affectedRows)
+                    } else if(result.affectedRows > 0) {
+
+                        DB.query(`INSERT INTO REQ_FRIEND_ALARM(FROM_USER, FROM_USER_NICKNAME, TARGET_ID) VALUES(?, ?, ?)`, 
+                        [userId, results[0].USER_NICKNAME, post.friendId], 
+                        (error, result) => {
+
+                            if(error) {
+                                console.log('insert REQ_FRIEND_ALARM ERROR')
+                            } else {
+                                console.log('insert REQ_FRIEND_ALARM SUCCESS')
+                                res.json(results[0].USER_NICKNAME);
+
+                            }
+
+                        })
                     }
 
                 })
 
+            } else {
+                res.json(null);
             }
 
         })
@@ -897,6 +911,37 @@ const friendService = {
             }
         })
 
+    },
+    getSavednotification: (req, res) => {
+        const userId = getUserID(req, res);
+
+        DB.query(`SELECT * FROM REQ_FRIEND_ALARM WHERE TARGET_ID = ? AND RF_IS_READ = 0`, 
+        [userId], 
+        (error, alarms) => {
+
+            if(alarms !== null && alarms.length > 0) {
+                res.json(alarms);
+            } else {
+                res.json(null);
+            }
+
+        })
+    },
+    updateNotificationRead: (req, res) => {
+        let post = req.body;
+        const userId = getUserID(req, res);
+
+        DB.query(`UPDATE REQ_FRIEND_ALARM SET RF_IS_READ = 1 WHERE FROM_USER = ? AND TARGET_ID = ?`, 
+        [post.fromId, userId], 
+        (error, result) => {
+
+            if(result.affectedRows > 0) {
+                res.json(result.affectedRows)
+            } else {
+                res.json(null);
+            }
+
+        })
     }
 
     

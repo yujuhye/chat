@@ -14,7 +14,7 @@ const cookieParser = require('cookie-parser');
 // Express에 CORS 미들웨어 적용
 app.use(cors({
     origin: "http://localhost:3000", // 프론트엔드 서버 주소
-    credentials: true // 쿠키를 포함시키기 위해 필요
+    credentials: true, // 쿠키를 포함시키기 위해 필요
 }));
 
 // Socket.IO 설정 -- 20240516 수정
@@ -28,6 +28,7 @@ const io = require('socket.io')(http, {
 
 // Socket.IO 설정을 위한 socket.js 모듈 호출
 require('./socket/socket')(io);
+require('./socket/alarm')(io);  //0520주해추가
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // 문제가 있을 시 확인 후 수정해야할듯
