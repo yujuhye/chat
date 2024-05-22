@@ -28,7 +28,7 @@ import ChatStatusPeriod from './admin/adminmanagement/ChatStatusPeriod';
 import ChatPage from './chat/ChatPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-const CLIENT_ID = 'here!!!!';
+const CLIENT_ID = '113858365495-jl2hl92heunsnv028li58n6aum139hcr.apps.googleusercontent.com';
 
 axios.defaults.withCredentials = true;
 

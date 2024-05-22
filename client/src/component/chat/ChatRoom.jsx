@@ -8,8 +8,9 @@ import FriendListModal from "./FriendListModal";
 import ChatTitleNameModModal from "./ChatTitleNameModModal";
 import { fetchUser } from "./fetchFunction";
 import { SERVER_URL } from '../../util/url';
+import SideNav from "../../include/SideNav";
 import '../../css/common.css';
-import '../../css/chat/chatRoom.css';
+import '../../css/chat/friendListModal.css';
 
 const socket = io('http://localhost:3001');
 // const socket = io('http://14.42.124.96:3001');
@@ -349,9 +350,9 @@ const ChatRoom = ({ handleRoomSelect }) => {
                 {searchResult.length > 0 ? (
                     // 검색 결과가 있을 경우 검색 결과 표시
                     <div id="searchResultWrap">
-                        <ul>
+                        <ul className="chatRoomUl">
                             {searchResult.map((room) => (
-                                <li key={room.ROOM_NO}>
+                                <li key={room.ROOM_NO} className="chatRoomLi">
                                     <a href="#" onClick={() => handleChatRoomClick(room)} className="chatTitleName">{room.PARTI_CUSTOMZING_NAME}</a>
                                     <span className="lastChatText">{room.LAST_CHAT_TEXT}</span>
                                     <span className="lastChatRegDate">{room.LAST_CHAT_REG_DATE}</span>
@@ -363,12 +364,12 @@ const ChatRoom = ({ handleRoomSelect }) => {
                 ) : (
                     // 검색 결과가 없을 경우 기존 채팅 리스트 표시
                     rooms.length > 0 ? (
-                        <ul>
+                        <ul className="chatRoomUl">
                             {rooms.map((room) => (
-                                <li key={room.ROOM_NO} 
+                                <li className="chatRoomLi" key={room.ROOM_NO} 
                                     onClick={() => handleChatRoomClick(room)} 
                                     style={{cursor: 'pointer'}}>
-                                    <span className="joinRoomCnt">{room.ROOM_NO}</span> &nbsp;&nbsp;
+                                    {/* <span className="joinRoomCnt">{room.ROOM_NO}</span> &nbsp;&nbsp; */}
                                     <a href="#" className="chatTitleName" 
                                     onClick={() => handleChatRoomClick(room)}>
                                         {room.PARTI_CUSTOMZING_NAME}
@@ -382,7 +383,7 @@ const ChatRoom = ({ handleRoomSelect }) => {
                                     className="chatDeleteBtn">DEL</a>
                                     <a href="#" onClick={(e) => {e.preventDefault(); e.stopPropagation(); favoriteRoom(room.ROOM_NO, room.USER_NO);}} 
                                     className="chatBookmarkBtn">
-                                        {room.PARTI_BOOKMARK === 1 ? 'UNLIKE' : 'LIKE'}
+                                        {room.PARTI_BOOKMARK === 1 ? '♥' : '♡'}
                                     </a>
                                 </li>
                             ))}
@@ -395,21 +396,23 @@ const ChatRoom = ({ handleRoomSelect }) => {
                 )}
             </div>
             {/* 친구 초대 */}
-            {
-                isShowFriendModal
-                ?
-                    socket && (
-                        <FriendListModal 
-                            setIsShowFriendModal={setIsShowFriendModal}
-                            isShowFriendModal={isShowFriendModal}
-                            handleFriendInviteModalClose={handleFriendInviteModalClose}
-                            socket={socket} // 여기에서 socket 인스턴스를 props로 전달
-                        />
-                )
-                :
-                    null
-            }
-
+            {/* <div id="friendListModal"> */}
+                {
+                    
+                    isShowFriendModal
+                    ?
+                        socket && (
+                            <FriendListModal 
+                                setIsShowFriendModal={setIsShowFriendModal}
+                                isShowFriendModal={isShowFriendModal}
+                                handleFriendInviteModalClose={handleFriendInviteModalClose}
+                                socket={socket} // 여기에서 socket 인스턴스를 props로 전달
+                            />
+                    )
+                    :
+                        null
+                }
+            {/* </div> */}
             {/* 채팅방 이름 수정 */}
             {
                 isShowChatTitleNameModModal

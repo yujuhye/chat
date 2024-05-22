@@ -4,6 +4,7 @@ import { setRooms, setLeaveRoom, setFavoriteRoom } from '../action/chatRoom';
 import io from 'socket.io-client';
 import axios from "axios"; 
 import '../../css/common.css'
+import '../../css/chat/chatViewFriendModal.css';
 
 const socket = io('http://localhost:3001');
 
@@ -138,12 +139,12 @@ const ChatDetailViewFriendModal = (props) => {
     }   
 
     return (
-        <div className="friendWrap">
-            <div className="friend">
-                <p>친구 리스트</p>
+        <div className="chatViweFriendWrap">
+            <div className="chatViweFriend">
+                <p className="chatViewFriendList">친구 리스트</p>
                 {friends.map(friend => (
-                    <div key={friend.FRIEND_NO}>
-                        <input 
+                    <div key={friend.FRIEND_NO} className="chatFriendListModal">
+                        <input className="chatFriendListModalInput"
                             type="checkbox" 
                             checked={selectedFriends.includes(friend.FRIEND_NO)}
                             onChange={() => handleFriendSelection(friend.FRIEND_NO)}
@@ -153,8 +154,10 @@ const ChatDetailViewFriendModal = (props) => {
                         {friend.FRIEND_TARGET_NAME}
                     </div>
                 ))}
-                <button onClick={chatInviteFriendClickHandler}>친구 초대</button>
-                <button onClick={handleFriendInviteModalClose}>닫기</button>
+                <div className="chatViewBtns">
+                    <button onClick={chatInviteFriendClickHandler} className="chatListFriendInviteBtn">친구 초대</button>
+                    <button onClick={handleFriendInviteModalClose} className="chatListFriendCloseBtn">닫기</button>
+                </div>
             </div>
         </div>
     );

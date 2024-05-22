@@ -3,7 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { fetchUser } from "./fetchFunction";
 import { setRooms } from '../action/chatRoom';
 import axios from "axios"; 
-import '../../css/common.css'
+import '../../css/common.css';
+
 
 const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendModal, setIsShowFriendModal}) => {
    
@@ -160,41 +161,82 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
 
         setIsShowFriendModal(false);
     }
+
+    const newChatCloseBtnClickHandler = () => {
+        console.log('newChatCloseBtnClickHandler()');
+
+        setIsShowChatNameInput(false);
+    }
  
+    // return (
+    //     <div className="friendWrap">
+    //         <div className="friend">
+    //             <p className="friendListModalFriList">친구 리스트</p>
+    //             {friends.map(friends => (
+    //                 <div key={friends.FRIEND_NO} className="friendListModalDiv">
+    //                     <input className="friendListModalCheckBox"
+    //                       type="checkbox" 
+    //                       checked={selectedFriends.includes(friends.FRIEND_NO)}
+    //                       onChange={() => handleFriendSelection(friends.FRIEND_NO)}
+    //                     />
+    //                     {/* {friends.USER_NO} */}
+    //                     {friends.FRIEND_TARGET_NAME}
+    //                 </div>
+    //             ))}
+    //             <button className="friendListModalSelectBtn" onClick={handleCreateRoom}>친구 선택</button>
+    //             <button className="friendListModalCloseBtn" onClick={handleFriendInviteModalClose}>닫기</button>
+    //         </div>
+    //         {
+    //             isShowChatNameInput
+    //             ?
+    //             <div className="newChatTitle">
+    //                 <form name="newChatTitle">
+    //                     <input type="hidden" name="user_no" value={userInfo.USER_NO} />                        
+    //                     <input type="hidden" name="user_nickname" value={userInfo.USER_NICKNAME} />                        
+    //                     <input className="friendListModalChatNameInput" type="text" name="room_default_name" value={chatName} onChange={(e)=>newChatTitleNameInputChange(e)} />                        
+    //                     <input className="friendListModalNewChatStartBtn" type="button" value="NEW CHAT" onClick={newChatStartBtnClickHandler} />
+    //                 </form>
+    //             </div>
+    //             :
+    //             null
+    //         }
+    //     </div>
+    // );
+
     return (
         <div className="friendWrap">
             <div className="friend">
-                <p>친구 리스트</p>
+                <p className="friendListModalFriList">친구 리스트</p>
                 {friends.map(friends => (
-                    <div key={friends.FRIEND_NO}>
-                        <input 
+                    <div key={friends.FRIEND_NO} className="friendListModalDiv">
+                        <input className="friendListModalCheckBox"
                           type="checkbox" 
                           checked={selectedFriends.includes(friends.FRIEND_NO)}
                           onChange={() => handleFriendSelection(friends.FRIEND_NO)}
                         />
-                        {friends.USER_NO}
+                        {/* {friends.USER_NO} */}
                         {friends.FRIEND_TARGET_NAME}
                     </div>
                 ))}
-                <button onClick={handleCreateRoom}>친구 선택</button>
-                <button onClick={handleFriendInviteModalClose}>닫기</button>
+                <div className="btnCenter">
+                    <button className="friendListModalSelectBtn" onClick={handleCreateRoom}>친구 선택</button>
+                    <button className="friendListModalCloseBtn" onClick={handleFriendInviteModalClose}>닫기</button>
+                </div>
             </div>
-            {
-                isShowChatNameInput
-                ?
-                <>
+            {isShowChatNameInput && (
+                <div className="newChatTitle">
                     <form name="newChatTitle">
                         <input type="hidden" name="user_no" value={userInfo.USER_NO} />                        
                         <input type="hidden" name="user_nickname" value={userInfo.USER_NICKNAME} />                        
-                        <input type="text" name="room_default_name" value={chatName} onChange={(e)=>newChatTitleNameInputChange(e)} />                        
-                        <input type="button" value="NEW CHAT" onClick={newChatStartBtnClickHandler} />
+                        <input className="friendListModalChatNameInput" type="text" name="room_default_name" value={chatName} onChange={(e)=>newChatTitleNameInputChange(e)} />                        
+                        <input className="friendListModalNewChatStartBtn" type="button" value="NEW CHAT" onClick={newChatStartBtnClickHandler} />
+                        <input className="friendListModalNewChatCloseBtn" type="button" value="CLOSE" onClick={newChatCloseBtnClickHandler} />
                     </form>
-                </>
-                :
-                null
-            }
+                </div>
+            )}
         </div>
     );
+    
 }
 
 export default FriendListModal;

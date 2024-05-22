@@ -1,142 +1,149 @@
-a {
-    text-decoration: none;
-}
-
-a:hover {
-    cursor: pointer;
-}
-
-/* 채팅방 목록 전체 영역 */
 #chatListWrap {
-    padding: 20px;
+    flex: 1;
+    width: 500px; 
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
 }
 
-/* 참여한 채팅방 목록 제목 */
 .joinChatRoomList {
-    background-color: #D3EDFD;
-    color: #2F4858;
-    padding: 10px 15px;
-    margin: 0;
+    font-size: 1.3em;
+    margin: 1em;
+    color: #333;
+
     text-align: center;
 }
 
-/* 채팅방 검색창과 버튼 영역 */
 .chatRoomSearch {
-    margin-top: 20px;
-    margin-bottom: 20px;
+    display: flex;
+    padding: 0 1em;
+    margin-bottom: 1em;
 }
 
 .chatRoomSearch input[type="text"] {
-    padding: 8px;
-    width: 70%; /* 검색창 너비 */
-    border: 1px solid #ccc;
+    flex: 1;
+    /* width: 440px; */
+    padding: 0.5em;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    margin-right: 10px;
 }
 
 .chatRoomSearch input[type="button"] {
-    padding: 8px 15px;
-    background-color: #094074;
-    color: #DAE3E5;
+    padding: 0.5em 1em;
+    margin-left: 0.5em;
     border: none;
-    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
     cursor: pointer;
-}
-
-/* 채팅방 추가 버튼 영역 */
-.chatRoomBtnWrap {
-    margin-bottom: 20px;
-}
-
-.chatBtn {
-    padding: 8px 15px;
-    background-color: #094074;
-    color: #DAE3E5;
-    border: none;
     border-radius: 4px;
-    cursor: pointer;
 }
 
-/* 채팅방 목록 */
-#searchResultWrap ul,
-.chatRoomList ul {
+.chatRoomUl {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
-#searchResultWrap ul li,
-.chatRoomList ul li {
-    padding: 10px;
-    background-color: #DAE3E5;
-    margin-bottom: 10px;
-    border-radius: 4px;
-}
-
-#searchResultWrap ul li a,
-.chatRoomList ul li a {
-    color: #2F4858;
-    text-decoration: none;
-}
-
-/* #searchResultWrap ul li a:hover,
-.chatRoomList ul li a:hover {
-    text-decoration: underline;
-} */
-
-/* 추가 버튼들 스타일 */
-.chatRoomList ul li a {
-    margin-right: 10px;
-}
-
-/* 채팅 리스트 항목 전체 스타일 */
-li {
+.chatRoomLi {
+    padding: 1em;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
     display: flex;
+    justify-content: space-between; /* 가로 간격을 일정하게 유지하기 위해 */
     align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-  }
+    width: 470px; /* chatListWrap와 동일한 너비로 설정 */
+}
 
-  li:hover {
-    cursor: pointer;
-    background-color: #DAE3E5;
-  }
-  
-  /* 채팅방 이름 스타일 */
-  .chatTitleName {
+.chatRoomLi:hover {
+    background-color: #f1f1f1;
+}
+
+.chatTitleName {
     font-weight: bold;
-    flex-basis: 20%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    color: #007bff;
     text-decoration: none;
-  }
-  
-  /* 마지막 채팅 내용 스타일 */
-  .lastChatText {
-    flex-basis: 40%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 0.9em;
+    width: 270px; /* 채팅방 이름 너비 */
+    overflow: hidden; /* 너비를 넘어가는 텍스트는 숨기기 */
+    white-space: nowrap; /* 줄 바꿈 방지 */
+    text-overflow: ellipsis; /* 너비를 넘어가는 텍스트는 ...로 표시 */
+}
+
+.participantsCount {
+    color: #007bff; /* 색상 변경 */
+    font-weight: bold; /* 굵은 글꼴 적용 */
+    width: 50px; /* 너비 유지 */
+}
+
+.lastChatText {
     color: #666;
-  }
-  
-  /* 마지막 채팅 전송 시간 스타일 */
-  .lastChatRegDate {
-    flex-basis: 15%;
-    font-size: 0.8em;
+    width: 100px; /* 마지막 메시지 너비 */
+    overflow: hidden; /* 너비를 넘어가는 텍스트는 숨기기 */
+    white-space: nowrap; /* 줄 바꿈 방지 */
+    text-overflow: ellipsis; /* 너비를 넘어가는 텍스트는 ...로 표시 */
+}
+
+.lastChatRegDate {
     color: #999;
-  }
-  
-  /* 수정, 나가기, 좋아요 버튼 공통 스타일 */
-  .chatTitleNameModifyBtn, .chatDeleteBtn, .chatBookmarkBtn {
-    flex-basis: 5%;
-    text-align: center;
-    background-color: #094074;
-    color: #DAE3E5;
-    padding: 5px;
-    margin-left: 2px;
-    border-radius: 5px;
+    font-size: 0.8em;
+    width: 100px; /* 메시지 시간 너비 */
+    overflow: hidden; /* 너비를 넘어가는 텍스트는 숨기기 */
+    white-space: nowrap; /* 줄 바꿈 방지 */
+    text-overflow: ellipsis; /* 너비를 넘어가는 텍스트는 ...로 표시 */
+}
+
+.chatRoomBtnWrap {
+    margin-top: 1em; /* 위쪽 여백 추가 */
+    margin-left: 1em;
+    margin-bottom: 1em; /* 아래쪽 여백 추가 */
+}
+
+.chatRoomBtnWrap .chatBtn {
+    display: inline-block;
+    padding: 0.5em 1em;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    text-decoration: none;
     cursor: pointer;
-  }
+}
+
+.chatRoomBtnWrap .chatBtn:hover {
+    background-color: #0056b3;
+}
+
+.emptyChatList {
+    text-align: center;
+    color: #999;
+    padding: 2em;
+}
+
+.chatTitleNameModifyBtn,
+.chatDeleteBtn,
+.chatBookmarkBtn {
+    margin-left: 0.5em;
+    color: #007bff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.chatTitleNameModifyBtn:hover,
+.chatDeleteBtn:hover,
+.chatBookmarkBtn:hover {
+    text-decoration: underline;
+}
+
+#friendListModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: auto;
+    background-color: white;
+    border: 1px solid #ddd;
+    padding: 20px;
+    z-index: 1000;
+}

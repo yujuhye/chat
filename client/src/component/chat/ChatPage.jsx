@@ -3,7 +3,11 @@ import { setRooms } from '../action/chatRoom';
 import axios from 'axios';
 import ChatRoom from './ChatRoom';
 import Chat from './Chat';
+import SideNav from "../../include/SideNav";
 import { useDispatch } from 'react-redux';
+import '../../css/chat/chatPage.css';
+import '../../css/chat/chatRoom.css';
+import '../../css/chat/chat.css';
 
 function ChatPage() {
     const [selectedRoom, setSelectedRoom] = useState(null);
@@ -50,10 +54,14 @@ function ChatPage() {
     };    
   
     return (
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <>
+       
+        <div id="chatPage">
+            <SideNav />
             <ChatRoom handleRoomSelect={handleRoomSelect} selectedRoom={selectedRoom} chatRooms={chatRooms} />
             {selectedRoom && <Chat selectedRoom={selectedRoom} setSelectedRoom={setSelectedRoom} updateChatRooms={updateChatRooms} />}
         </div>
+        </>
     );
 }
 

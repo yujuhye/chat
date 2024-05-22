@@ -8,7 +8,7 @@ import ChatDetailViewFriendModal from "./ChatDetailViewFriendModal";
 import FileModal from "./FileModal";
 import { fetchUser } from "./fetchFunction";
 import '../../css/common.css';
-import '../../css/chat/chat.css'
+
 import Profile from "./Profile";
 
 const socket = io('http://localhost:3001');
@@ -35,6 +35,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     const [notifications, setNotifications]                             = useState([]);
     const [userInfo, setUserInfo]                                       = useState('');
     const [blockFriend, setBlockFriend] = useState(''); 
+    const [loggedInUserNo, setLoggedInUserNo] = useState(null); // 5/21 추가
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView(); 
@@ -439,6 +440,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                 console.log('현재 방에 참여한 유저 목록 -----> ', response.data);
 
                 const loggedInUserNo = joinUserInfo[0].USER_NO;
+                setLoggedInUserNo(joinUserInfo[0].USER_NO);
                 console.log('현재 로그인한 사람의 USER_NO ----->', loggedInUserNo);       
                 
                 const sortedParticipants = response.data.sort((a, b) => {
@@ -460,7 +462,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
         const roomId = selectedRoom.ROOM_NO;
         if (roomId && joinUserInfo) {
           getJoinUser(joinUserInfo);
-          console.log('*********** joinUserInfo *********',joinUserInfo);
+          console.log('*********** joinUserInfo *********', joinUserInfo);
         }
       }, [roomId, joinUserInfo]);
 
@@ -689,14 +691,14 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
             <h2 className="roomName">{roomName}</h2>
             {/* 메뉴바 추가 */}
             <div className="chatMenu">
-                <input type="text" name="chat_text" value={searchChatKey} onChange={(e)=>searchChatTextChangeHander(e)} ref={searchInputRef} />
+                <input type="text" name="chat_text" value={searchChatKey} onChange={(e)=>searchChatTextChangeHander(e)} ref={searchInputRef} className="chatSearchInput" />
                 <button className="searchChatTextBtn" onClick={searchChatTextBtnClickHander}>SEARCH</button>
                 <button className="hamburgerButton" onClick={toggleMenu}>메뉴</button>
                 <div className={`menuContent ${isMenuOpen ? 'show' : ''}`}>
-                    <button onClick={joinChatUserListClickHandler}>참여자 목록</button>
-                    <button onClick={thisChatInviteFriendClickHandler}>친구 초대</button>
-                    <button onClick={leaveChatRoomBtnClickHandler}>나가기</button>
-                    <button onClick={locationChatListBtnClickHandler}>리스트</button>
+                    <button className="chatJoinUser" onClick={joinChatUserListClickHandler}>참여자 목록</button>
+                    <button className="chatInviteUser" onClick={thisChatInviteFriendClickHandler}>친구 초대</button>
+                    <button className="chatQuitChatRoom" onClick={leaveChatRoomBtnClickHandler}>나가기</button>
+                    <button className="chatList" onClick={locationChatListBtnClickHandler}>리스트</button>
                 </div>
             </div>
             <div id="messageWrap">
@@ -712,17 +714,17 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                         <>
                             {searchResult.map((msg, index) => (
                                 <div key={index} className="msg">
-                                    <p>
+                                    <p className="chatPTag">
                                         <strong className="userNickname">{msg.USER_NICKNAME}</strong>
                                         <br />
-                                        {msg.CHAT_TEXT}
+                                        <span className="msgContent">{msg.CHAT_TEXT}</span>
                                         &nbsp;&nbsp;
-                                        {msg.CHAT_REG_DATE}
+                                        <span className="msgRegDate">{msg.CHAT_REG_DATE}</span>
                                     </p>   
                                 </div>
                             ))}
-                            <div>
-                                <button onClick={searchCancelBtnClickHander}>취소</button>
+                            <div id="chatCloseBtn">
+                                <button className="chatCloseBtn" onClick={searchCancelBtnClickHander}>취소</button>
                             </div>
                         </>
                     ) : (
@@ -730,46 +732,53 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                             {messages && messages.map((msg, index) => (
                                 <div key={index} className="msg">
                                     {msg.content}
-                                    <p>
+                                    <p className="chatPTag">
                                         <strong className="userNickname">{msg.USER_NICKNAME}</strong>
                                         <br />
                                         {/* 유형에 따라 다른 내용을 렌더링 */}
                                         {msg.CHAT_CONDITION === 0 && (
                                             <>
-                                                {msg.CHAT_TEXT}
+                                                <span className="msgContent">{msg.CHAT_TEXT}</span>
                                                 &nbsp;&nbsp;
-                                                {msg.CHAT_REG_DATE}
+                                                <span className="msgRegDate">{msg.CHAT_REG_DATE}</span>
                                             </>
                                         )}
                                         {msg.CHAT_CONDITION === 1 && (
                                             <>
-                                                <img src={`http://localhost:3001/${msg.CHAT_IMAGE_NAME}`} alt="이미지" style={{ maxWidth: '200px' }} />
-                                                &nbsp;&nbsp;
-                                                {msg.CHAT_REG_DATE}
+                                                <span className="msgContent">
+                                                    <img src={`http://localhost:3001/${msg.CHAT_IMAGE_NAME}`} alt="이미지" style={{ maxWidth: '200px' }} className="chatImg"/>
+                                                </span>
                                                 <br />
-                                                <button onClick={() => downloadImage(msg.CHAT_IMAGE_NAME)}>Download</button>
+                                                
+                                                <br />
+                                                <span className="msgRegDate">{msg.CHAT_REG_DATE}</span>
+                                                <button onClick={() => downloadImage(msg.CHAT_IMAGE_NAME)} className="chatImgDownload">Download</button>
                                             </>
                                         )}
                                         {msg.CHAT_CONDITION === 2 && (
                                             <>
-                                                <video width="320" height="240" controls>
-                                                    <source src={`http://localhost:3001/${msg.CHAT_VIDEO_NAME}`} type="video/mp4" />
-                                                </video>
+                                                <span className="msgContent">
+                                                    <video width="320" height="240" controls className="chatVideo">
+                                                        <source src={`http://localhost:3001/${msg.CHAT_VIDEO_NAME}`} type="video/mp4" />
+                                                    </video>
+                                                </span>
                                                 &nbsp;&nbsp;
-                                                {msg.CHAT_REG_DATE}
+                                                <span className="msgRegDate">{msg.CHAT_REG_DATE}</span>
                                                 <br />
-                                                <button onClick={() => downloadVideo(msg.CHAT_VIDEO_NAME)}>Download</button>
+                                                <button onClick={() => downloadVideo(msg.CHAT_VIDEO_NAME)} className="chatVideoDownload">Download</button>
                                             </>
                                         )}
                                         {msg.CHAT_CONDITION === 3 && (
                                             <>
-                                                <a href={`http://localhost:3001/${msg.CHAT_FILE_NAME}`} download>
-                                                    {msg.CHAT_FILE_NAME}
-                                                </a>
+                                                <span className="msgContent">
+                                                    <a href={`http://localhost:3001/${msg.CHAT_FILE_NAME}`} download>
+                                                        {msg.CHAT_FILE_NAME}
+                                                    </a>
+                                                </span>
                                                 &nbsp;&nbsp;
-                                                {msg.CHAT_REG_DATE}
+                                                <span className="msgRegDate">{msg.CHAT_REG_DATE}</span>
                                                 <br />
-                                                <button onClick={() => window.open(`http://localhost:3001/${msg.CHAT_FILE_NAME}`, '_blank')}>Download</button>
+                                                <button onClick={() => window.open(`http://localhost:3001/${msg.CHAT_FILE_NAME}`, '_blank')} className="chatFileDownload">Download</button>
                                             </>
                                         )}
                                     </p>   
@@ -821,14 +830,16 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                 isShowChatJoinUser
                 ?
                     <>
-                        {participants.map(participant => (
-                            <div key={participant.USER_NO}>
-                                <div onClick={()=>nicknameClickHandler(participant.USER_NO)}>
-                                    {participant.USER_NICKNAME}
-                                </div>
-                            </div> 
-                        ))}
-                        <button className="chatJoinUserCloseBtn" onClick={chatJoinUserCloseBtnClickHander}>CLOSE</button>
+                        <div id="chatJoinUserList">
+                            {participants.map(participant => (
+                                <div key={participant.USER_NO} className="chatJoinUserList">
+                                    <div className="chatJoinUserProfile" onClick={()=>nicknameClickHandler(participant.USER_NO)}>
+                                        {participant.USER_NICKNAME}
+                                    </div>
+                                </div> 
+                            ))}
+                            <button className="chatJoinUserCloseBtn" onClick={chatJoinUserCloseBtnClickHander}>CLOSE</button>
+                        </div>
                     </>
                 :
                     null

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import  '../../css/profile.css';
+import '../../css/chat/Profile.css';
 
 import io from 'socket.io-client';
 
@@ -181,9 +182,9 @@ const Profile = ({ onClose, selectedUserNo }) => {
     return (
         <>
             {profile ? (
-                <div>
-                    <p>
-                        <span>
+                <div id="chatProfileWrap">
+                    <p className="chatProfilePTag">
+                        <span className="chatProfileSpanTag">
                             {profile.USER_FRONT_IMG_NAME ? (
                                 <img src={profile.USER_FRONT_IMG_NAME} className="myFrontProfileImg" />
                             ) : (
@@ -196,7 +197,7 @@ const Profile = ({ onClose, selectedUserNo }) => {
                     {profile.USER_NO !== userInfo.USER_NO && (
                         profile.isFriend ? (
                             <input
-                                className="btn"
+                                className="chatStartInChatView"
                                 type="button"
                                 name="friendChatting"
                                 value="채팅"
@@ -204,7 +205,7 @@ const Profile = ({ onClose, selectedUserNo }) => {
                             />
                         ) : (
                             <input
-                                className="btn"
+                                className="friendReqInChatView"
                                 type="button"
                                 name="addFriend"
                                 value="친구 신청"
@@ -214,7 +215,7 @@ const Profile = ({ onClose, selectedUserNo }) => {
                     )}
                 </div>
             ) : (
-                <p>프로필 정보를 불러오는 중...</p>
+                <p className="loadingChatProfile">프로필 정보를 불러오는 중...</p>
             )}
         </>
     );    

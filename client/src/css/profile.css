@@ -53,6 +53,7 @@
   border-left: 2px solid #d3d3d3; 
   border-right: 2px solid #d3d3d3; 
   padding: 10px; 
+  overflow: auto;
 }
 
 .friendListWrap h3 {

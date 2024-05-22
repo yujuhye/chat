@@ -50,47 +50,88 @@ module.exports = function(io) {
         // 여기부터
         socket.on('chatRoomCreated', (data) => {
             const { userInfo, friendNo, friendName, roomName } = data;
-            console.log('유저 정보 >>>>> ',userInfo);
-            console.log('유저 정보 USER_NO >>>>> ',userInfo.USER_NO);
-            console.log('유저 정보 USER_NICKNAME >>>>> ',userInfo.USER_NICKNAME);
-            console.log('유저 정보 friendNo >>>>> ',friendNo);
-            console.log('유저 정보 friendName >>>>> ',friendName);
-            console.log('유저 정보 roomName >>>>> ',roomName);
-
+        
             const userNo = userInfo.USER_NO;
             const userName = userInfo.USER_NICKNAME;
-    
-            // 채팅방 생성 쿼리
-            const createRoomSql = `INSERT INTO CHAT_ROOM (ROOM_DEFAULT_NAME) VALUES (?)`;
-
-            DB.query(createRoomSql, [roomName], (err, result) => {
+        
+            // 친구의 FRIEND_TARGET_ID를 조회
+            const queryFriendTargetId = `SELECT FRIEND_TARGET_ID FROM FRIEND WHERE FRIEND_NO = ?`;
+            DB.query(queryFriendTargetId, [friendNo], (err, friendResults) => {
                 if (err) {
                     socket.emit('error', err.message);
                     return;
                 }
-
-                const roomNo = result.insertId;
-
-                // 채팅방 참여자 추가 쿼리
-                const addParticipantsSql = `
-                    INSERT INTO CHAT_PARTICIPANT (ROOM_NO, USER_NO, USER_NICKNAME, PARTI_CUSTOMZING_NAME, PARTI_REG_DATE)
-                    VALUES (?, ?, ?, ?, NOW()), (?, ?, ?, ?, NOW())
-                `;
-
-                DB.query(
-                    addParticipantsSql,
-                    [roomNo, userNo, userName, roomName, roomNo, friendNo, friendName, roomName],
-                    (err, result) => {
+                if (friendResults.length === 0) {
+                    socket.emit('error', 'No friend found with the given friend number');
+                    return;
+                }
+                const friendTargetId = friendResults[0].FRIEND_TARGET_ID;
+        
+                // FRIEND_TARGET_ID를 사용하여 USER_NO를 조회
+                const queryFriendUserNo = `SELECT USER_NO FROM USER_IFM WHERE USER_ID = ?`;
+                DB.query(queryFriendUserNo, [friendTargetId], (err, userResults) => {
+                    if (err) {
+                        socket.emit('error', err.message);
+                        return;
+                    }
+                    if (userResults.length === 0) {
+                        socket.emit('error', 'No user found with the given friend ID');
+                        return;
+                    }
+                    const friendUserNo = userResults[0].USER_NO;
+        
+                    // 트랜잭션 시작
+                    DB.beginTransaction(err => {
                         if (err) {
                             socket.emit('error', err.message);
                             return;
                         }
-
-                        socket.emit('roomCreated', { roomNo, roomName });
-                    }
-                );
+        
+                        const createRoomSql = `INSERT INTO CHAT_ROOM (ROOM_DEFAULT_NAME) VALUES (?)`;
+                        DB.query(createRoomSql, [roomName], (err, result) => {
+                            if (err) {
+                                return DB.rollback(() => {
+                                    socket.emit('error', err.message);
+                                });
+                            }
+        
+                            const roomNo = result.insertId;
+                            const addParticipantsSql = `
+                                INSERT INTO CHAT_PARTICIPANT (ROOM_NO, USER_NO, USER_NICKNAME, PARTI_CUSTOMZING_NAME, PARTI_REG_DATE)
+                                VALUES (?, ?, ?, ?, NOW())
+                            `;
+        
+                            // 현재 유저 추가
+                            DB.query(addParticipantsSql, [roomNo, userNo, userName, roomName], (err) => {
+                                if (err) {
+                                    return DB.rollback(() => {
+                                        socket.emit('error', err.message);
+                                    });
+                                }
+        
+                                // 친구 추가
+                                DB.query(addParticipantsSql, [roomNo, friendUserNo, friendName, roomName], (err) => {
+                                    if (err) {
+                                        return DB.rollback(() => {
+                                            socket.emit('error', err.message);
+                                        });
+                                    }
+        
+                                    DB.commit(err => {
+                                        if (err) {
+                                            return DB.rollback(() => {
+                                                socket.emit('error', err.message);
+                                            });
+                                        }
+                                        socket.emit('roomCreated', { roomNo, roomName });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
             });
-        });
+        });                   
         // 여기까지 추가
 
         // 채팅방 생성

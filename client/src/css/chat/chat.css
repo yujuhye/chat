@@ -1,0 +1,193 @@
+#chatWrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+
+    position: relative;
+    
+}
+
+#messageWrap {
+    width: 470px;
+}
+
+.roomName {
+    font-size: 1.3em;
+    margin: 1em;
+    color: #333;
+
+    text-align: center;
+}
+
+.chatMenu .chatSearchInput {
+    flex: 1;
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 0.5em;
+}
+
+.chatMenu .searchChatTextBtn,
+.chatMenu .hamburgerButton {
+    padding: 0.5em 1em;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 0.5em;
+}
+
+.chatMenu {
+    position: relative; /* 상대 위치 지정 */
+    display: flex;
+    align-items: center;
+    padding: 1em;
+    border-bottom: 1px solid #ddd;
+    background-color: #fff;
+}
+
+.chatMenu .menuContent {
+    display: none;
+    position: absolute; /* 절대 위치 설정 */
+    top: calc(100% + 10px); /* 채팅 메뉴 바로 아래에 위치 */
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    z-index: 1000;
+}
+
+.chatMenu .menuContent.show {
+    display: block;
+}
+
+.chatMenu .menuContent button {
+    display: block;
+    width: 100%;
+    padding: 0.5em 1em;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    color: #333; /* 버튼 텍스트 색상 */
+    transition: background-color 0.3s; /* 배경색 전환 효과 */
+}
+
+.chatMenu .menuContent button:hover {
+    background-color: #f9f9f9; /* 호버 시 배경색 변경 */
+}
+
+#messageWrap {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1em;
+}
+
+.msg {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 80%; /* 최대 너비를 80%로 설정하여 너무 긴 메시지가 너무 넓게 표시되지 않도록 제한 */
+    background-color: #f1f0f0; /* 기본 메시지 배경색 */
+    align-self: flex-start; /* 모든 메시지를 왼쪽 정렬로 설정 */
+}
+
+.msg .msgRegDate {
+    float: right; /* 보낸 시간을 우측 정렬로 설정 */
+}
+
+.chatPTag {
+    word-wrap: break-word;
+}
+
+.userNickname {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.chatImg,
+.chatVideo {
+    max-width: 100%;
+    border-radius: 4px;
+}
+
+.chatCloseBtn,
+.chatImgDownload,
+.chatVideoDownload,
+.chatFileDownload {
+    padding: 0.5em 1em;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 0.5em;
+}
+
+.sendFileBtn,
+.sendBtn {
+    padding: 0.5em 1em;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 0.5em 0.5em 0.5em 0;
+}
+
+.inputMessageInput {
+    flex: 1;
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0.5em 0;
+}
+
+/* 참여자 목록 */
+#chatJoinUserList {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1em;
+    max-height: 300px; /* 브라우저 높이에서 100px를 뺀 값으로 설정 */
+    width: 100px;
+    /* overflow-y: auto;  */
+    position: absolute;
+    top: 0;
+    left: calc(100% + 10px);
+    z-index: 1000;
+}s
+
+/* 참여자 목록을 클릭할 때 배경색이 변경되는 효과 */
+#chatJoinUserList .chatJoinUserList div {
+    padding: 0.5em 1em;
+    cursor: pointer;
+    transition: background-color 0.3s; /* 호버 시 배경색 전환 효과 */
+}
+
+/* 참여자 목록의 호버 시 배경색 변경 */
+#chatJoinUserList .chatJoinUserList div:hover {
+    background-color: #f9f9f9;
+}
+
+/* 참여자 목록 닫기 버튼 */
+#chatJoinUserList .chatJoinUserCloseBtn {
+    padding: 0.5em 1em;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 0.5em;
+    position: absolute;
+    bottom: -35px; /* 목록 아래로 이동 */
+    right: 30px;
+}
+
+#chatJoinUserList .chatJoinUserProfile{
+    margin: 10px;
+}

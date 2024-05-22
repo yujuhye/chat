@@ -1,0 +1,177 @@
+.friendWrap {
+    display: flex;
+    padding: 5px;
+    margin: 5px;
+    position: relative;
+
+}
+
+.friend {
+    width: 300px;
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.friendModal {
+    display: none; 
+    position: absolute;
+    top: 0;
+    right: 100%; 
+    width: 50%; 
+    max-width: 400px;
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 1000; 
+    overflow-y: auto; 
+    padding: 20px; 
+    box-sizing: border-box; 
+}
+
+.btnCenter {
+    text-align: center;
+}
+
+.friendModalContent {
+    background-color: #fff;
+    width: 80%;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.friendListModalDiv {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    /* display: flex; */
+    align-items: center;
+}
+
+.friendListModalCheckBox {
+    margin-right: 10px;
+}
+
+.friendListModalCheckBox:checked + span {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.friendListModalUserName {
+    flex: 1;
+}
+
+.friendListModalSelectBtn, .friendListModalCloseBtn {
+    padding: 8px 16px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.friendListModalSelectBtn:hover, .friendListModalCloseBtn:hover {
+    background-color: #0056b3;
+}
+
+.friendListModalFriList {
+    margin-top: 5px;
+    text-align: center; /* 가운데 정렬 */
+    font-weight: bold; /* 굵게 */
+    font-size: 1.2em; /* 글자 크기 키움 */
+}
+
+/* 체크박스 스타일링 */
+.friendListModalCheckBox {
+    margin-right: 10px; /* 체크박스 오른쪽 여백 추가 */
+    appearance: none; /* 기본 스타일 제거 */
+    width: 20px; /* 체크박스 크기 조절 */
+    height: 20px;
+    border: 2px solid #007bff; /* 테두리 설정 */
+    border-radius: 4px; /* 테두리의 모서리를 둥글게 만듦 */
+    outline: none; /* 포커스 테두리 제거 */
+    cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+}
+
+/* 체크된 상태의 체크박스 스타일 */
+.friendListModalCheckBox:checked {
+    background-color: #007bff; /* 배경색 변경 */
+}
+
+/* 체크된 상태의 체크마크 스타일 */
+.friendListModalCheckBox:checked::after {
+    content: '\2713'; /* 체크마크(유니코드) 추가 */
+    color: white; /* 체크마크 색상 */
+    font-size: 16px; /* 체크마크 크기 */
+    position: absolute; /* 위치 설정 */
+    top: 50%; /* 가운데 정렬 */
+    left: 50%; /* 가운데 정렬 */
+    transform: translate(-50%, -50%); /* 가운데 정렬 */
+}
+
+/* 버튼 간격 조절 */
+.friendListModalSelectBtn {
+    margin-left: 10px;
+    margin-right: 10px; /* 오른쪽 마진 추가 */
+}
+
+.friendListModalCloseBtn {
+    margin-left: 10px; /* 왼쪽 마진 추가 */
+}
+
+
+/******************************/
+
+
+/* 채팅방 이름 입력 */
+.newChatTitle {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px; /* 내부 여백 설정 */
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 300px; /* 모달의 가로 크기 */
+    height: 80px; /* 모달의 세로 크기 */
+
+    text-align: center; /* 버튼 가운데 정렬 */
+}
+
+
+.friendListModalChatNameInput {
+    width: 90%;
+    padding: 10px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease; /* 테두리 색상 변화에 애니메이션 적용 */
+}
+
+.friendListModalChatNameInput:focus {
+    border-color: #007bff; /* 포커스 시 테두리 색상 변경 */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* 포커스 시 그림자 효과 추가 */
+}
+
+.friendListModalNewChatStartBtn,
+.friendListModalNewChatCloseBtn {
+    padding: 10px 20px;
+    margin-top: 10px;
+    margin-right: 10px; /* 버튼 간격 조절 */
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease; /* 배경색 변화에 애니메이션 적용 */
+}
+
+.friendListModalNewChatStartBtn:hover,
+.friendListModalNewChatCloseBtn:hover {
+    background-color: #0056b3; /* 호버 시 배경색 변경 */
+}
+

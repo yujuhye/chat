@@ -1,0 +1,24 @@
+/* 친구 초대 모달 */
+.friendWrap {
+    position: absolute;
+    top: 50px; /* 채팅방 위에 위치시키기 위한 조정 */
+    right: 80px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* 다른 요소 위에 표시되도록 설정 */
+}
+
+/* 모달 제목 */
+.chatViewFriendList {
+    font-size: 18px; /* 제목의 글꼴 크기 설정 */
+    font-weight: bold; /* 제목의 글꼴 굵기 설정 */
+    margin-bottom: 10px; /* 제목과 내용 사이의 간격 설정 */
+    
+    text-align: center;
+}
+
+
+

@@ -7,7 +7,8 @@ import { fileSend, fileSendSuccess, fileSendFail } from '../action/file';
 import { setRooms, setLeaveRoom, setFavoriteRoom } from '../action/chatRoom';
 import io from 'socket.io-client';
 import axios from 'axios';
-import '../../css/common.css'
+import '../../css/common.css';
+import '../../css/chat/file.css';
 
 const socket = io('http://localhost:3001');
 
@@ -290,23 +291,27 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
             <input type="file" accept="video/*" name="chat_video_name" style={{ display: "none" }} multiple ref={selectVideoFile} onChange={fileSelectChangeEventHandler} />
             <input type="file" accept="application/pdf,application/zip,text/plain" name="chat_file_name" style={{ display: "none" }} multiple ref={selectFile} onChange={fileSelectChangeEventHandler} />
             <br />
-            <button onClick={() => selectImgFile.current.click()}>IMG</button>
-            <button onClick={() => selectVideoFile.current.click()}>VIDEO</button>
-            <button onClick={() => selectFile.current.click()}>FILE</button>
+            <button className="fileModalImgBtn" onClick={() => selectImgFile.current.click()}>IMG</button>
+            <button className="fileModalVideoBtn" onClick={() => selectVideoFile.current.click()}>VIDEO</button>
+            <button className="fileModalFileBtn" onClick={() => selectFile.current.click()}>FILE</button>
 
             {/* 선택된 파일 정보 */}
             {selectedFiles.length > 0 && (
                 <div>
-                    <p>FILE : </p>
-                    <ul>
+                    <p className="fileModalFile">FILE : </p>
+                    <ul className="fileModalUl">
                         {selectedFiles.map((file, idx) => {
                             return <li name="submitFiles" key={idx}>{file.name}</li>
                         })}
                     </ul>
                 </div>
             )}
-            <button onClick={fileSendBtnClickHandler}>SEND</button>
-            <input type="button" value="CLOSE" onClick={fileModalCloseBtnClickHandler}/>
+
+            <br />
+            <div className="fileBtns">
+                <button className="fileModalSendBtn" onClick={fileSendBtnClickHandler}>SEND</button>
+                <input className="fileModalCloseBtn" type="button" value="CLOSE" onClick={fileModalCloseBtnClickHandler}/>
+            </div>
         </div>
     );
 }

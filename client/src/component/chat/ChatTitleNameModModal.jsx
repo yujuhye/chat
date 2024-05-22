@@ -15,9 +15,9 @@ const ChatTitleNameModModal = ({ setIsShowChatTitleNameModModal, selectedRoomNo,
                 <form name="chatNameModForm">
                     <input type="hidden" name="room_no" value={selectedRoomNo} />
                     <input type="hidden" name="user_no" value={userNo} />
-                    <input type="text" name="parti_customzing_name" value={chatTitleName} onChange={(e) => modifyChatTitleName(e)} />
-                    <input type="button" onClick={() => modifyChatTitleNameClickHandler(selectedRoomNo, userNo, chatTitleName)} value="MODIFY"/>
-                    <input type="button" onClick={() => modifyChatTitleNameInputCloseBtnClickHandler()} value="CLOSE"/>
+                    <input className="chatTitleName" type="text" name="parti_customzing_name" value={chatTitleName} onChange={(e) => modifyChatTitleName(e)} />
+                    <input className="chatTitleModBtn" type="button" onClick={() => modifyChatTitleNameClickHandler(selectedRoomNo, userNo, chatTitleName)} value="MODIFY"/>
+                    <input className="chatTitleModalCloseBtn" type="button" onClick={() => modifyChatTitleNameInputCloseBtnClickHandler()} value="CLOSE"/>
                 </form>
             </div>
         </>

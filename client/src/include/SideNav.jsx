@@ -7,8 +7,8 @@ const SideNav = () => {
     return(
         <>
          <div className='sideNav'>
-                <Link to="/">채팅</Link> &nbsp;
                 <Link to="/friend/friendList">친구</Link> &nbsp;
+                <Link to="/chatPage">Chat</Link> &nbsp; 
         </div>
         </>
     );

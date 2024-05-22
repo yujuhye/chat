@@ -26,7 +26,7 @@ const Nav = () => {
                     <Link to="/member/setting">설정</Link> &nbsp;
                     {/* <Link to="/chatRoom/list">chat</Link> &nbsp; */}
                     {/* 추가 부분 */}
-                    <Link to="/chatPage">Chat Page</Link> &nbsp; 
+                    <Link to="/chatPage">Chat</Link> &nbsp; 
                 </>
             }
 

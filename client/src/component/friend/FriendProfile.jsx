@@ -71,6 +71,10 @@ function FriendProfile() {
     const createChatRoom = (userInfo, friendNo, friendName) => {
         const roomName = `${userInfo.USER_NICKNAME}, ${friendName}`;
 
+        console.log('userInfo >>>>> ', userInfo);     // 유저 정보
+        console.log('friendNo >>>>> ', friendNo);     // 친구 번호
+        console.log('friendName >>>>> ', friendName); // 친구 닉네임
+
         socket.emit('chatRoomCreated', {
             userInfo,
             friendNo,
