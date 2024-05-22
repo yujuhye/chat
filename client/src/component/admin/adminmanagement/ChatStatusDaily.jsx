@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 
 import '../../../css/admin/adminmanagement/chatstatusdaily.css';
+import { SERVER_URL } from '../../../util/url';
 
 const ChatStatusDaily = ({ selectedWeek, onBackToWeekly }) => {
     const [data, setData] = useState([]);
@@ -33,7 +34,10 @@ const ChatStatusDaily = ({ selectedWeek, onBackToWeekly }) => {
     const fetchData = async (week) => {
         if (week) {
             try {
-                const response = await axios.get(`http://localhost:3001/admin/chatStatusDaily/${week}`);
+                const response = await axios.get(
+                    // `http://localhost:3001/admin/chatStatusDaily/${week}`
+                    `${SERVER_URL.TARGET_URL()}/admin/chatStatusDaily/${week}`,
+                    );
                 const formattedData = formatDailyData(response.data);
                 setData(formattedData);
             } catch (error) {

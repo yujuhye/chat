@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAIdAction, setAPwAction, setAEmailAction } from '../../action/adminJoinActions';
+import { SERVER_URL } from '../../../util/url';
 
 axios.defaults.withCredentials = true;
 
@@ -77,7 +78,8 @@ const AdminJoin = () => {
         };
 
         axios({
-            url: `http://localhost:3001/admin/adminSignUpConfirm`,
+            // url: `http://localhost:3001/admin/adminSignUpConfirm`,
+            url: `${SERVER_URL.TARGET_URL()}/admin/adminSignUpConfirm`,
             method: 'post',
             data: requestData,
             withCredentials: true,

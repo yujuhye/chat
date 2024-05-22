@@ -7,6 +7,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import '../../../css/admin/adminmanagement/chatstatushourly.css';
+import { SERVER_URL } from '../../../util/url';
 
 const ChatStatusHourly = () => {
     const [data, setData] = useState([]);
@@ -19,7 +20,10 @@ const ChatStatusHourly = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/admin/ChatStatusThreeHourly`);
+            const response = await axios.get(
+                // `http://localhost:3001/admin/ChatStatusThreeHourly`
+                `${SERVER_URL.TARGET_URL()}/admin/ChatStatusThreeHourly`,
+                );
 
             const hourlyCounts = new Array(8).fill(0);
             response.data.forEach(item => {

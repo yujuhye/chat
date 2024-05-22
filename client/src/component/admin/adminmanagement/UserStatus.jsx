@@ -6,6 +6,7 @@ import {
 import Nav from '../../../include/Nav';
 import useAxiosGetAdmin from '../../../util/useAxiosGetAdmin';
 import '../../../css/admin/adminmanagement/userstatus.css';
+import { SERVER_URL } from '../../../util/url';
 
 const UserStatus = () => {
     const [data, setData] = useState([]);
@@ -21,7 +22,11 @@ const UserStatus = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(`http://localhost:3001/admin/userStatus`);
+            const response = await axios.get(
+                // `http://localhost:3001/admin/userStatus`
+                `${SERVER_URL.TARGET_URL()}/admin/userStatus`,
+
+                );
             const formattedData = response.data.reverse().map(item => ({
                 ...item,
                 regDate: `${item.regYear}.${String(item.regMonth).padStart(2, '0')}`
