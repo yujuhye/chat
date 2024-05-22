@@ -118,7 +118,7 @@ function SocketAlarm() {
         <>
         <div className="notificationContainer">
             <IoMdNotificationsOutline 
-                size="30px"
+                size="32px"
                 onClick={notificationClickHandler}
                 className="notificationIcon"
             />

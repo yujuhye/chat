@@ -87,11 +87,11 @@ function MyProfile() {
                                 myProfile[profileId].frontImg === ''
                                 ?
                                     <>
-                                        <img src="/resource/img/profile_default.png" className="myFrontProfileImg"/>
+                                        <img src="/resource/img/profile_default.png" className="myFrontProfileImgs"/>
                                     </>
                                 :
                                     <>
-                                        <img src={`http://localhost:3001/${myProfile[profileId].id}/${myProfile[profileId].frontImg}`} className="myFrontProfileImg"/>
+                                        <img src={`http://localhost:3001/${myProfile[profileId].id}/${myProfile[profileId].frontImg}`} className="myFrontProfileImgs"/>
                                     </>
                             }
                             <span className="myProfileName">{myProfile[profileId].name}</span>

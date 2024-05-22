@@ -669,7 +669,7 @@ function RequestFriend() {
 
     return(
         <div className="form-container">
-        <h2>친구요청</h2>
+        <h2 className="reqFriendText">친구요청</h2>
         <form className="searchFriendWrap" name="searchFriend">
             <input type="text" name="uId" value={uId} onChange={(e) => {searchFriendIdChangeHandler(e)}}  placeholder="아이디로 친구 검색"/>
             <input type="button" value="SEARCH" onClick={searchFriendClickHandler}/>

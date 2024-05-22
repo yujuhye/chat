@@ -1,7 +1,7 @@
 .friendListContainer {
   display: flex;
   height: 100vh; 
-  width: 600px;
+  width: 640px;
   justify-content: flex-start; 
   padding-right: 400px; 
   
@@ -14,14 +14,15 @@
   margin-right: 300px;
   cursor: pointer; 
   transition: background-color 0.3s ease; 
-  width:100%;
+  width: 480px;
   overflow: hidden;
-
+ 
 }
 
 .friendList {
   cursor: pointer; 
   transition: background-color 0.3s ease; 
+  
 }
 
 .friendList:hover {
@@ -36,7 +37,7 @@
 
 }
 
-.frontProfileImg {
+.frontProfileImgs {
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -59,12 +60,14 @@
   flex-grow: 1;
   text-align: center;
   width: 500px;
+  /* min-height: 1000px; */
   display: flex;
   flex-direction: column;
   align-items: center; 
   border-left: 2px solid #d3d3d3; 
   border-right: 2px solid #d3d3d3; 
-  padding: 10px; 
+  padding: 10px;
+ 
 }
 
 .friendListWrap h3 {
@@ -75,7 +78,14 @@
 }
 
 .friendProfileDetailsWrap{
-  margin: 20px;
+  margin: 18px;
+  /* display: flex; */
+ 
+
+}
+
+.friendLisText {
+  margin-top: 5px;
 }
 
 .searchBox {
@@ -87,7 +97,7 @@
 .searchIcon {
   position: absolute;
   top: 18px;
-  left: 90px;
+  left: 100px;
   z-index: 1;
 }
 
@@ -98,7 +108,7 @@
   height: 30px;
   border-radius: 20px;
   z-index: 0;
-  padding-left: 40px;
+  padding-left: 50px;
 }
 
 .searchMyFriend::placeholder {
@@ -137,9 +147,9 @@
 
   }
   
-  .myFrontProfileImg {
-  width: 80px;
-  height: 80px;
+  .myFrontProfileImgs {
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
   margin-right: 25px;
   margin-left: 25px;
@@ -170,7 +180,7 @@
   
   .myProfileListWrap {
   background-color: #f0f0f0;
-  width: 94%;
+  width: 480px;
   }
   
   .myProfileList {
@@ -187,7 +197,7 @@
   width: 400px;
   height: 700px;
   /* display: flex; */
-  margin: 15px;
+  margin: 40px;
   }
 
   .myProfileList.selected {
@@ -205,3 +215,10 @@
     top: 2px;
     z-index: 110px;
   }
+
+ .friendListUl {
+  overflow-y: auto; /* 추가 */
+  overflow-x: hidden; /* 추가 */
+  box-sizing: border-box; /* 추가 */
+
+ }

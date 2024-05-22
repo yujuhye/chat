@@ -103,11 +103,11 @@ function FriendList() {
                         friends[friendId].frontImg === ''
                         ?
                             <>
-                                <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
+                                <img src="/resource/img/profile_default.png" className="frontProfileImgs"/>
                             </>
                             :
                             <>
-                                <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImg"/>
+                                <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImgs"/>
                             </>
                             
                 }
@@ -206,11 +206,11 @@ function FriendList() {
             <>
                 <MyProfile />
                 <h3>즐겨찾기</h3>
-                <span>{favoirtefriendLists()}</span>
+                {favoirtefriendLists()}
             </>
             }
            <h3>친구</h3>
-            <ul>
+            <ul className="friendListUl">
                 {Object.keys(filteredFriendsObject).map((friendId, index) => (
                     // <div className="friendList">
                     <div className={`friendList ${selectedFriend === friends[friendId].id ? "selected" : ""}`} >
@@ -220,11 +220,11 @@ function FriendList() {
                             friends[friendId].frontImg === ''
                             ?
                                 <>
-                                    <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
+                                    <img src="/resource/img/profile_default.png" className="frontProfileImgs"/>
                                 </>
                             :
                                 <>
-                                    <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImg"/>
+                                    <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImgs"/>
                                 </>
                             
                         }
