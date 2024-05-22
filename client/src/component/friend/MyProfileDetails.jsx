@@ -142,6 +142,7 @@ function MyProfileDetails() {
         let backFiles = profileBackImg[0].files;
 
         let formData = new FormData();
+        formData.append("userId", selectedMyId);
         formData.append("profileName", profileName);
         // formData.append("uFrontImgName", frontFiles[0]);
         // formData.append("profileBackImg", backFiles[0]);

@@ -5,7 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { originFriendInfoAction, requestFriendAction } from "../action/requestFriendAction";
 import socketIOClientByFriend from "socket.io-client";
 
-import '../../css/profile.css';
+// import '../../css/profile.css';
+import '../../css/requestFriend.css';
 import '../../css/common.css';
 import useAxiosGetMember from "../../util/useAxiosGetMember";
 
@@ -656,29 +657,30 @@ function RequestFriend() {
     // }
 
     return(
-        <>
-        <form name="searchFriend">
+        <div className="form-container">
+        <h2>친구요청</h2>
+        <form className="searchFriendWrap" name="searchFriend">
             <input type="text" name="uId" value={uId} onChange={(e) => {searchFriendIdChangeHandler(e)}}  placeholder="아이디로 친구 검색"/>
             <input type="button" value="SEARCH" onClick={searchFriendClickHandler}/>
         </form>
         {searchMessage && <p>{searchMessage}</p>}
         {Object.keys(searchFriendInfo).length > 0 && (
-            <ul>
+            <ul className="reqFriendWrap">
                 {Object.keys(searchFriendInfo).map((searchFriendInfoId, index) => (
-                <li key={index} className="profile" onClick={()=>searchIdClickHandler(searchFriendInfo[searchFriendInfoId].searchId, searchFriendInfo[searchFriendInfoId].searchNo )}>
+                <li key={index} className="reqProfile" onClick={()=>searchIdClickHandler(searchFriendInfo[searchFriendInfoId].searchId, searchFriendInfo[searchFriendInfoId].searchNo )}>
                     {
                         searchFriendInfo[searchFriendInfoId].searchFrontImg === ''
                             ?
                             <>
-                                <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
+                                <img src="/resource/img/profile_default.png" className="reqProfileImg"/>
                             </>
                             :
                             <>
-                                <img src={`http://localhost:3001/${searchFriendInfo[searchFriendInfoId].searchId}/${searchFriendInfo[searchFriendInfoId].searchFrontImg}`} className="frontProfileImg"/>
+                                <img src={`http://localhost:3001/${searchFriendInfo[searchFriendInfoId].searchId}/${searchFriendInfo[searchFriendInfoId].searchFrontImg}`} className="reqProfileImg"/>
                             </>
                             
                     }
-                    <span className="profileName">
+                    <span className="reqProfileName">
                         {searchFriendInfo[searchFriendInfoId].searchName}({searchFriendInfo[searchFriendInfoId].searchId})
                     </span>
                     <span>{searchFriendInfo[searchFriendInfoId].searchCurMsg}</span>
@@ -751,7 +753,7 @@ function RequestFriend() {
             </ul>
         )}
         
-        </>
+        </div>
     );
 }
 

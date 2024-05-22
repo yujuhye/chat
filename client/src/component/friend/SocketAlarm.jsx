@@ -81,7 +81,7 @@ function SocketAlarm() {
                 setSavedNotifications(response.data);
                 setNewNotification(true);
             } else {
-                setSavedNotifications('');
+                setSavedNotifications([]);
                 setNewNotification(false);
             }
            
@@ -133,7 +133,7 @@ function SocketAlarm() {
                             ))}
                         </>
                     ) : (
-                        <div>새로운 알림이 없습니다.</div>
+                        <div className="notification">새로운 알림이 없습니다.</div>
                     )}
                 </div>
             )}

@@ -95,7 +95,7 @@ function FriendList() {
         console.log('render favoirtefriendLists()');
 
         const favoriteLists = Object.keys(friends).filter((friendId) => friends[friendId].favorite === 1).map((friendId, index) => (
-            <div className="friendList">
+            <div className={`friendList ${selectedFriend === friends[friendId].id ? "selected" : ""}`}>
             <li key={index} className="profile" onClick={() =>friendProfileClickHandler(friends[friendId].id)}>
                  {
                         friends[friendId].frontImg === ''
@@ -110,7 +110,7 @@ function FriendList() {
                             
                 }
                 <span className="profileName">{friends[friendId].name}</span>
-                {friends[friendId].curMsg}
+                <span className="friendCurMsg">{friends[friendId].curMsg}</span>
             </li>
             </div>
         ));
@@ -190,9 +190,11 @@ function FriendList() {
         <div className="friendListContainer">
         <SideNav />
         <div className="friendListWrap">
-        <Nav />
-           <h2>친구 목록</h2>
-           <SocketAlarm />
+        {/* <Nav /> */}
+        <div className="friendListWithAlarm">
+            <h2 className="friendLisText">친구 목록</h2>
+            <span className="reqAlarm"><SocketAlarm /></span>
+        </div>
            <div className="searchBox">
                 <IoSearchSharp className="searchIcon"/>
                 <input className="searchMyFriend" type="text" name="searchMyFriendId" value={searchId} onChange={(e) => searchMyFriendChangeHandler(e)}  placeholder="친구이름 검색"/>
@@ -225,7 +227,7 @@ function FriendList() {
                             
                         }
                         <span className="profileName">{friends[friendId].name}</span>
-                        {friends[friendId].curMsg}
+                        <span className="friendCurMsg">{friends[friendId].curMsg}</span>
                     </li>
                     </div>
                     // </div>
