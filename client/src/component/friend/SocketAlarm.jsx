@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import cookie from 'js-cookie';
 import { Link, useNavigate } from "react-router-dom";
+import { SERVER_URL } from "../../util/url";
 
 const server = "http://localhost:3001";
 
@@ -73,7 +74,11 @@ function SocketAlarm() {
         console.log('getSavednotification');
 
         try {
-            const response = await axios.get('http://localhost:3001/friend/getSavednotification', {
+            const response = await axios.get(
+                // 'http://localhost:3001/friend/getSavednotification',
+                 `${SERVER_URL.TARGET_URL()}/friend/getSavednotification`,
+
+                 {
 
             });
             console.log('getSavednotification success', response.data);
@@ -96,7 +101,10 @@ function SocketAlarm() {
         console.log('axiosUpdateNotificationReading()');
 
         try {
-            const response = await axios.put('http://localhost:3001/friend/updateNotificationRead', {
+            const response = await axios.put(
+                // 'http://localhost:3001/friend/updateNotificationRead',
+                `${SERVER_URL.TARGET_URL()}/friend/updateNotificationRead`,
+                 {
                 fromId: fromId,
             });
             console.log('axiosUpdateNotificationReading success', response.data);
@@ -110,7 +118,7 @@ function SocketAlarm() {
         <>
         <div className="notificationContainer">
             <IoMdNotificationsOutline 
-                size="30px"
+                size="32px"
                 onClick={notificationClickHandler}
                 className="notificationIcon"
             />

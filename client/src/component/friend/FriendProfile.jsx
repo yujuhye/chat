@@ -8,6 +8,7 @@ import Favorite from "./Favorite";
 import { IoMdClose, IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 import io from 'socket.io-client';
+import { SERVER_URL } from "../../util/url";
 const socket = io('http://localhost:3001');
 
 function FriendProfile() {
@@ -36,7 +37,8 @@ function FriendProfile() {
 
     const fetchUser = () => {
         axios({
-            url: `http://localhost:3001/chatRoom/getUserInfo`,
+            url: `${SERVER_URL.TARGET_URL()}/friend/getUserInfo`,
+            // url: `http://localhost:3001/chatRoom/getUserInfo`,
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -173,7 +175,8 @@ function FriendProfile() {
         console.log('axiosBlockFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/updateblockFriend',
+            // url: 'http://localhost:3001/friend/updateblockFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/updateblockFriend`,
             method: 'put',
             params: {
                 'friendId': selectedFriendId,
@@ -206,7 +209,8 @@ function FriendProfile() {
         console.log('axiosDeleteFriend');
 
         axios({
-            url: 'http://localhost:3001/friend/deleteFriend',
+            // url: 'http://localhost:3001/friend/deleteFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/deleteFriend`,
             method: 'delete',
             params: {
                 'friendId': selectedFriendId,
@@ -240,7 +244,8 @@ function FriendProfile() {
         console.log('axiosDeleteTargetFriend');
 
         axios({
-            url: 'http://localhost:3001/friend/deleteTargetFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/deleteTargetFriend`,
+            // url: 'http://localhost:3001/friend/deleteTargetFriend',
             method: 'delete',
             params: {
                 'friendId': selectedFriendId,
@@ -270,8 +275,8 @@ function FriendProfile() {
     async function axiosGetFriendProfileImgs() {
         console.log('axiosGetFriendProfileImgs()');
 
-        try {
-            const response = await axios.get('http://localhost:3001/friend/getFriendProfileImgs', {
+        try {            
+            const response = await axios.get(`${SERVER_URL.TARGET_URL()}/friend/getFriendProfileImgs`, {
                 params :{
                     selectId: selectedFriendId,
                 }
@@ -296,7 +301,7 @@ function FriendProfile() {
         console.log('axiosGetFriendBackImgs()');
 
         try {
-            const response = await axios.get('http://localhost:3001/friend/getFriendBackImgs', {
+            const response = await axios.get(`${SERVER_URL.TARGET_URL()}/friend/getFriendBackImgs`, {
                 params :{
                     selectId: selectedFriendId,
                 }

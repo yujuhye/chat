@@ -15,6 +15,7 @@ import cookie from 'js-cookie';
 import { IoSearchSharp } from "react-icons/io5";
 import { escapeRegExp } from "lodash";
 import SocketAlarm from "./SocketAlarm";
+import { SERVER_URL } from "../../util/url";
 
 function FriendList() {
 
@@ -58,7 +59,8 @@ function FriendList() {
         console.log('axiosGetFriendList');
 
         axios({
-            url: 'http://localhost:3001/friend/friendList',
+            url: `${SERVER_URL.TARGET_URL()}/friend/friendList`,
+            // url: 'http://localhost:3001/friend/friendList',
             method: 'get',
         })
         .then(response => {
@@ -101,11 +103,11 @@ function FriendList() {
                         friends[friendId].frontImg === ''
                         ?
                             <>
-                                <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
+                                <img src="/resource/img/profile_default.png" className="frontProfileImgs"/>
                             </>
                             :
                             <>
-                                <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImg"/>
+                                <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImgs"/>
                             </>
                             
                 }
@@ -204,11 +206,11 @@ function FriendList() {
             <>
                 <MyProfile />
                 <h3>즐겨찾기</h3>
-                <span>{favoirtefriendLists()}</span>
+                {favoirtefriendLists()}
             </>
             }
            <h3>친구</h3>
-            <ul>
+            <ul className="friendListUl">
                 {Object.keys(filteredFriendsObject).map((friendId, index) => (
                     // <div className="friendList">
                     <div className={`friendList ${selectedFriend === friends[friendId].id ? "selected" : ""}`} >
@@ -218,11 +220,11 @@ function FriendList() {
                             friends[friendId].frontImg === ''
                             ?
                                 <>
-                                    <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
+                                    <img src="/resource/img/profile_default.png" className="frontProfileImgs"/>
                                 </>
                             :
                                 <>
-                                    <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImg"/>
+                                    <img src={`http://localhost:3001/${friends[friendId].id}/${friends[friendId].frontImg}`} className="frontProfileImgs"/>
                                 </>
                             
                         }
