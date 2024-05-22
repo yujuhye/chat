@@ -27,6 +27,7 @@ import ChatStatusMonthly from './admin/adminmanagement/ChatStatusMonthly';
 import ChatStatusPeriod from './admin/adminmanagement/ChatStatusPeriod';
 import ChatPage from './chat/ChatPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import OpenChatPage from './open_chat/page/OpenChatPage';
 
 const CLIENT_ID = '113858365495-jl2hl92heunsnv028li58n6aum139hcr.apps.googleusercontent.com';
 
@@ -64,6 +65,7 @@ const MainHome = () => {
                     <Route path="/admin/chatstatusperiod" element={<ChatStatusPeriod />} />
                     <Route path='/friend/friendList' element={<FriendList />} />
                     <Route path='/friend/requestFriend' element={<RequestFriend />} />
+                    <Route path='/openChatHome' element={<OpenChatPage />} />
                 </Routes>
 
             </BrowserRouter>

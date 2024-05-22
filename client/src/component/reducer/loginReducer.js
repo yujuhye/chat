@@ -31,6 +31,11 @@ const loginReducer = (state = initialState, action) => {
                 ...state,
                 userId: action.payload
             };
+        case 'SET_USER_NO':
+            return {
+                ...state,
+                userNo: action.payload
+            }
 
 
         default:

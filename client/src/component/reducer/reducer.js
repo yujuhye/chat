@@ -11,6 +11,7 @@ import newsReducer from './newsReducer';
 import memberModifyReducer from './memberModifyReducer';
 import findPasswordReducer from './findPasswordReducer';
 import fileReducer from './fileReducer';
+import openChatReducer from './openChatReducer';
 
 export const reducer = combineReducers({
     join: joinReducer,
@@ -24,7 +25,8 @@ export const reducer = combineReducers({
     adminjoin: adminJoinReducer,
     adminlogin: adminLoginReducer,
     file: fileReducer,
-    news: newsReducer
+    news: newsReducer,
+    openChat: openChatReducer
 
 
 });
