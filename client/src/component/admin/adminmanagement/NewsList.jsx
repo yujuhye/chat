@@ -6,6 +6,7 @@ import axios from 'axios';
 import { setNewsListAction, setSelectedNewsContentAction } from '../../../component/action/newsActions';
 import useAxiosGetAdmin from '../../../util/useAxiosGetAdmin';
 import '../../../css/admin/adminmanagement/newslist.css';
+import { SERVER_URL } from '../../../util/url';
 
 const NewsList = () => {
     const newsList = useSelector(state => state.news.newsList);
@@ -25,7 +26,8 @@ const NewsList = () => {
         console.log('[NewsList] AxiosGetNews()');
         try {
             const response = await axios.get(
-                'http://localhost:3001/admin/getNews',
+                // 'http://localhost:3001/admin/getNews',
+               `${SERVER_URL.TARGET_URL()}/admin/getNews`,
                 { withCredentials: true }
             );
 
@@ -68,7 +70,9 @@ const NewsList = () => {
         setIsFetchingNewsContent(true);
         try {
             const response = await axios.get(
-                'http://localhost:3001/admin/getNewsContent',
+                // 'http://localhost:3001/admin/getNewsContent',
+                `${SERVER_URL.TARGET_URL()}/admin/getNewsContent`,
+
                 {
                     params: { index },
                     withCredentials: true

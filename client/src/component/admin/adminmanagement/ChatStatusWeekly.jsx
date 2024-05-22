@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
 import '../../../css/admin/adminmanagement/chatstatusweekly.css';
+import { SERVER_URL } from '../../../util/url';
 
 const ChatStatusWeekly = ({ selectedMonth, onSelectWeek, onBackToMonthly }) => {
     const [data, setData] = useState([]);
@@ -17,7 +18,11 @@ const ChatStatusWeekly = ({ selectedMonth, onSelectWeek, onBackToMonthly }) => {
     const fetchData = async () => {
         try {
             console.log('Fetching weekly data for month:', selectedMonth);
-            const response = await axios.get(`http://localhost:3001/admin/chatStatusWeekly/${selectedMonth}`);
+            const response = await axios.get(
+                // `http://localhost:3001/admin/chatStatusWeekly/${selectedMonth}`
+                `${SERVER_URL.TARGET_URL()}/admin/chatStatusWeekly/${selectedMonth}`,
+
+                );
             console.log('Weekly data response:', response.data);
 
             const formattedData = formatWeeklyData(response.data);

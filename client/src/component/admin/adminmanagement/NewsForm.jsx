@@ -7,6 +7,7 @@ import useAxiosGetAdmin from '../../../util/useAxiosGetAdmin';
 import cookie from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import '../../../css/admin/adminmanagement/newsform.css';
+import { SERVER_URL } from '../../../util/url';
 
 const NewsForm = () => {
 
@@ -63,7 +64,8 @@ const NewsForm = () => {
         };
 
         axios({
-            url: `http://localhost:3001/admin/newsWriteConfirm?`,
+            // url: `http://localhost:3001/admin/newsWriteConfirm?`,
+            url: `${SERVER_URL.TARGET_URL()}/admin/newsWriteConfirm?`,
             method: 'post',
             data: requestData,
             withCredentials: true,

@@ -6,6 +6,7 @@ import {
 import useAxiosGetAdmin from '../../../util/useAxiosGetAdmin';
 import { Link } from 'react-router-dom';
 import '../../../css/admin/adminmanagement/chatstatusmonthly.css';
+import { SERVER_URL } from '../../../util/url';
 
 const ChatStatusMonthly = ({ onSelectMonth, currentPage, setCurrentPage }) => {
     const [data, setData] = useState([]);
@@ -21,7 +22,11 @@ const ChatStatusMonthly = ({ onSelectMonth, currentPage, setCurrentPage }) => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/admin/chatStatusMonthly');
+            const response = await axios.get(
+                // 'http://localhost:3001/admin/chatStatusMonthly'
+                `${SERVER_URL.TARGET_URL()}/admin/chatStatusMonthly`,
+
+                );
 
             const now = new Date();
             const currentYear = now.getFullYear();
