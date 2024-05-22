@@ -15,6 +15,7 @@ import cookie from 'js-cookie';
 import { IoSearchSharp } from "react-icons/io5";
 import { escapeRegExp } from "lodash";
 import SocketAlarm from "./SocketAlarm";
+import { SERVER_URL } from "../../util/url";
 
 function FriendList() {
 
@@ -58,7 +59,8 @@ function FriendList() {
         console.log('axiosGetFriendList');
 
         axios({
-            url: 'http://localhost:3001/friend/friendList',
+            url: `${SERVER_URL.TARGET_URL()}/friend/friendList`,
+            // url: 'http://localhost:3001/friend/friendList',
             method: 'get',
         })
         .then(response => {

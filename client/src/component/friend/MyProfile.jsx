@@ -7,6 +7,7 @@ import  '../../css/profile.css';
 import  '../../css/common.css';
 import { Link } from "react-router-dom";
 import MyProfileDetails from "./MyProfileDetails";
+import { SERVER_URL } from "../../util/url";
 
 function MyProfile() {
 
@@ -39,7 +40,8 @@ function MyProfile() {
         console.log('axiosGetMyProfile');
 
         axios({
-            url: 'http://localhost:3001/friend/myProfile',
+            // url: 'http://localhost:3001/friend/myProfile',
+            url: `${SERVER_URL.TARGET_URL()}/friend/myProfile`,
             method: 'get',
             // params: {
             //     'user_id': 'gildong',

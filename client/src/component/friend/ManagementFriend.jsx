@@ -7,6 +7,7 @@ import '../../css/managementFriend.css';
 import RequestFriend from "./RequestFriend";
 import SideNav from "../../include/SideNav";
 import '../../css/common.css';
+import { SERVER_URL } from "../../util/url";
 
 function ManagementFriend() {
 
@@ -108,7 +109,8 @@ function ManagementFriend() {
         console.log('axiosGetReceivedRequestFriend');
 
         axios({
-            url: 'http://localhost:3001/friend/getReceivedRequestFriend',
+            // url: 'http://localhost:3001/friend/getReceivedRequestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/getReceivedRequestFriend`,
             method: 'get',
         })
         .then(response => {
@@ -153,7 +155,8 @@ function ManagementFriend() {
         console.log('axiosAcceptRequestFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/acceptRequestFriend',
+            // url: 'http://localhost:3001/friend/acceptRequestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/acceptRequestFriend`,
             method: 'put',
             params: {
                 'acceptReqfriendId': recId,
@@ -193,7 +196,8 @@ function ManagementFriend() {
         console.log('axiosHideRequestFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/hideRequestFriend',
+            // url: 'http://localhost:3001/friend/hideRequestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/hideRequestFriend`,
             method: 'put',
             params: {
                 'reqId': reqId,
@@ -236,7 +240,8 @@ function ManagementFriend() {
         }
 
         axios({
-            url: 'http://localhost:3001/friend/acceptReqTargetFriend',
+            // url: 'http://localhost:3001/friend/acceptReqTargetFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/acceptReqTargetFriend`,
             method: 'post',
             data: formData, 
         })
@@ -260,7 +265,8 @@ function ManagementFriend() {
         console.log('axiosGetSentRequestFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/getSentRequestFriend',
+            // url: 'http://localhost:3001/friend/getSentRequestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/getSentRequestFriend`,
             method: 'get',
         })
         .then(response => {
@@ -300,7 +306,8 @@ function ManagementFriend() {
         console.log('axiosDeleteReqFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/deletesentReqFriend',
+            // url: 'http://localhost:3001/friend/deletesentReqFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/deletesentReqFriend`,
             method: 'delete',
             params: {
                 'reqNo' : reqNo,
@@ -336,7 +343,8 @@ function ManagementFriend() {
         console.log('axiosGetBlockFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/blockFriend',
+            // url: 'http://localhost:3001/friend/blockFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/blockFriend`,
             method: 'get',
         })
         .then(response => {
@@ -378,7 +386,8 @@ function ManagementFriend() {
         console.log('axiosReleaseBlockFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/releaseBlockFriend',
+            // url: 'http://localhost:3001/friend/releaseBlockFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/releaseBlockFriend`,
             method: 'put',
             params: {
                 'friendNo': friendNo,
@@ -413,7 +422,8 @@ function ManagementFriend() {
         console.log('axiosGetHiddenFriends()');
 
         axios({
-            url: 'http://localhost:3001/friend/getHiddenFriends',
+            // url: 'http://localhost:3001/friend/getHiddenFriends',
+            url: `${SERVER_URL.TARGET_URL()}/friend/getHiddenFriends`,
             method: 'get',
         })
         .then(response => {
@@ -455,7 +465,8 @@ function ManagementFriend() {
         console.log('axiosReleaseHiddenFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/releaseHiddenFriend',
+            // url: 'http://localhost:3001/friend/releaseHiddenFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/releaseHiddenFriend`,
             method: 'put',
             params: {
                 'friendNo': friendNo,

@@ -14,6 +14,9 @@
   margin-right: 300px;
   cursor: pointer; 
   transition: background-color 0.3s ease; 
+  width:100%;
+  overflow: hidden;
+
 }
 
 .friendList {
@@ -23,10 +26,14 @@
 
 .friendList:hover {
   background-color: #f0f0f0; 
+  width: 99%;
+
 }
 
 .friendList.selected {
   background-color: #dcdcdc;
+  width: 99%;
+
 }
 
 .frontProfileImg {
@@ -42,6 +49,11 @@
   margin-right: 20px;
     margin-left: 20px;
 }
+.friendCurMsg{
+  margin-left: 50px;
+  text-align: right;
+  
+}
 
 .friendListWrap {
   flex-grow: 1;
@@ -53,7 +65,6 @@
   border-left: 2px solid #d3d3d3; 
   border-right: 2px solid #d3d3d3; 
   padding: 10px; 
-  overflow: auto;
 }
 
 .friendListWrap h3 {
@@ -121,7 +132,9 @@
   align-items: center;
   margin: 10px;
   margin-right: 300px;
-  width: 200px;
+  width:100%;
+  overflow: hidden;
+
   }
   
   .myFrontProfileImg {
@@ -136,6 +149,11 @@
   font-size: 1.3em;
   margin: 10px;
   font-weight: bold;
+  white-space: nowrap; /* 추가 */
+  overflow: hidden; /* 추가 */
+  text-overflow: ellipsis; /* 추가 */
+
+  
   }
 
   .myCurMsg {
@@ -144,6 +162,10 @@
     white-space: nowrap; 
     margin-left: 50px;
     text-align: right;
+    white-space: nowrap; /* 추가 */
+  overflow: hidden; /* 추가 */
+  text-overflow: ellipsis; /* 추가 */
+
   }
   
   .myProfileListWrap {
@@ -171,4 +193,15 @@
   .myProfileList.selected {
     background-color: #dcdcdc;
     width: 99%;
+  }
+
+  .friendListWithAlarm {
+    position: relative;
+  }
+
+  .reqAlarm {
+    position: absolute;
+    left: 270px;
+    top: 2px;
+    z-index: 110px;
   }

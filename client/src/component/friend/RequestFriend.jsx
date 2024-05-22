@@ -9,6 +9,7 @@ import socketIOClientByFriend from "socket.io-client";
 import '../../css/requestFriend.css';
 import '../../css/common.css';
 import useAxiosGetMember from "../../util/useAxiosGetMember";
+import { SERVER_URL } from "../../util/url";
 
 const server = "http://localhost:3001";
 
@@ -173,7 +174,8 @@ function RequestFriend() {
         console.log('axiosSearchFriendById()');
 
         axios({
-            url: 'http://localhost:3001/friend/searchFriendById',
+            // url: 'http://localhost:3001/friend/searchFriendById',
+            url: `${SERVER_URL.TARGET_URL()}/friend/searchFriendById`,
             method: 'get',
             params: {
                 'uId': uId,
@@ -231,7 +233,8 @@ function RequestFriend() {
         const friendId = selectSearchId;
 
         axios({
-            url: 'http://localhost:3001/friend/matchingFriend',
+            // url: 'http://localhost:3001/friend/matchingFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/matchingFriend`,
             method: 'get',
             params: {
                 'friendId': friendId,
@@ -290,7 +293,8 @@ function RequestFriend() {
         const selectedId = selectedFriendInfo.searchId;
 
         axios({
-            url: 'http://localhost:3001/friend/matchingRequestFriend',
+            // url: 'http://localhost:3001/friend/matchingRequestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/matchingRequestFriend`,
             method: 'get',
             params: {
                 'friendId': selectedId,
@@ -344,7 +348,8 @@ function RequestFriend() {
         console.log('axiosReceivedReqFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/matchingReceivedReqFriend',
+            // url: 'http://localhost:3001/friend/matchingReceivedReqFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/matchingReceivedReqFriend`,
             method: 'get',
             params: {
                 'friendId': selectedId,
@@ -405,7 +410,8 @@ function RequestFriend() {
         console.log('axiosmatchHidenFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/matchHidenFriend',
+            // url: 'http://localhost:3001/friend/matchHidenFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/matchHidenFriend`,
             method: 'get',
             params: {
                 'friendId': selectSearchId,
@@ -460,7 +466,8 @@ function RequestFriend() {
         }
 
         axios({
-            url: 'http://localhost:3001/friend/requestFriend',
+            // url: 'http://localhost:3001/friend/requestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/requestFriend`,
             method: 'post',
             data: formData
         })
@@ -501,7 +508,8 @@ function RequestFriend() {
         // const requestingFriendId = requestingFriendIds[0];
 
         axios({
-            url: 'http://localhost:3001/friend/deleteRequestFriend',
+            // url: 'http://localhost:3001/friend/deleteRequestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/deleteRequestFriend`,
             method: 'delete',
             params: {
                 'requestingFriendId' : reqId,
@@ -542,7 +550,8 @@ function RequestFriend() {
         // const selectedName = selectedFriendInfo.searchName;
 
         axios({
-            url: 'http://localhost:3001/friend/acceptRequestFriend',
+            // url: 'http://localhost:3001/friend/acceptRequestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/acceptRequestFriend`,
             method: 'put',
             params: {
                 'acceptReqfriendId': recId,
@@ -590,7 +599,8 @@ function RequestFriend() {
         }
 
         axios({
-            url: 'http://localhost:3001/friend/acceptReqTargetFriend',
+            // url: 'http://localhost:3001/friend/acceptReqTargetFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/acceptReqTargetFriend`,
             method: 'post',
             data: formData, 
         })
@@ -617,7 +627,8 @@ function RequestFriend() {
         // const selectedId = selectedFriendInfo.searchId;
 
         axios({
-            url: 'http://localhost:3001/friend/hideRequestFriend',
+            // url: 'http://localhost:3001/friend/hideRequestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/hideRequestFriend`,
             method: 'put',
             params: {
                 'reqId': sentId,
