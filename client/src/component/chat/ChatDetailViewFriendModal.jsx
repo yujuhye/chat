@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { setRooms, setLeaveRoom, setFavoriteRoom } from '../action/chatRoom';
+import { SERVER_URL } from '../../util/url';
 import io from 'socket.io-client';
 import axios from "axios"; 
 import '../../css/common.css'
 import '../../css/chat/chatViewFriendModal.css';
 
-const socket = io('http://localhost:3001');
+// const socket = io('http://localhost:3001');
+const socket = io(`${SERVER_URL.TARGET_URL()}`);
 
 const ChatDetailViewFriendModal = (props) => {
     const { participants, handleFriendInviteModalClose, isShowChatInviteFriendModal, setIsShowChatInviteFriendModal, socket, selectedRoom  } = props;

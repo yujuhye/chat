@@ -12,8 +12,8 @@ import SideNav from "../../include/SideNav";
 import '../../css/common.css';
 import '../../css/chat/friendListModal.css';
 
-const socket = io('http://localhost:3001');
-// const socket = io('http://14.42.124.96:3001');
+// const socket = io('http://localhost:3001');
+const socket = io(`${SERVER_URL.TARGET_URL()}`);
 
 const ChatRoom = ({ handleRoomSelect }) => {
     const navigate = useNavigate();

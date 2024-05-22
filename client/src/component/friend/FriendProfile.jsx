@@ -37,7 +37,7 @@ function FriendProfile() {
 
     const fetchUser = () => {
         axios({
-            url: `${SERVER_URL.TARGET_URL()}/friend/getUserInfo`,
+            url: `${SERVER_URL.TARGET_URL()}/chatRoom/getUserInfo`,
             // url: `http://localhost:3001/chatRoom/getUserInfo`,
             method: 'get',
             headers: {

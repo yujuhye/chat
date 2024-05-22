@@ -11,8 +11,8 @@ import { SERVER_URL } from '../../util/url';
 import '../../css/common.css';
 
 import Profile from "./Profile";
-
-const socket = io('http://localhost:3001');
+// const socket = io('http://localhost:3001');
+const socket = io(`${SERVER_URL.TARGET_URL()}`);
 
 const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     const { roomId } = useParams();
@@ -81,12 +81,12 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     const receiveMessage = (data) => {
         const { sender, content, sentAt, status, userNo, readStatus, unreadCount } = data;
     
-        // console.log('콘솔밖 blockFriend>>>>>>>', blockFriend);
-        // console.log('콘솔밖 blockFriend[userNo]>>>>>>>', blockFriend[userNo]);
+        console.log('콘솔밖 blockFriend>>>>>>>', blockFriend);
+        console.log('콘솔밖 blockFriend[userNo]>>>>>>>', blockFriend.blockFriendNo);
 
         // 차단된 친구인지 확인
-        if (blockFriend && blockFriend[userNo]) {
-            // console.log('blockFriend>>>>>>>', blockFriend);
+        if (blockFriend && blockFriend.blockFriendNo) {
+            console.log('blockFriend>>>>>>>', blockFriend);
             return; // 메시지를 무시하고 함수 종료
         }
     
@@ -136,29 +136,33 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
             try {
                 const userData = await fetchUser();
                 setUserInfo(userData);
-    
+
                 const roomId = selectedRoom.ROOM_NO;
                 const userNo = userData.USER_NO; 
-    
+
                 socket.emit('joinRoom', { roomId, userNo });
             } catch (error) {
                 alert(error.message);
             }
         };
-    
+
         fetchUserInfoAndJoinRoom();
-    
-        // 파일 정보 수신
+
         const handleReceiveFile = (data) => {
             // console.log('파일 정보 수신:', data);
-    
+
             const newMessage = {
                 ...data.messages, // 기존 마지막 메시지 정보
             };
-    
-            setMessages(prevMessages => [...prevMessages, newMessage]);
+
+            setMessages(prevMessages => {
+                if (!prevMessages.some(message => message.id === newMessage.id)) {
+                    return [...prevMessages, newMessage];
+                }
+                return prevMessages;
+            });
         };
-    
+
         socket.on('receiveFile', handleReceiveFile);
 
         return () => {
@@ -222,9 +226,9 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
 
     }, [fileData, error]); 
 
-    // useEffect(() => {
-    //     console.log('채팅 로그 업데이트됨 -----> ', messages);
-    // }, [messages]); 
+    useEffect(() => {
+        console.log('채팅 로그 업데이트됨 -----> ', messages);
+    }, [messages]); 
     
     // 친구 초대 알림
     useEffect(() => {
@@ -367,9 +371,9 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
 
     const sendMessage = () => {
         if (!inputMessage.trim()) return;
-        // console.log('현재 방에 있는 사람 정보 -----> ', joinUserInfo);
+        console.log('현재 방에 있는 사람 정보 -----> ', joinUserInfo);
         const roomId = selectedRoom.ROOM_NO;
-        // console.log('방!!!!!!번호!!!!!화긴!!!!! >>>>> ', roomId);
+        console.log('방!!!!!!번호!!!!!화긴!!!!! >>>>> ', roomId);
         socket.emit('sendMessage', { 
           sender: joinUserInfo[0]?.USER_NICKNAME, 
           userNo: joinUserInfo[0]?.USER_NO,  
@@ -663,11 +667,12 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
         console.log('**********************axiosGetBlockFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/blockFriend',
+            // url: `${SERVER_URL.TARGET_URL()}/chat/getJoinUser`, 
+            url: `${SERVER_URL.TARGET_URL()}/friend/blockFriend`,
             method: 'get',
         })
         .then(response => {
-            // console.log('axiosGetBlockFriend success', response.data);
+            console.log('axiosGetBlockFriend success', response.data);
 
             if(response.data !== null ) {
 
@@ -760,7 +765,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                                         {msg.CHAT_CONDITION === 1 && (
                                             <>
                                                 <span className="msgContent">
-                                                    <img src={`http://localhost:3001/${msg.CHAT_IMAGE_NAME}`} alt="이미지" style={{ maxWidth: '200px' }} className="chatImg"/>
+                                                    <img src={`${SERVER_URL.TARGET_URL()}/${msg.CHAT_IMAGE_NAME}`} alt="이미지" style={{ maxWidth: '200px' }} className="chatImg"/>
                                                 </span>
                                                 <br />
                                                 
@@ -773,7 +778,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                                             <>
                                                 <span className="msgContent">
                                                     <video width="320" height="240" controls className="chatVideo">
-                                                        <source src={`http://localhost:3001/${msg.CHAT_VIDEO_NAME}`} type="video/mp4" />
+                                                        <source src={`${SERVER_URL.TARGET_URL()}/${msg.CHAT_VIDEO_NAME}`} type="video/mp4" />
                                                     </video>
                                                 </span>
                                                 &nbsp;&nbsp;
@@ -785,7 +790,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                                         {msg.CHAT_CONDITION === 3 && (
                                             <>
                                                 <span className="msgContent">
-                                                    <a href={`http://localhost:3001/${msg.CHAT_FILE_NAME}`} download>
+                                                    <a href={`${SERVER_URL.TARGET_URL()}/${msg.CHAT_FILE_NAME}`} download>
                                                         {msg.CHAT_FILE_NAME}
                                                     </a>
                                                 </span>

@@ -11,7 +11,8 @@ import axios from 'axios';
 import '../../css/common.css';
 import '../../css/chat/file.css';
 
-const socket = io('http://localhost:3001');
+// const socket = io('http://localhost:3001');
+const socket = io(`${SERVER_URL.TARGET_URL()}`);
 
 const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFileModal }) => {
     const selectImgFile = useRef("");

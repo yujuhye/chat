@@ -9,8 +9,10 @@ import io from 'socket.io-client';
 import socketIOClientByFriend from "socket.io-client";
 import useAxiosGetMember from "../../util/useAxiosGetMember";
 
-const socket = io('http://localhost:3001');
-const server = "http://localhost:3001";
+// const socket = io('http://localhost:3001');
+const socket = io(`${SERVER_URL.TARGET_URL()}`);
+// const server = "http://localhost:3001";
+const server = `${SERVER_URL.TARGET_URL()}`;
 
 const Profile = ({ onClose, selectedUserNo }) => {
 
@@ -122,10 +124,10 @@ const Profile = ({ onClose, selectedUserNo }) => {
             params: params,
         })
         .then(response => {
-            // console.log('axiosGetMyProfile success', response.data);
+            console.log('axiosGetMyProfile success', response.data);
             setProfile(response.data); // 프로필 정보 상태 업데이트
 
-            // console.log('axiosGetMyProfile success', profile);
+            console.log('axiosGetMyProfile success', profile);
         })
         .catch(error => {
             console.log('axiosGetMyProfile error');
@@ -193,7 +195,7 @@ const Profile = ({ onClose, selectedUserNo }) => {
                     <p className="chatProfilePTag">
                         <span className="chatProfileSpanTag">
                             {profile.USER_FRONT_IMG_NAME ? (
-                                <img src={profile.USER_FRONT_IMG_NAME} className="myProfileImg" />
+                                <img src={`${SERVER_URL.TARGET_URL()}/${profile.USER_ID}/${profile.USER_FRONT_IMG_NAME}`} className="myProfileImg" />
                             ) : (
                                 <img src="/resource/img/profile_default.png" className="myProfileImg" />
                             )}
