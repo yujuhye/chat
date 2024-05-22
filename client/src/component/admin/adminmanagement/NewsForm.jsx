@@ -6,6 +6,7 @@ import { setNewsTitleAction, setNewsContentAction } from '../../../component/act
 import useAxiosGetAdmin from '../../../util/useAxiosGetAdmin';
 import cookie from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
+import '../../../css/admin/adminmanagement/newsform.css';
 
 const NewsForm = () => {
 
@@ -120,14 +121,39 @@ const NewsForm = () => {
     return (
         <div>
             <Nav />
-            <p>공지사항 글쓰기</p>
-            <form name="newsForm">
-                <input type="text" name="newsTitle" value={newsTitle} onChange={(e) => newsInfoChangeHandler(e)} placeholder="제목을 입력하세요." /><br />
-                <textarea name="newsContent" value={newsContent} onChange={(e) => newsInfoChangeHandler(e)} placeholder="내용을 입력하세요." /><br />
-                <input type="button" value="WRITE" onClick={writeNewsSubmitBtnClickHandler} />
-                <input type="reset" value="RESET" onClick={writeNewsResetBtnClickHandler} />
-            </form>
-        </div >
+            <div className="newsFormContainer">
+                <h1 className="newsFormHeader">공지사항 글쓰기</h1>
+                <form name="newsForm" className="newsForm">
+                    <input
+                        type="text"
+                        name="newsTitle"
+                        value={newsTitle}
+                        onChange={(e) => newsInfoChangeHandler(e)}
+                        placeholder="제목을 입력하세요."
+                        className="newsInput"
+                    /><br />
+                    <textarea
+                        name="newsContent"
+                        value={newsContent}
+                        onChange={(e) => newsInfoChangeHandler(e)}
+                        placeholder="내용을 입력하세요."
+                        className="newsTextarea"
+                    /><br />
+                    <input
+                        type="button"
+                        value="WRITE"
+                        onClick={writeNewsSubmitBtnClickHandler}
+                        className="newsButton"
+                    />
+                    <input
+                        type="reset"
+                        value="RESET"
+                        onClick={writeNewsResetBtnClickHandler}
+                        className="newsButton"
+                    />
+                </form>
+            </div>
+        </div>
     );
 };
 

@@ -1,0 +1,110 @@
+body,
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.newsListContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: calc(100vh - 60px);
+    background-color: #f8f9fa;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.newsListHeader {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.newsListContent {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.newsListTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.newsListTable th,
+.newsListTable td {
+    border: 1px solid #ddd;
+    padding: 8px 30px;
+}
+
+.newsListTable th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: center;
+}
+
+.newsListTable td {
+    text-align: left;
+    white-space: pre-wrap;
+    /* Ensure that whitespace and line breaks are preserved */
+}
+
+.newsListTable .titleColumn {
+    width: 70%;
+    /* Adjust the percentage as needed */
+}
+
+.newsListTable .dateColumn {
+    width: 30%;
+    /* Adjust the percentage as needed */
+    text-align: center;
+}
+
+.newsListTable tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.pagination {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.pageButton {
+    padding: 5px 10px;
+    border: 1px solid #007bff;
+    background-color: #ffffff;
+    color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pageButton.active,
+.pageButton:hover {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+.newsListLinks {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.newsListLinks a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 1rem;
+}
+
+.newsListLinks a:hover {
+    text-decoration: underline;
+}

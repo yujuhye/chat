@@ -4,6 +4,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import { useNavigate } from 'react-router-dom';
+import '../../../css/admin/adminmanagement/chatstatusweekly.css';
 
 const ChatStatusWeekly = ({ selectedMonth, onSelectWeek, onBackToMonthly }) => {
     const [data, setData] = useState([]);
@@ -77,9 +78,9 @@ const ChatStatusWeekly = ({ selectedMonth, onSelectWeek, onBackToMonthly }) => {
     };
 
     return (
-        <div>
-            <h1>{selectedMonth}월의 주별 채팅 수 통계</h1>
-            <button onClick={onBackToMonthly}>월별 통계로 돌아가기</button>
+        <div className="chatStatusWeeklyContainer">
+            <h1 className="weeklyHeader">{selectedMonth}월의 주별 채팅 수 통계</h1>
+            <button onClick={onBackToMonthly} className="backButton">월별 통계로 돌아가기</button>
             <ResponsiveContainer width="80%" height={400}>
                 <BarChart
                     data={data}

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import '../../../css/admin/adminmanagement/chatstatushourly.css';
 
 const ChatStatusHourly = () => {
     const [data, setData] = useState([]);
@@ -19,7 +20,7 @@ const ChatStatusHourly = () => {
     const fetchData = async () => {
         try {
             const response = await axios.get(`http://localhost:3001/admin/ChatStatusThreeHourly`);
-            // Process the data
+
             const hourlyCounts = new Array(8).fill(0);
             response.data.forEach(item => {
                 const hour = parseInt(item.chatHour);
@@ -27,7 +28,6 @@ const ChatStatusHourly = () => {
                 hourlyCounts[index] += item.chatCount;
             });
 
-            // Format data for Recharts
             const formattedData = hourlyCounts.map((count, index) => {
                 const startTime = index * 3;
                 const endTime = (index + 1) * 3 - 1;
@@ -47,29 +47,29 @@ const ChatStatusHourly = () => {
     return (
         <div>
             <Nav />
-            <h1>시간대별 채팅 수 통계</h1>
+            <div className="chatStatusHourlyContainer">
 
-            <Link to="/admin/chatstatusperiod">기간별 통계</Link><br />
-
-
-            <ResponsiveContainer width="80%" height={400}>
-                <BarChart
-                    data={data}
-                    margin={{
-                        top: 20,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="timeRange" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="chatCount" fill="#82ca9d" barSize={100} />
-                </BarChart>
-            </ResponsiveContainer>
+                <h1 className="hourlyHeader">시간대별 채팅 수 통계</h1>
+                <Link to="/admin/chatstatusperiod" className="periodLink">기간별 통계 이동</Link>
+                <ResponsiveContainer width="80%" height={400}>
+                    <BarChart
+                        data={data}
+                        margin={{
+                            top: 20,
+                            right: 30,
+                            left: 20,
+                            bottom: 5,
+                        }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="timeRange" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="chatCount" fill="#82ca9d" barSize={100} />
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
         </div>
     );
 };
