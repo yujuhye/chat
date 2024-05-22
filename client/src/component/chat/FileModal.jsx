@@ -5,12 +5,14 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { fileSend, fileSendSuccess, fileSendFail } from '../action/file';
 import { setRooms, setLeaveRoom, setFavoriteRoom } from '../action/chatRoom';
+import { SERVER_URL } from '../../util/url';
 import io from 'socket.io-client';
 import axios from 'axios';
 import '../../css/common.css';
 import '../../css/chat/file.css';
 
-const socket = io('http://localhost:3001');
+// const socket = io('http://localhost:3001');
+const socket = io(`${SERVER_URL.TARGET_URL()}`);
 
 const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModal, setIsShowFileModal }) => {
     const selectImgFile = useRef("");
@@ -28,9 +30,11 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
         const refreshChatListListener = () => {
           const fetchRooms = async () => {
             try {
-              const response = await axios.get('http://localhost:3001/chatRoom/list');
-              console.log('파일 전송 후 확인 : ', response.data);
-              console.log('파일 전송 후 확인 : ', response.data.rooms);
+            //const response = await axios.get('http://localhost:3001/chatRoom/list');
+            const response = await axios.get(`${SERVER_URL.TARGET_URL()}/chatRoom/list`);
+            //url: `${SERVER_URL.TARGET_URL()}/chatRoom/searChatRoom`
+            //   console.log('파일 전송 후 확인 : ', response.data);
+            //   console.log('파일 전송 후 확인 : ', response.data.rooms);
       
               // 가져온 채팅방 목록을 리덕스 스토어에 설정
               dispatch(setRooms(response.data.rooms));
@@ -58,7 +62,7 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
         // multiple : 선택한 파일을 files로 인식
         const files = e.target.files;
 
-        console.log('files -----> ', files);
+        // console.log('files -----> ', files);
         
         if(files.length > 0) {
             setSelectedFiles([...files]);
@@ -96,17 +100,14 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
             userId: userInfo.USER_ID,
             roomId: roomId,
         };
-        console.log('이미지 전송 유저 번호 확인 -----> ', user);
+        // console.log('이미지 전송 유저 번호 확인 -----> ', user);
 
         selectedFiles.forEach(file => {
             if(file.type.startsWith('image/')) {
-                // 이미지 파일인 경우
                 axiosImgFileSubmit([file], user, dispatch); 
             } else if(file.type.startsWith('video/')) {
-                // 영상 파일인 경우
                 axiosVideoFileSubmit([file], user, dispatch); 
             } else {
-                // 기타 파일인 경우
                 axiosFileSubmit([file], user, dispatch); 
             }
         });
@@ -120,14 +121,15 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
 
         files.forEach(file => {
             formData.append('chat_img_name', file);
-            console.log('file -----> ', file);
+            // console.log('file -----> ', file);
         });
         formData.append('userNo', user.userNo);
         formData.append('userId', user.userId);
         formData.append('roomId', user.roomId);
 
         axios({
-            url: `http://localhost:3001/chat/submitImgFiles`,
+            // url: `http://localhost:3001/chat/submitImgFiles`,
+            url: `${SERVER_URL.TARGET_URL()}/chat/submitImgFiles`,
             method: 'post',
             data: formData,
             headers: {
@@ -137,7 +139,7 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
         .then(response => {
             console.log('파일 전송 성공!');
             //alert('파일 전송 성공!');
-            console.log('then file submit success! -----> ', response.data);
+            // console.log('then file submit success! -----> ', response.data);
             
             let submitInfo = {
                 roomId: user.roomId,
@@ -175,14 +177,15 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
 
         files.forEach(file => {
             formData.append('chat_video_name', file);
-            console.log('file -----> ', file);
+            // console.log('file -----> ', file);
         });
         formData.append('userNo', user.userNo);
         formData.append('userId', user.userId);
         formData.append('roomId', user.roomId);
 
         axios({
-            url: `http://localhost:3001/chat/submitVideoFiles`,
+            // url: `http://localhost:3001/chat/submitVideoFiles`,
+            url: `${SERVER_URL.TARGET_URL()}/chat/submitVideoFiles`,
             method: 'post',
             data: formData,
             headers: {
@@ -191,7 +194,7 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
         })
         .then(response => {
             console.log('파일 전송 성공!');
-            console.log('file submit success! -----> ', response.data);
+            // console.log('file submit success! -----> ', response.data);
 
             let submitInfo = {
                 roomId: user.roomId,
@@ -229,14 +232,15 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
 
         files.forEach(file => {
             formData.append('chat_file_name', file);
-            console.log('file -----> ', file);
+            // console.log('file -----> ', file);
         });
         formData.append('userNo', user.userNo);
         formData.append('userId', user.userId);
         formData.append('roomId', user.roomId);
 
         axios({
-            url: `http://localhost:3001/chat/submitFiles`,
+            // url: `http://localhost:3001/chat/submitFiles`,
+            url: `${SERVER_URL.TARGET_URL()}/chat/submitFiles`,
             method: 'post',
             data: formData,
             headers: {
@@ -245,7 +249,7 @@ const FileModal = ({ selectedRoom, fileModalCloseBtnClickHandler, isShowFileModa
         })
         .then(response => {
             console.log('파일 전송 성공!');
-            console.log('file submit success! -----> ', response.data);
+            // console.log('file submit success! -----> ', response.data);
 
             let submitInfo = {
                 roomId: user.roomId,

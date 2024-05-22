@@ -7,6 +7,7 @@ import  '../../css/profile.css';
 import  '../../css/common.css';
 import { Link } from "react-router-dom";
 import MyProfileDetails from "./MyProfileDetails";
+import { SERVER_URL } from "../../util/url";
 
 function MyProfile() {
 
@@ -39,7 +40,8 @@ function MyProfile() {
         console.log('axiosGetMyProfile');
 
         axios({
-            url: 'http://localhost:3001/friend/myProfile',
+            // url: 'http://localhost:3001/friend/myProfile',
+            url: `${SERVER_URL.TARGET_URL()}/friend/myProfile`,
             method: 'get',
             // params: {
             //     'user_id': 'gildong',
@@ -85,11 +87,11 @@ function MyProfile() {
                                 myProfile[profileId].frontImg === ''
                                 ?
                                     <>
-                                        <img src="/resource/img/profile_default.png" className="myFrontProfileImg"/>
+                                        <img src="/resource/img/profile_default.png" className="myFrontProfileImgs"/>
                                     </>
                                 :
                                     <>
-                                        <img src={`http://localhost:3001/${myProfile[profileId].id}/${myProfile[profileId].frontImg}`} className="myFrontProfileImg"/>
+                                        <img src={`http://localhost:3001/${myProfile[profileId].id}/${myProfile[profileId].frontImg}`} className="myFrontProfileImgs"/>
                                     </>
                             }
                             <span className="myProfileName">{myProfile[profileId].name}</span>

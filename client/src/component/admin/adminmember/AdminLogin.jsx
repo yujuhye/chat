@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setAIdAction, setAPwAction, setIsAdminLoginAction, setAdminIdAction } from '../../action/adminLoginActions';
+import { SERVER_URL } from '../../../util/url';
 import cookie from 'js-cookie';
 import '../../../css/admin/adminmember/adminlogin.css';
 
@@ -71,7 +72,10 @@ const AdminLogin = () => {
 
         console.log('[AdminLogin] axiosAdminLogin()');
 
-        axios.post('http://localhost:3001/admin/adminSigninConfirm', {
+        axios.post(
+            // 'http://localhost:3001/admin/adminSigninConfirm', 
+            `${SERVER_URL.TARGET_URL()}/admin/adminSigninConfirm`,
+            {
             'aId': aId,
             'aPw': aPw,
         }, { withCredentials: true })

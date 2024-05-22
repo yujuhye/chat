@@ -5,6 +5,7 @@ import ChatRoom from './ChatRoom';
 import Chat from './Chat';
 import SideNav from "../../include/SideNav";
 import { useDispatch } from 'react-redux';
+import { SERVER_URL } from '../../util/url';
 import '../../css/chat/chatPage.css';
 import '../../css/chat/chatRoom.css';
 import '../../css/chat/chat.css';
@@ -17,9 +18,11 @@ function ChatPage() {
     // 채팅방 리스트를 불러오는 함수
     const fetchChatRooms = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/chatRoom/list');
-            console.log('chat list : ', response.data); 
-            console.log('채팅 리스트 room : ', response.data.rooms); 
+            // const response = await axios.get('http://localhost:3001/chatRoom/list');
+            const response = await axios.get(`${SERVER_URL.TARGET_URL()}/chatRoom/list`);
+            //url: `${SERVER_URL.TARGET_URL()}/chatRoom/searChatRoom`
+            // console.log('chat list : ', response.data); 
+            // console.log('채팅 리스트 room : ', response.data.rooms); 
 
             // 가져온 채팅방 목록을 리덕스 스토어에 설정
             dispatch(setRooms(response.data.rooms));
@@ -44,7 +47,7 @@ function ChatPage() {
     }, []);
   
     const handleRoomSelect = (room) => {
-        console.log('방정보가 찍히긴 해? -----> ', room); // room_no찍힘
+        // console.log('방정보가 찍히긴 해? -----> ', room); // room_no찍힘
         
         if (selectedRoom && room.ROOM_NO === selectedRoom.ROOM_NO) {
             setSelectedRoom(null);

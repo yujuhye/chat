@@ -7,11 +7,12 @@ import io from 'socket.io-client';
 import ChatDetailViewFriendModal from "./ChatDetailViewFriendModal";
 import FileModal from "./FileModal";
 import { fetchUser } from "./fetchFunction";
+import { SERVER_URL } from '../../util/url';
 import '../../css/common.css';
 
 import Profile from "./Profile";
-
-const socket = io('http://localhost:3001');
+// const socket = io('http://localhost:3001');
+const socket = io(`${SERVER_URL.TARGET_URL()}`);
 
 const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     const { roomId } = useParams();
@@ -50,7 +51,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     }, []);
 
     const toggleMenu = () => {
-        console.log('toggleMenu()');
+        // console.log('toggleMenu()');
         setIsMenuOpen(!isMenuOpen);
     }
     
@@ -81,15 +82,15 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
         const { sender, content, sentAt, status, userNo, readStatus, unreadCount } = data;
     
         console.log('콘솔밖 blockFriend>>>>>>>', blockFriend);
-        console.log('콘솔밖 blockFriend[userNo]>>>>>>>', blockFriend[userNo]);
+        console.log('콘솔밖 blockFriend[userNo]>>>>>>>', blockFriend.blockFriendNo);
 
         // 차단된 친구인지 확인
-        if (blockFriend && blockFriend[userNo]) {
+        if (blockFriend && blockFriend.blockFriendNo) {
             console.log('blockFriend>>>>>>>', blockFriend);
             return; // 메시지를 무시하고 함수 종료
         }
     
-        console.log('보낸 메시지 상태 확인 -----> ', status);
+        // console.log('보낸 메시지 상태 확인 -----> ', status);
         const newMessage = {
             USER_NICKNAME: sender,
             CHAT_TEXT: content,
@@ -99,10 +100,10 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
             READ_STATUS: readStatus,
             UNREAD_COUNT: unreadCount,
         };
-        console.log('채팅 로그 확인해보장 -----> ',newMessage);
-        console.log('채팅 로그 확인해보장 READ_STATUS -----> ',newMessage.READ_STATUS);
-        console.log('채팅 로그 확인해보장 UNREAD_COUNT -----> ',newMessage.UNREAD_COUNT);
-        console.log('채팅 로그 확인해보장 USER_NO -----> ',newMessage.USER_NO);
+        // console.log('채팅 로그 확인해보장 -----> ',newMessage);
+        // console.log('채팅 로그 확인해보장 READ_STATUS -----> ',newMessage.READ_STATUS);
+        // console.log('채팅 로그 확인해보장 UNREAD_COUNT -----> ',newMessage.UNREAD_COUNT);
+        // console.log('채팅 로그 확인해보장 USER_NO -----> ',newMessage.USER_NO);
         setMessages((prevMessages) => [...prevMessages, newMessage]); //newMessage를 추가
     };
         
@@ -120,7 +121,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
 
     useEffect(() => {
         const handleMessageReceive = (messages) => {
-            console.log(' ***** 채팅 로그 확인해보장 -----> ',messages);
+            // console.log(' ***** 채팅 로그 확인해보장 -----> ',messages);
             receiveMessage(messages);
         };
         socket.on('receiveMessage', handleMessageReceive); 
@@ -135,29 +136,33 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
             try {
                 const userData = await fetchUser();
                 setUserInfo(userData);
-    
+
                 const roomId = selectedRoom.ROOM_NO;
                 const userNo = userData.USER_NO; 
-    
+
                 socket.emit('joinRoom', { roomId, userNo });
             } catch (error) {
                 alert(error.message);
             }
         };
-    
+
         fetchUserInfoAndJoinRoom();
-    
-        // 파일 정보 수신
+
         const handleReceiveFile = (data) => {
-            console.log('파일 정보 수신:', data);
-    
+            // console.log('파일 정보 수신:', data);
+
             const newMessage = {
                 ...data.messages, // 기존 마지막 메시지 정보
             };
-    
-            setMessages(prevMessages => [...prevMessages, newMessage]);
+
+            setMessages(prevMessages => {
+                if (!prevMessages.some(message => message.id === newMessage.id)) {
+                    return [...prevMessages, newMessage];
+                }
+                return prevMessages;
+            });
         };
-    
+
         socket.on('receiveFile', handleReceiveFile);
 
         return () => {
@@ -169,9 +174,10 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     useEffect(() => {
         const refreshChatListListener = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/chatRoom/list');
-                console.log('chat list : ', response.data);
-                console.log('채팅 리스트 room : ', response.data.rooms);
+                // const response = await axios.get('http://localhost:3001/chatRoom/list');
+                const response = await axios.get(`${SERVER_URL.TARGET_URL()}/chatRoom/list`);
+                // console.log('chat list : ', response.data);
+                // console.log('채팅 리스트 room : ', response.data.rooms);
     
                 // 가져온 채팅방 목록을 리덕스 스토어에 설정
                 dispatch(setRooms(response.data.rooms));
@@ -188,13 +194,13 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
         };
     }, [socket]); 
 
-    useEffect(() => {
-        console.log('현재 방에 참여한 유저 목록:', participants);
+    // useEffect(() => {
+    //     // console.log('현재 방에 참여한 유저 목록:', participants);
     
-        // 읽음 상태 업데이트 요청하기
-        //socket.emit('updateReadCnt', roomId, participants);
+    //     // 읽음 상태 업데이트 요청하기
+    //     //socket.emit('updateReadCnt', roomId, participants);
     
-    }, [participants]);
+    // }, [participants]);
 
     useEffect(() => {
         if (selectedRoom) {
@@ -213,7 +219,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     useEffect(() => {
         
         if (fileData) {
-            console.log('File uploaded successfully', fileData);
+            // console.log('File uploaded successfully', fileData);
             const roomId = selectedRoom.ROOM_NO;
             roomDetails(roomId);
         }
@@ -260,13 +266,13 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     // 파일 받기 & 초대 메시지
     useEffect(() => {
         const handleReceiveFile = (data) => {
-            console.log('파일 정보 수신:', data);
+            // console.log('파일 정보 수신:', data);
             const newMessage = { ...data.messages };
             setMessages(prevMessages => [...prevMessages, newMessage]);
         };
     
         const handleReceiveInviteMessage = (inviteMessage) => {
-            console.log('Received an invite message:', inviteMessage);
+            // console.log('Received an invite message:', inviteMessage);
             setMessages(prevMessages => [
                 ...prevMessages,
                 {
@@ -291,9 +297,11 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     useEffect(() => {
         const refreshChatListListener = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/chatRoom/list');
-                console.log('chat list : ', response.data);
-                console.log('채팅 리스트 room : ', response.data.rooms);
+                // const response = await axios.get('http://localhost:3001/chatRoom/list');
+                const response = await axios.get(`${SERVER_URL.TARGET_URL()}/chatRoom/list`);
+                //url: `${SERVER_URL.TARGET_URL()}/member/signUpConfirm`,
+                // console.log('chat list : ', response.data);
+                // console.log('채팅 리스트 room : ', response.data.rooms);
     
                 // 가져온 채팅방 목록을 리덕스 스토어에 설정
                 dispatch(setRooms(response.data.rooms));
@@ -320,9 +328,11 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
         const refreshChatListListener = () => {
             const fetchRooms = async () => {
                 try {
-                    const response = await axios.get('http://localhost:3001/chatRoom/list');
-                    console.log('chat list : ', response.data); 
-                    console.log('채팅 리스트 room : ', response.data.rooms); 
+                    // const response = await axios.get('http://localhost:3001/chatRoom/list');
+                    const response = await axios.get(`${SERVER_URL.TARGET_URL()}/chatRoom/list`);
+                    //url: `${SERVER_URL.TARGET_URL()}/member/signUpConfirm`,
+                    // console.log('chat list : ', response.data); 
+                    // console.log('채팅 리스트 room : ', response.data.rooms); 
     
                     // 가져온 채팅방 목록을 리덕스 스토어에 설정
                     dispatch(setRooms(response.data.rooms));
@@ -381,19 +391,23 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     const roomDetails = async (roomId) => {
         try {
             console.log('roomDetails()');
-            const response = await axios.get(`http://localhost:3001/chat/details/${roomId}`, {
+            // const response = await axios.get(`http://localhost:3001/chat/details/${roomId}`
+            const response = await axios.get(`${SERVER_URL.TARGET_URL()}/chat/details/${roomId}`
+            //url: `${SERVER_URL.TARGET_URL()}/member/signUpConfirm`,
+            , 
+            {
                 params: { roomId },
             });
             const { participants, chatHistory } = response.data;
 
-            console.log('★★★★★participants ----->', participants);
-            console.log('★★★★★chatHistory ----->', chatHistory);
+            // console.log('★★★★★participants ----->', participants);
+            // console.log('★★★★★chatHistory ----->', chatHistory);
 
             setJoinUserInfo(participants);
             setMessages(chatHistory);
 
             const roomName = participants[0].PARTI_CUSTOMZING_NAME;
-            console.log('채팅방 이름 -----> ', roomName);
+            // console.log('채팅방 이름 -----> ', roomName);
 
             setRoomName(roomName);
         } catch (err) {
@@ -418,7 +432,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     // 참여자 목록
     const joinChatUserListClickHandler = () => {
         console.log('joinChatUserListClickHandler()');
-        console.log('joinChatUserListClickHandler----->', joinUserInfo);
+        // console.log('joinChatUserListClickHandler----->', joinUserInfo);
         setIsShowChatJoinUser(true);
         getJoinUser(joinUserInfo);
     }
@@ -426,22 +440,23 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     const getJoinUser = (joinUserInfo) => {
         const roomId = selectedRoom.ROOM_NO;
         console.log('getJoinUser()');
-        console.log('joinUserInfo -----> ', joinUserInfo);
+        // console.log('joinUserInfo -----> ', joinUserInfo);
         axios({
-           url: `http://localhost:3001/chat/getJoinUser`, 
-           method: 'get',
-           params: {
+            //url: `${SERVER_URL.TARGET_URL()}/member/signUpConfirm`,
+            url: `${SERVER_URL.TARGET_URL()}/chat/getJoinUser`, 
+            method: 'get',
+            params: {
                 roomId,
-           }
+            }
         })
         .then(response => {
             if(response.data) {
                 console.log('getJoinUser success!');
-                console.log('현재 방에 참여한 유저 목록 -----> ', response.data);
+                // console.log('현재 방에 참여한 유저 목록 -----> ', response.data);
 
                 const loggedInUserNo = joinUserInfo[0].USER_NO;
                 setLoggedInUserNo(joinUserInfo[0].USER_NO);
-                console.log('현재 로그인한 사람의 USER_NO ----->', loggedInUserNo);       
+                // console.log('현재 로그인한 사람의 USER_NO ----->', loggedInUserNo);       
                 
                 const sortedParticipants = response.data.sort((a, b) => {
                     if (a.USER_NO === loggedInUserNo) return -1; // 본인이면 배열의 앞쪽으로
@@ -462,7 +477,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
         const roomId = selectedRoom.ROOM_NO;
         if (roomId && joinUserInfo) {
           getJoinUser(joinUserInfo);
-          console.log('*********** joinUserInfo *********', joinUserInfo);
+        //   console.log('*********** joinUserInfo *********', joinUserInfo);
         }
       }, [roomId, joinUserInfo]);
 
@@ -497,7 +512,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
         try {
             if (window.confirm('정말로 방을 나가시겠습니까?')) {
                 const userData = await fetchUser();
-                console.log('방나가기 이벤트 -----> ', userData);
+                // console.log('방나가기 이벤트 -----> ', userData);
                 
                 let chatInfo = {
                     id: roomId,
@@ -505,7 +520,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                 }
 
                 socket.emit('leaveRoom', chatInfo);
-                console.log('방에서 나가기 이벤트 -----> ', chatInfo);
+                // console.log('방에서 나가기 이벤트 -----> ', chatInfo);
                 setSelectedRoom(null);
                 updateChatRooms();
             }
@@ -550,9 +565,10 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
             chat_text: searchChatKey,
             roomId: roomId,
         }
-        console.log('params -----> ', params);
+        // console.log('params -----> ', params);
         axios({
-            url: `http://localhost:3001/chat/searChatText`,
+            //url: `${SERVER_URL.TARGET_URL()}/chat/getJoinUser`, 
+            url: `${SERVER_URL.TARGET_URL()}/chat/searChatText`,
             method: 'get',
             params: params,
             headers: {
@@ -561,7 +577,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
         })
         .then(response => {
             if(response.data) {
-                console.log('채팅 내용 검색 성공 -----> ', response.data);
+                // console.log('채팅 내용 검색 성공 -----> ', response.data);
                 setSearchResult(response.data); // 검색 결과 저장
                 if(response.data.length === 0 ){
                     alert('검색 결과가 없습니다.');
@@ -588,7 +604,8 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     async function downloadImage(imageName) {
         try {
             // 이미지 파일의 URL을 구성
-            const imageUrl = `http://localhost:3001/${imageName}`;
+            // const imageUrl = `http://localhost:3001/${imageName}`;
+            const imageUrl = `${SERVER_URL.TARGET_URL()}/${imageName}`;
             // Fetch API를 사용하여 이미지를 Blob으로 가져옴
             const response = await fetch(imageUrl);
             const blob = await response.blob();
@@ -612,7 +629,8 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
     async function downloadVideo(videoName) {
         try {
             // 이미지 파일의 URL을 구성
-            const videoUrl = `http://localhost:3001/${videoName}`;
+            // const videoUrl = `http://localhost:3001/${videoName}`;
+            const videoUrl = `${SERVER_URL.TARGET_URL()}/${videoName}`;
             // Fetch API를 사용하여 이미지를 Blob으로 가져옴
             const response = await fetch(videoUrl);
             const blob = await response.blob();
@@ -634,7 +652,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
 
     const nicknameClickHandler = (userNo) => {
         console.log('닉네임 클릭!!!!');
-        console.log('닉네임 클릭!!!! 번호!', userNo);
+        // console.log('닉네임 클릭!!!! 번호!', userNo);
 
         if (selectedUserNo === userNo) {
             setIsShowProfilePopup(prevState => !prevState);
@@ -649,7 +667,8 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
         console.log('**********************axiosGetBlockFriend()');
 
         axios({
-            url: 'http://localhost:3001/friend/blockFriend',
+            // url: `${SERVER_URL.TARGET_URL()}/chat/getJoinUser`, 
+            url: `${SERVER_URL.TARGET_URL()}/friend/blockFriend`,
             method: 'get',
         })
         .then(response => {
@@ -746,7 +765,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                                         {msg.CHAT_CONDITION === 1 && (
                                             <>
                                                 <span className="msgContent">
-                                                    <img src={`http://localhost:3001/${msg.CHAT_IMAGE_NAME}`} alt="이미지" style={{ maxWidth: '200px' }} className="chatImg"/>
+                                                    <img src={`${SERVER_URL.TARGET_URL()}/${msg.CHAT_IMAGE_NAME}`} alt="이미지" style={{ maxWidth: '200px' }} className="chatImg"/>
                                                 </span>
                                                 <br />
                                                 
@@ -759,7 +778,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                                             <>
                                                 <span className="msgContent">
                                                     <video width="320" height="240" controls className="chatVideo">
-                                                        <source src={`http://localhost:3001/${msg.CHAT_VIDEO_NAME}`} type="video/mp4" />
+                                                        <source src={`${SERVER_URL.TARGET_URL()}/${msg.CHAT_VIDEO_NAME}`} type="video/mp4" />
                                                     </video>
                                                 </span>
                                                 &nbsp;&nbsp;
@@ -771,7 +790,7 @@ const Chat = ({selectedRoom, setSelectedRoom, updateChatRooms}) => {
                                         {msg.CHAT_CONDITION === 3 && (
                                             <>
                                                 <span className="msgContent">
-                                                    <a href={`http://localhost:3001/${msg.CHAT_FILE_NAME}`} download>
+                                                    <a href={`${SERVER_URL.TARGET_URL()}/${msg.CHAT_FILE_NAME}`} download>
                                                         {msg.CHAT_FILE_NAME}
                                                     </a>
                                                 </span>

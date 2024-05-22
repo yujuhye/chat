@@ -3,8 +3,10 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setMIdAction, setMPwAction, setMEmailAction, setMNicknameAction, setCurMIdAction, setCurMPwAction, setCurMEmailAction, setCurMNicknameAction, } from '../action/memberModifyActions';
+import { SERVER_URL } from '../../util/url';
 import Nav from '../../include/Nav';
 import cookie from 'js-cookie';
+import '../../css/member/membermodify.css';
 
 axios.defaults.withCredentials = true;
 
@@ -32,7 +34,8 @@ const MemberModify = () => {
 
         } else {
             axios.get(
-                'http://localhost:3001/member/getMember',
+                // 'http://localhost:3001/member/getMember',
+                `${SERVER_URL.TARGET_URL()}/member/getMember`,
                 {
                     headers: {
                         Authorization: `Bearer ${userToken}`
@@ -169,7 +172,10 @@ const MemberModify = () => {
             mNickname: mNickname
         };
 
-        axios.post('http://localhost:3001/member/modifyConfirm', requestData, {
+        axios.post(
+            // 'http://localhost:3001/member/modifyConfirm', 
+            `${SERVER_URL.TARGET_URL()}/member/modifyConfirm`,
+            requestData, {
             headers: {
                 Authorization: `Bearer ${userToken}`
             }
@@ -217,20 +223,22 @@ const MemberModify = () => {
     }
 
     return (
-
         <div>
             <Nav />
-            <p>회원 정보 수정</p>
-            <form name="memberModifyForm">
-                <input type="text" name="mId" value={mId} readOnly disabled /><br />
-                <input type="password" name="mPw" value={mPw} onChange={(e) => memberInfoChangeHandler(e)} placeholder="비밀번호를 입력하세요." /><br />
-                <input type="text" name="mEmail" value={mEmail} onChange={(e) => memberInfoChangeHandler(e)} placeholder="메일을 입력하세요." /><br />
-                <input type="text" name="mNickname" value={mNickname} onChange={(e) => memberInfoChangeHandler(e)} placeholder="닉네임을 입력하세요." /><br />
-                <input type="button" value="정보수정" onClick={memberModifySubmitBtnClickHandler} />
-                <input type="reset" value="RESET" onClick={memberModifyResetBtnClickHandler} />
-            </form>
+            <div className="contentContainer">
+                <div className="modifyForm">
+                    <p>회원 정보 수정</p>
+                    <form name="memberModifyForm">
+                        <input type="text" name="mId" value={mId} readOnly disabled /><br />
+                        <input type="password" name="mPw" value={mPw} onChange={memberInfoChangeHandler} placeholder="비밀번호를 입력하세요." /><br />
+                        <input type="text" name="mEmail" value={mEmail} onChange={memberInfoChangeHandler} placeholder="메일을 입력하세요." /><br />
+                        <input type="text" name="mNickname" value={mNickname} onChange={memberInfoChangeHandler} placeholder="닉네임을 입력하세요." /><br />
+                        <input type="button" value="정보수정" onClick={memberModifySubmitBtnClickHandler} />
+                        <input type="reset" value="RESET" onClick={memberModifyResetBtnClickHandler} />
+                    </form>
+                </div>
+            </div>
         </div>
-
     );
 };
 

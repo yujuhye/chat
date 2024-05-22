@@ -8,6 +8,7 @@ import { IoMdClose, IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import { MdPhotoCameraBack } from "react-icons/md";
 import { FaCameraRetro } from "react-icons/fa";
 import { IoCheckmarkSharp } from "react-icons/io5";
+import { SERVER_URL } from "../../util/url";
 
 function MyProfileDetails() {
 
@@ -164,7 +165,8 @@ function MyProfileDetails() {
         }
 
         axios({
-            url: 'http://localhost:3001/friend/myProfileEdit',
+            // url: 'http://localhost:3001/friend/myProfileEdit',
+            url: `${SERVER_URL.TARGET_URL()}/friend/myProfileEdit`,
             method: 'put',
             data: formData,
         })
@@ -195,7 +197,8 @@ function MyProfileDetails() {
         console.log('axisDefaultBackImg()');
 
         axios({
-            url: 'http://localhost:3001/friend/myBackDefaultImg',
+            // url: 'http://localhost:3001/friend/myBackDefaultImg',
+            url: `${SERVER_URL.TARGET_URL()}/friend/myBackDefaultImg`,
             method: 'put',
         })
         .then(response => {
@@ -225,7 +228,8 @@ function MyProfileDetails() {
         console.log('axisDefaultFrontImg()');
 
         axios({
-            url: 'http://localhost:3001/friend/myFrontDefaultImg',
+            // url: 'http://localhost:3001/friend/myFrontDefaultImg',
+            url: `${SERVER_URL.TARGET_URL()}/friend/myFrontDefaultImg`,
             method: 'put',
         })
         .then(response => {
@@ -256,7 +260,11 @@ function MyProfileDetails() {
         console.log('axiosGetMyProfileImgs');
 
         try {
-            const response = await axios.get('http://localhost:3001/friend/getMyProfileImgs', {
+            const response = await axios.get(
+                // 'http://localhost:3001/friend/getMyProfileImgs', 
+                `${SERVER_URL.TARGET_URL()}/friend/getMyProfileImgs`,
+
+                {
 
             });
             console.log('axiosGetMyProfileImgs success', response.data);
@@ -279,7 +287,10 @@ function MyProfileDetails() {
         console.log('axiosGetMyBackImgs()');
 
         try {
-            const response = await axios.get('http://localhost:3001/friend/getMyBackImgs', {
+            const response = await axios.get(
+                // 'http://localhost:3001/friend/getMyBackImgs',
+                `${SERVER_URL.TARGET_URL()}/friend/getMyBackImgs`,
+                 {
 
             });
             console.log('axiosGetMyBackImgs success', response.data);

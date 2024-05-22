@@ -5,6 +5,8 @@ import {
 } from 'recharts';
 import useAxiosGetAdmin from '../../../util/useAxiosGetAdmin';
 import { Link } from 'react-router-dom';
+import '../../../css/admin/adminmanagement/chatstatusmonthly.css';
+import { SERVER_URL } from '../../../util/url';
 
 const ChatStatusMonthly = ({ onSelectMonth, currentPage, setCurrentPage }) => {
     const [data, setData] = useState([]);
@@ -20,7 +22,11 @@ const ChatStatusMonthly = ({ onSelectMonth, currentPage, setCurrentPage }) => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/admin/chatStatusMonthly');
+            const response = await axios.get(
+                // 'http://localhost:3001/admin/chatStatusMonthly'
+                `${SERVER_URL.TARGET_URL()}/admin/chatStatusMonthly`,
+
+                );
 
             const now = new Date();
             const currentYear = now.getFullYear();
@@ -109,34 +115,36 @@ const ChatStatusMonthly = ({ onSelectMonth, currentPage, setCurrentPage }) => {
     };
 
     return (
-        <div>
-            <h1>월별 채팅 수 통계</h1>
-            <Link to="/admin/chatstatushourly">기간별 통계</Link><br />
-            <div>
-                <label>
-                    연도:
-                    <select value={selectedYear} onChange={(e) => {
-                        setSelectedYear(e.target.value);
-                        setSelectedMonth('');
-                    }}>
-                        <option value="">선택</option>
-                        {years.map(year => (
-                            <option key={year} value={year}>{year}</option>
-                        ))}
-                    </select>
-                </label>
-                <label>
-                    월:
-                    <select value={selectedMonth} onChange={(e) => {
-                        setSelectedMonth(e.target.value);
-                    }}>
-                        <option value="">선택</option>
-                        {months.map(month => (
-                            <option key={month} value={month}>{month}</option>
-                        ))}
-                    </select>
-                </label>
-                <button onClick={handleSelectDate}>검색</button>
+        <div className="chatStatusContainer">
+            <h1 className="chatStatusHeader">월별 채팅 수 통계</h1>
+            <div className="topBar">
+                <Link to="/admin/chatstatushourly" className="hourlyLink">시간대별 통계 이동</Link>
+                <div className="dateSelector">
+                    <label>
+                        연도:
+                        <select value={selectedYear} onChange={(e) => {
+                            setSelectedYear(e.target.value);
+                            setSelectedMonth('');
+                        }}>
+                            <option value="">선택</option>
+                            {years.map(year => (
+                                <option key={year} value={year}>{year}</option>
+                            ))}
+                        </select>
+                    </label>
+                    <label>
+                        월:
+                        <select value={selectedMonth} onChange={(e) => {
+                            setSelectedMonth(e.target.value);
+                        }}>
+                            <option value="">선택</option>
+                            {months.map(month => (
+                                <option key={month} value={month}>{month}</option>
+                            ))}
+                        </select>
+                    </label>
+                    <button onClick={handleSelectDate} className="searchButton">검색</button>
+                </div>
             </div>
             <ResponsiveContainer width="80%" height={400}>
                 <BarChart
@@ -157,12 +165,12 @@ const ChatStatusMonthly = ({ onSelectMonth, currentPage, setCurrentPage }) => {
                     <Bar dataKey="chatCount" fill="#0B76A0" barSize={120} />
                 </BarChart>
             </ResponsiveContainer>
-            <div>
-                <button onClick={handlePrevPage} disabled={currentPage * itemsPerPage >= data.length}>이전</button>
-                <button onClick={handleNextPage} disabled={currentPage === 1}>다음</button>
+            <div className="paginationButtons">
+                <button onClick={handlePrevPage} disabled={currentPage * itemsPerPage >= data.length} className="pageButton">이전</button>
+                <button onClick={handleNextPage} disabled={currentPage === 1} className="pageButton">다음</button>
             </div>
         </div>
     );
-};
+}
 
 export default ChatStatusMonthly;

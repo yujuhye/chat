@@ -14,12 +14,14 @@ async function fetchMessagesFromDatabase(roomId, userNo) {
         JOIN
             CHAT_PARTICIPANT AS CP ON C.ROOM_NO = CP.ROOM_NO
         LEFT JOIN
-            FRIEND F ON CP.USER_NO = F.USER_NO AND F.FRIEND_TARGET_ID = C.USER_NICKNAME AND F.FRIEND_IS_BLOCK = 1
+            FRIEND F ON CP.USER_NO = F.USER_NO AND F.FRIEND_TARGET_NAME = C.USER_NICKNAME AND F.FRIEND_IS_BLOCK = 1
+        LEFT JOIN
+            FRIEND F2 ON F2.USER_NO = C.USER_NICKNAME AND F2.FRIEND_TARGET_NAME = CP.USER_NICKNAME AND F2.FRIEND_IS_BLOCK = 1
         WHERE
             C.ROOM_NO = ? 
             AND CP.USER_NO = ? 
             AND C.CHAT_REG_DATE > CP.PARTI_REG_DATE
-            AND (F.FRIEND_NO IS NULL OR F.FRIEND_IS_BLOCK = 0)
+            AND (F.FRIEND_NO IS NULL AND F2.FRIEND_NO IS NULL)
         ORDER BY
             C.CHAT_REG_DATE ASC
         `;
@@ -462,6 +464,7 @@ module.exports = function(io) {
         //     });
         // });
 
+        // 메시지 전송
         socket.on('sendMessage', (data) => {
             const { sender, content, roomId, userNo } = data;
         
@@ -474,17 +477,17 @@ module.exports = function(io) {
         
             // 차단된 사용자 목록 조회
             const blockSql = `SELECT FRIEND_TARGET_ID FROM FRIEND WHERE USER_NO = ? AND FRIEND_IS_BLOCK = 1`;
-            DB.query(blockSql, [userNo], (blockErr, blockedUsers) => {
+            DB.query(blockSql, [sender], (blockErr, blockedUsers) => { // 여기서 sender가 보낸 사람의 userNo와 같다고 가정
                 if (blockErr) {
                     console.error('차단된 사용자 목록 조회 오류 -----> ', blockErr);
                     return;
                 }
-        
+
                 const blockedUserNos = blockedUsers.map(user => user.FRIEND_TARGET_ID);
-        
-                // 보낸 메시지를 차단한 사용자에 의해 보내진 경우 처리 중지
-                if (blockedUserNos.includes(sender)) {
-                    console.log('차단된 사용자가 메시지를 보냈습니다.');
+
+                // 받는 사용자가 보낸 메시지를 차단한 경우 처리 중지
+                if (blockedUserNos.includes(userNo)) {
+                    console.log('차단된 사용자가 메시지를 받으려고 합니다.');
                     return;
                 }
         
@@ -556,7 +559,7 @@ module.exports = function(io) {
                     });
                 });
             });
-        });
+        });        
             
         // 채팅방 떠남
         socket.on('leaveRoom', function(data){

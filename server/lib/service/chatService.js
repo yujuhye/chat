@@ -80,14 +80,16 @@ const chatService = {
         JOIN
             CHAT_PARTICIPANT AS CP ON C.ROOM_NO = CP.ROOM_NO
         LEFT JOIN
-            FRIEND F ON CP.USER_NO = F.USER_NO AND F.FRIEND_TARGET_ID = C.USER_NICKNAME AND F.FRIEND_IS_BLOCK = 1
+            FRIEND F ON CP.USER_NO = F.USER_NO AND F.FRIEND_TARGET_NAME = C.USER_NICKNAME AND F.FRIEND_IS_BLOCK = 1
+        LEFT JOIN
+            FRIEND F2 ON F2.USER_NO = C.USER_NICKNAME AND F2.FRIEND_TARGET_NAME = CP.USER_NICKNAME AND F2.FRIEND_IS_BLOCK = 1
         WHERE
             C.ROOM_NO = ? 
             AND CP.USER_NO = ? 
             AND C.CHAT_REG_DATE > CP.PARTI_REG_DATE
-            AND (F.FRIEND_NO IS NULL OR F.FRIEND_IS_BLOCK = 0)
+            AND (F.FRIEND_NO IS NULL AND F2.FRIEND_NO IS NULL)
         ORDER BY
-            C.CHAT_REG_DATE ASC    
+            C.CHAT_REG_DATE ASC
         `;
 
         // 사용자 번호(userNo) 조회 쿼리 실행
@@ -203,6 +205,10 @@ const chatService = {
         console.log('채팅 이미지 전송 userNo ----->', post.userNo);
         console.log('채팅 이미지 전송 userId ----->', post.userId);
         console.log('채팅 이미지 전송 roomId ----->', post.roomId);
+
+        const now = new Date();
+        now.setHours(now.getHours() + 9); // KST 시간으로 조정
+        const kst = now.toISOString().slice(0, 19).replace('T', ' ');
     
         let userInfoSelectSql =
         `
@@ -217,9 +223,9 @@ const chatService = {
         let submitImgSql = 
         `
             INSERT INTO CHAT
-                (ROOM_NO, USER_NICKNAME, CHAT_CONDITION, CHAT_IMAGE_NAME)
+                (ROOM_NO, USER_NICKNAME, CHAT_CONDITION, CHAT_IMAGE_NAME, CHAT_REG_DATE)
             VALUES 
-                (?, ?, 1, ?)        
+                (?, ?, 1, ?, ?)        
         `;
     
         req.files.forEach(file => {
@@ -233,7 +239,7 @@ const chatService = {
                     const userNickname = userInfoResult[0].USER_NICKNAME;
                     console.log("유저 닉네임 조회 -----> ", userNickname);
     
-                    DB.query(submitImgSql, [post.roomId, userNickname, file.filename], (err, chatResult) => {
+                    DB.query(submitImgSql, [post.roomId, userNickname, file.filename, kst], (err, chatResult) => {
                         if (err) {
                             console.log("채팅 이미지 전송 중 에러 발생 -----> ", err);
     
@@ -286,6 +292,10 @@ const chatService = {
         console.log('채팅 영상 전송 userNo ----->', post.userNo);
         console.log('채팅 영상 전송 userId ----->', post.userId);
         console.log('채팅 영상 전송 roomId ----->', post.roomId);
+
+        const now = new Date();
+        now.setHours(now.getHours() + 9); // KST 시간으로 조정
+        const kst = now.toISOString().slice(0, 19).replace('T', ' ');
     
         let userInfoSelectSql =
         `
@@ -300,9 +310,9 @@ const chatService = {
         let submitVideoSql = 
         `
             INSERT INTO CHAT
-                (ROOM_NO, USER_NICKNAME, CHAT_CONDITION, CHAT_VIDEO_NAME)
+                (ROOM_NO, USER_NICKNAME, CHAT_CONDITION, CHAT_VIDEO_NAME, CHAT_REG_DATE)
             VALUES 
-                (?, ?, 2, ?)        
+                (?, ?, 2, ?, ?)        
         `;
     
         // req.files를 통해 업로드된 파일들의 배열에 접근
@@ -319,7 +329,7 @@ const chatService = {
                     console.log("유저 닉네임 조회 -----> ", userNickname);
     
                     // CHAT 테이블에 데이터 삽입
-                    DB.query(submitVideoSql, [post.roomId, userNickname, file.filename], (err, chatResult) => {
+                    DB.query(submitVideoSql, [post.roomId, userNickname, file.filename, kst], (err, chatResult) => {
                         if (err) {
                             console.log("채팅 영상 전송 중 에러 발생 -----> ", err);
     
@@ -374,6 +384,10 @@ const chatService = {
         console.log('채팅 파일 전송 userNo ----->', post.userNo);
         console.log('채팅 파일 전송 userId ----->', post.userId);
         console.log('채팅 파일 전송 roomId ----->', post.roomId);
+
+        const now = new Date();
+        now.setHours(now.getHours() + 9); // KST 시간으로 조정
+        const kst = now.toISOString().slice(0, 19).replace('T', ' ');
     
         let userInfoSelectSql =
         `
@@ -388,9 +402,9 @@ const chatService = {
         let submitFileSql = 
         `
             INSERT INTO CHAT
-                (ROOM_NO, USER_NICKNAME, CHAT_CONDITION, CHAT_FILE_NAME)
+                (ROOM_NO, USER_NICKNAME, CHAT_CONDITION, CHAT_FILE_NAME, CHAT_REG_DATE)
             VALUES 
-                (?, ?, 3, ?)        
+                (?, ?, 3, ?, ?)        
         `;
     
         // req.files를 통해 업로드된 파일들의 배열에 접근
@@ -431,7 +445,7 @@ const chatService = {
                                 VALUES 
                                     (?, ?, ?)
                             `;
-                            DB.query(chatFileTableInsertSql, [chatNo, post.userNo, file.filename], (err, chatFileResult) => {
+                            DB.query(chatFileTableInsertSql, [chatNo, post.userNo, file.filename, kst], (err, chatFileResult) => {
                                 if (err) {
                                     console.log("CHAT_FILE_NAME 테이블 삽입 중 에러 발생 -----> ", err);
                                     

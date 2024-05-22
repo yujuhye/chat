@@ -6,13 +6,13 @@ export default function roomsReducer(state = initialState, action) {
     switch (action.type) {
         case 'SET_ROOMS':
             // 상태를 직접 변형하지 않고 새로운 객체를 반환
-            console.log('SET_ROOMS Payload:', action.rooms);
+            // console.log('SET_ROOMS Payload:', action.rooms);
             // state['rooms'] = action.rooms;
             // return {...state};
             return {...state, rooms: action.rooms};
         
         case 'LEAVE_ROOM':
-            console.log('LEAVE_ROOM rooms:', action.payload); // 해당 방번호 출력
+            // console.log('LEAVE_ROOM rooms:', action.payload); // 해당 방번호 출력
             return {
                 ...state,
                 rooms: state.rooms.filter(room => room.id !== action.payload),

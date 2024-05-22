@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setYourIdAction, setYourEmailAction } from '../action/findPasswordActions';
+import { SERVER_URL } from '../../util/url';
+import '../../css/member/findpassword.css';
 
 axios.defaults.withCredentials = true;
 
@@ -50,7 +52,8 @@ const FindPassword = () => {
         console.log('[FindPassword] axiosFindPassword()');
 
         axios({
-            url: 'http://localhost:3001/member/findPassword',
+            // url: 'http://localhost:3001/member/findPassword',
+            url: `${SERVER_URL.TARGET_URL()}/member/findPassword`,
             method: 'post',
             data: {
                 'yourId': yourId,
@@ -78,17 +81,17 @@ const FindPassword = () => {
     }
 
     return (
-
-        <div>
-            <p>비밀번호 찾기</p>
-            <form name="findPasswordForm">
-                <input type="text" name="yourId" value={yourId} onChange={(e) => memberInfoChangeHandler(e)} placeholder="아이디를 입력하세요." /><br />
-                <input type="text" name="yourEmail" value={yourEmail} onChange={(e) => memberInfoChangeHandler(e)} placeholder="메일을 입력하세요." /><br />
-                <input type="button" value="비밀번호 찾기" onClick={findPasswordBtnClickHandler} />
-                <input type="reset" value="RESET" onClick={findPasswordResetBtnClickHandler} />
-            </form>
+        <div className="findPasswordContainer">
+            <div className="findPasswordForm">
+                <p>비밀번호 찾기</p>
+                <form name="findPasswordForm">
+                    <input type="text" name="yourId" value={yourId} onChange={memberInfoChangeHandler} placeholder="아이디를 입력하세요." /><br />
+                    <input type="text" name="yourEmail" value={yourEmail} onChange={memberInfoChangeHandler} placeholder="메일을 입력하세요." /><br />
+                    <input type="button" value="비밀번호 찾기" onClick={findPasswordBtnClickHandler} />
+                    <input type="reset" value="RESET" onClick={findPasswordResetBtnClickHandler} />
+                </form>
+            </div>
         </div>
-
     );
 };
 

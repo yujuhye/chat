@@ -6,7 +6,9 @@
     border-radius: 5px;
     background-color: #f9f9f9;
 } */
-
+.reqFriendText {
+    margin-top: 5px;
+}
 
 .form-container input[type="text"] {
     padding: 10px;

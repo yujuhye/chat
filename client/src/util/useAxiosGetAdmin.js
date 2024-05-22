@@ -20,7 +20,8 @@ const useAxiosGetAdmin = () => {
 
             try {
                 const response = await axios.get(
-                    'http://localhost:3001/admin/getAdmin',
+                    // 'http://localhost:3001/admin/getAdmin',
+                    `${SERVER_URL.TARGET_URL()}/admin/getAdmin`, 
                     {
                         headers: {
                             Authorization: `Bearer ${adminToken}`

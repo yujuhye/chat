@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-
 import {FaRegStar, FaStar} from "react-icons/fa";
+import { SERVER_URL } from '../../util/url';
 
 function Favorite(props) {
 
@@ -25,15 +25,14 @@ function Favorite(props) {
 
         try {
             if(!isFavorite) {
-
-                const response = await axios.put('http://localhost:3001/friend/addFavorite', {
+                const response = await axios.put(`${SERVER_URL.TARGET_URL()}/friend/addFavorite`, {
                     no: no,
                 });
                 console.log('favorite success', response.data);
 
             } else {
-
-                const response = await axios.put('http://localhost:3001/friend/deleteFavorite', {
+               
+                const response = await axios.put(`${SERVER_URL.TARGET_URL()}/friend/deleteFavorite`, {
                     no: no,
                 });
                 console.log('favorite delete success', response.data);

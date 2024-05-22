@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { setRooms, setLeaveRoom, setFavoriteRoom } from '../action/chatRoom';
+import { SERVER_URL } from '../../util/url';
 import io from 'socket.io-client';
 import axios from "axios"; 
 import '../../css/common.css'
 import '../../css/chat/chatViewFriendModal.css';
 
-const socket = io('http://localhost:3001');
+// const socket = io('http://localhost:3001');
+const socket = io(`${SERVER_URL.TARGET_URL()}`);
 
 const ChatDetailViewFriendModal = (props) => {
     const { participants, handleFriendInviteModalClose, isShowChatInviteFriendModal, setIsShowChatInviteFriendModal, socket, selectedRoom  } = props;
@@ -32,13 +34,13 @@ const ChatDetailViewFriendModal = (props) => {
 
             } else {
 
-                alert('[FriendListModal] 친구 목록을 불러오는 데 실패했습니다.');
+                // alert('친구 목록을 불러오는 데 실패했습니다.');
 
             }
         })
         .catch(error => {
 
-            alert(`[FriendListModal] fetchFriends Error: ${error.message}`);
+            alert(`[FriendListModal] 친구 목록을 불러오는 데 실패했습니다. : ${error.message}`);
 
         });
     };
@@ -74,8 +76,8 @@ const ChatDetailViewFriendModal = (props) => {
             const fetchRooms = async () => {
                 try {
                     const response = await axios.get('http://localhost:3001/chatRoom/list');
-                    console.log('chat list : ', response.data); 
-                    console.log('채팅 리스트 room : ', response.data.rooms); 
+                    // console.log('chat list : ', response.data); 
+                    // console.log('채팅 리스트 room : ', response.data.rooms); 
     
                     // 가져온 채팅방 목록을 리덕스 스토어에 설정
                     dispatch(setRooms(response.data.rooms));
@@ -100,7 +102,7 @@ const ChatDetailViewFriendModal = (props) => {
     if (!isShowChatInviteFriendModal) return null; // 모달을 표시하지 않을 경우 렌더링하지 않음
 
     const handleFriendSelection = (friendNo) => {
-        console.log('friendNo -----> ', friendNo);
+        // console.log('friendNo -----> ', friendNo);
         
         const friend = friends.find(f => f.FRIEND_NO === friendNo);
 
@@ -131,7 +133,7 @@ const ChatDetailViewFriendModal = (props) => {
         }
         console.log('친구 선택됨');        
 
-        console.log('selectedFriends -----> ', inviteFriend);
+        // console.log('selectedFriends -----> ', inviteFriend);
         socket.emit('invite room', inviteFriend);
 
         setIsShowChatInviteFriendModal(false);
@@ -150,7 +152,7 @@ const ChatDetailViewFriendModal = (props) => {
                             onChange={() => handleFriendSelection(friend.FRIEND_NO)}
                             disabled={participants.some(participant => participant.USER_NO === friend.USER_NO)} // 현재 방에 있는 유저는 선택할 수 없도록 함
                         />
-                        {friend.USER_NO}
+                        {/* {friend.USER_NO} */}
                         {friend.FRIEND_TARGET_NAME}
                     </div>
                 ))}
