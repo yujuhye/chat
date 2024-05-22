@@ -27,14 +27,17 @@
     width: 300px; 
     max-height: 500px;
     overflow-y: auto; 
-    z-index: 2; 
+    z-index: 101;
+    margin: 3px; 
 }
 
 .notification {
     margin-bottom: 5px;
     margin-top: 5px;
     cursor: pointer;
+    z-index: 100; 
 }
+
 
 .notification:hover {
     background-color: #f0f0f0;

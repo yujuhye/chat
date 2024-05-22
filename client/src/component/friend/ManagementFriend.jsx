@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { IoIosArrowDown, IoIosArrowUp  } from "react-icons/io";
 
 import '../../css/managementFriend.css';
+import RequestFriend from "./RequestFriend";
+import SideNav from "../../include/SideNav";
+import '../../css/common.css';
 
 function ManagementFriend() {
 
@@ -485,28 +488,33 @@ function ManagementFriend() {
 
 
     return(
-        <>
-            <h2>친구관리</h2>
+        <div className="managementFriendContainer">
+            <SideNav />
+            <div className="managementFriendWrap">
+            <div className="requestFriendWraps"> <RequestFriend /></div>
+            <div className="manageFriendText">
+                <h2 >친구관리</h2>
+            </div>
             <h3 className="managementFriend" onClick={receivedClickHandler}>받은요청 {receivedIsOpen ?  <IoIosArrowUp /> : <IoIosArrowDown />}
             </h3>
             { receivedIsOpen && (
                 Object.keys(getReqFriend).length > 0 ? (
-                    <ul>
+                    <ul className="managementUl">
                         {Object.keys(getReqFriend).map((getReqFriendid, index) => (
-                            <li key={index} className="profile">
+                            <li key={index} className="reqProfile">
                                 {
                                     getReqFriend[getReqFriendid].getReqfriendImg === ''
                                     ?
                                         <>
-                                            <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
+                                            <img src="/resource/img/profile_default.png" className="reqProfileImg"/>
                                         </>
                                     :
                                         <>
-                                            <img src={`http://localhost:3001/${getReqFriend[getReqFriendid].getReqfriendId}/${getReqFriend[getReqFriendid].getReqfriendImg}`} className="frontProfileImg"/>
+                                            <img src={`http://localhost:3001/${getReqFriend[getReqFriendid].getReqfriendId}/${getReqFriend[getReqFriendid].getReqfriendImg}`} className="reqProfileImg"/>
                                         </>
                                     
                                 }
-                                <span className="profileName">
+                                <span className="reqProfileName">
                                     {getReqFriend[getReqFriendid].getReqfriendName}({getReqFriend[getReqFriendid].getReqfriendId})
                                 </span> &nbsp;&nbsp;&nbsp;
                                     {getReqFriend[getReqFriendid].getReqfriendMes}
@@ -525,19 +533,19 @@ function ManagementFriend() {
                 Object.keys(sentReqFriend).length > 0 ? (
                 <ul>
                     {Object.keys(sentReqFriend).map((sentReqFriendid, index) => (
-                    <li key={index} className="profile">
+                    <li key={index} className="reqProfile">
                         {
                         sentReqFriend[sentReqFriendid].sentReqfrienImg === '' 
                         ? 
                         <>
-                            <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
+                            <img src="/resource/img/profile_default.png" className="reqProfileImg"/>
                         </>
                         : 
                         <>
-                            <img src={`http://localhost:3001/${sentReqFriend[sentReqFriendid].sentReqfriendId}/${sentReqFriend[sentReqFriendid].sentReqfrienImg}`} className="frontProfileImg"/>
+                            <img src={`http://localhost:3001/${sentReqFriend[sentReqFriendid].sentReqfriendId}/${sentReqFriend[sentReqFriendid].sentReqfrienImg}`} className="reqProfileImg"/>
                         </>
                         }
-                        <span className="profileName">
+                        <span className="reqProfileName">
                             {sentReqFriend[sentReqFriendid].sentReqfriendName}({sentReqFriend[sentReqFriendid].sentReqfriendId})
                         </span> &nbsp;&nbsp;&nbsp;
                         <input type="button" value="요청취소" onClick={() => deleteRequestBtnClickHandler(sentReqFriend[sentReqFriendid].sentReqfriendNo)}/>
@@ -554,19 +562,19 @@ function ManagementFriend() {
                 Object.keys(blockFriend).length > 0 ? (
                 <ul>
                     {Object.keys(blockFriend).map((blockFriendid, index) => (
-                    <li key={index} className="profile">
+                    <li key={index} className="reqProfile">
                         {
                         blockFriend[blockFriendid].blockFriendImg === '' 
                         ? 
                         <>
-                            <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
+                            <img src="/resource/img/profile_default.png" className="reqProfileImg"/>
                         </>
                         : 
                         <>
-                            <img src={`http://localhost:3001/${blockFriend[blockFriendid].blockFriendId}/${blockFriend[blockFriendid].blockFriendImg}`} className="frontProfileImg"/>
+                            <img src={`http://localhost:3001/${blockFriend[blockFriendid].blockFriendId}/${blockFriend[blockFriendid].blockFriendImg}`} className="reqProfileImg"/>
                         </>
                         }
-                        <span className="profileName">
+                        <span className="reqProfileName">
                             {blockFriend[blockFriendid].blockFriendName}({blockFriend[blockFriendid].blockFriendId})
                         </span> &nbsp;&nbsp;&nbsp;
                         <input type="button" value="차단해제" onClick={() => releaseBlockFriendClickHandler(blockFriend[blockFriendid].blockFriendNo)}/>
@@ -583,19 +591,19 @@ function ManagementFriend() {
                 Object.keys(hiddenFriend).length > 0 ? (
                 <ul>
                     {Object.keys(hiddenFriend).map((hiddenFriendid, index) => (
-                    <li key={index} className="profile">
+                    <li key={index} className="reqProfile">
                         {
                         hiddenFriend[hiddenFriendid].hiddenfriendImg === '' 
                         ? 
                         <>
-                            <img src="/resource/img/profile_default.png" className="frontProfileImg"/>
+                            <img src="/resource/img/profile_default.png" className="reqProfileImg"/>
                         </>
                         : 
                         <>
-                            <img src={`http://localhost:3001/${hiddenFriend[hiddenFriendid].hiddenfriendId}/${hiddenFriend[hiddenFriendid].hiddenfriendImg}`} className="frontProfileImg"/>
+                            <img src={`http://localhost:3001/${hiddenFriend[hiddenFriendid].hiddenfriendId}/${hiddenFriend[hiddenFriendid].hiddenfriendImg}`} className="reqProfileImg"/>
                         </>
                         }
-                        <span className="profileName">
+                        <span className="reqProfileName">
                             {hiddenFriend[hiddenFriendid].hiddenfriendName}({hiddenFriend[hiddenFriendid].hiddenfriendId})
                         </span> &nbsp;&nbsp;&nbsp;
                         <input type="button" value="숨김해제" onClick={() => releaseHiddenFriendClickHandler(hiddenFriend[hiddenFriendid].hiddenfriendNo)}/>
@@ -606,7 +614,8 @@ function ManagementFriend() {
             <p>숨김친구가 없습니다.</p>
             )
             )}
-        </>
+            </div>
+        </div>
     );
 }
 

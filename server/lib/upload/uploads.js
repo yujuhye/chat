@@ -2,6 +2,7 @@ const multer = require("multer");
 const uuid4 = require("uuid4");
 const path = require('path');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
 
 const uploads = {
 
@@ -137,16 +138,15 @@ const uploads = {
             storage: multer.diskStorage({
                 destination(req, file, done) {
 
-                    let fileDir = `C:\\member\\upload\\profile_thums\\${req.user}\\`;
-                    
+                    let fileDir = `C:\\member\\upload\\profile_thums\\${req.body.userId}\\`;
 
-                    console.log('req.body.uId  ---> ', req.user);
+                    // console.log('profileImg userId ---> ', userId);
 
                     if (!fs.existsSync(fileDir)) {
                         fs.mkdirSync(fileDir, { recursive: true });
                     }
 
-                    done(null, `C:\\member\\upload\\profile_thums\\${req.user}\\`);
+                    done(null, `C:\\member\\upload\\profile_thums\\${req.body.userId}\\`);
                 },
                 filename(req, file, done) {
                     let uuid = uuid4();

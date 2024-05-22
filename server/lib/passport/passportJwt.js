@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const shortid = require('shortid');
 const jwt = require('jsonwebtoken');
 
-const CLIENT_ID = 'here!!!!';
+const CLIENT_ID = '113858365495-jl2hl92heunsnv028li58n6aum139hcr.apps.googleusercontent.com';
 const client = new OAuth2Client(CLIENT_ID);
 
 module.exports = function (app) {

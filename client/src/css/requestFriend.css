@@ -1,0 +1,88 @@
+/* .form-container {
+    width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+} */
+
+
+.form-container input[type="text"] {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    width: 200px;
+    text-align: center;
+}
+
+.form-container input[type="button"] {
+    padding: 10px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+}
+
+.form-container input[type="button"]:hover {
+    background-color: #0056b3;
+}
+
+.reqFriendWrap {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0 0 0;
+}
+
+.reqProfile {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.reqProfileImg {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.reqProfileName {
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.reqProfile span {
+    margin-right: 10px;
+}
+
+.reqProfile div {
+    margin-left: auto;
+}
+
+.reqProfile p {
+    margin: 0;
+    color: red;
+}
+
+.reqProfile input[type="button"] {
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    margin: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.reqProfile input[type="button"]:hover {
+    background-color: #0056b3;
+}

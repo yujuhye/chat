@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUIdAction, setUPwAction, setIsLoginAction, setUserIdAction } from '../action/loginActions';
 import useAxiosGetMember from "../../util/useAxiosGetMember";
 import cookie from 'js-cookie';
@@ -9,17 +9,19 @@ import { GoogleLogin } from '@react-oauth/google';
 import '../../css/member/login.css';
 import * as jwt_decode from 'jwt-decode';
 import io from 'socket.io-client'; // 0519 추가
+import { friendListsAction } from '../action/friendList';
 const socket = io('http://localhost:3001'); // 0519 추가
 
 
 axios.defaults.withCredentials = true;
-const CLIENT_ID = 'here!!!!';
+const CLIENT_ID = '113858365495-jl2hl92heunsnv028li58n6aum139hcr.apps.googleusercontent.com';
 
 const Login = () => {
     const dispatch = useDispatch();
     const [uId, setUId] = useState('');
     const [uPw, setUPw] = useState('');
     const navigate = useNavigate();
+    const friends = useSelector(state => state['friend']['friends']);
     useAxiosGetMember();
 
     const memberInfoChangeHandler = (e) => {
@@ -58,7 +60,7 @@ const Login = () => {
                     console.log('dispatch(setUserIdAction(uId) --> ', dispatch(setUserIdAction(uId)));
                     // 0519 소켓 서버에 로그인 이벤트 보내기
                     socket.emit('login', uId);
-
+                    dispatch(friendListsAction(''));
                     navigate('/friend/friendList');
                 } else {
                     alert('MEMBER LOGIN PROCESS FAIL!!');
