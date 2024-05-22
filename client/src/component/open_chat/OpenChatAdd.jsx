@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import socket from './socket';
 import { generateRandomString } from '../../util/randomString';
-import { FaPeopleGroup } from "react-icons/fa6";
 import uploadFile from '../../util/uploadFileOpenChat'
 
-const OpenChatAdd = ({ onLeave, userNo, onCreateSuccess }) => {
+const OpenChatAdd = ({ onLeave, userNo }) => {
 
-    const [openRProfile, setOpenRProfile] = useState(<FaPeopleGroup />);
+    const [openRProfile, setOpenRProfile] = useState('');
     const [openRName, setOpenRName] = useState('');
     const [openRLimit, setOpenRLimit] = useState(50);
     const [openRIntro, setOpenRIntro] = useState('');
@@ -36,12 +35,18 @@ const OpenChatAdd = ({ onLeave, userNo, onCreateSuccess }) => {
     const handleNewProfileImageChange = async (e) => {
 
         const file = e.target.files[0];
-        try {
-            const uploadedFile = await uploadFile(file);
-            setNewProfileImage(uploadedFile.secure_url);
-        } catch (error) {
-            console.error('파일 업로드 실패:', error);
+        
+        if(file) {
+            try {
+                const uploadedFile = await uploadFile(file);
+                setNewProfileImage(uploadedFile.secure_url);
+            } catch (error) {
+                console.error('파일 업로드 실패:', error);
+            }
+        } else {
+            setOpenRProfile('');
         }
+
     };
 
 
@@ -91,10 +96,9 @@ const OpenChatAdd = ({ onLeave, userNo, onCreateSuccess }) => {
                 
             };
 
-            socket.emit('createOpenChat', newOpenChat,);
-
+            socket.emit('createOpenChat', newOpenChat);
+            
         } else if(profileType === 'default') {
-
             const newOpenChat = {
                 OPEN_R_ID: generateRandomString(80),
                 OPEN_R_PROFILE: openRProfile,
@@ -106,10 +110,10 @@ const OpenChatAdd = ({ onLeave, userNo, onCreateSuccess }) => {
             };
 
             socket.emit('createOpenChatOnDefault', newOpenChat);
-        
+            
     }
     
-    setOpenRProfile(<FaPeopleGroup />);
+    setOpenRProfile('');
     setOpenRName('');
     setOpenRLimit(50);
     setOpenRIntro('');

@@ -1,14 +1,10 @@
 const DB = require('../../lib/db/db');
 
 exports.updateBookmark = async (rNo, uNo, callback) => {
-
+    console.log('updateBookmark called!!');
     let query = `UPDATE OPEN_CHAT_PARTICIPANT
     SET OPEN_P_BOOKMARK = (CASE WHEN OPEN_P_BOOKMARK = 0 THEN 1 ELSE 0 END)
-    WHERE OPEN_P_NO IN (
-      SELECT OPEN_P_NO
-      FROM OPEN_CHAT_PARTICIPANT
-      WHERE rNo = ? AND uNo = ?
-    )`
+    WHERE (OPEN_R_NO, USER_NO) = (?, ?)`
 
     DB.query(query, [rNo, uNo], (error, result) => {
 

@@ -9,12 +9,12 @@ import { setCurrentRoom, setOpenChatRooms, updateChatRoomBookmark, setAllOpenCha
 import OpenChatRoom from '../OpenChatRoom';
 import OpenChatAdd from '../OpenChatAdd';
 import { FaRegStar, FaStar } from "react-icons/fa";
+import { FaPeopleGroup } from "react-icons/fa6";
 
 
 const OpenChatPage = () => {
 
-    const getUserNo = useAxiosGetMemberForOpenChat();
-    let userNo = getUserNo;
+    const userNo = useAxiosGetMemberForOpenChat();
 
 
     const dispatch = useDispatch();
@@ -24,12 +24,11 @@ const OpenChatPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showChatRoom, setShowChatRoom] = useState(false);
     const [showChatAdd, setShowChatAdd] = useState(false);
-    const [resNo, setResNo] = useState(null);
 
     useEffect(() => {
         console.log('userNo@@@@', userNo);
         if (userNo !== undefined) {
-            setResNo(userNo);
+            // setResNo(userNo);
             socket.emit('getOpenChatList', userNo);
 
             socket.on('openChatRooms', (rooms) => {
@@ -61,15 +60,10 @@ const OpenChatPage = () => {
         socket.on('createSuccess', (openRNo) => {
             dispatch(setCurrentRoom({ OPEN_R_NO: openRNo[0] }));
             setShowChatRoom(true);
-
-            setResNo(openRNo[1]);
-
+            let resNo = openRNo[1];
+            
             socket.emit('getOpenChatList', resNo);
-            socket.on('openChatRooms', (rooms) => {
-                console.log('rooms1', rooms);
-                dispatch(setOpenChatRooms(rooms));
 
-            });
         });
 
     }, [dispatch, showChatRoom]);
@@ -108,12 +102,15 @@ const OpenChatPage = () => {
     };
 
     const handleBookmarkRoom = (rNo) => {
-        
-        socket.emit('updateBookmark', rNo, resNo);
-        socket.on('bookmarkUpdateSucceess', (result) => {
 
+        socket.emit('updateBookmark', rNo, userNo);
+        socket.on('bookmarkUpdateSucceess', (result) => {
+            console.log('result', result);
             if(result > 0) {
                 dispatch(updateChatRoomBookmark(rNo));
+
+                socket.emit('getOpenChatList', userNo);
+
             }
         });
 
@@ -133,10 +130,10 @@ const OpenChatPage = () => {
     );
 
     const sortedChatRooms = filteredChatRooms.sort((a, b) => {
-        if (a.bookmark && !b.bookmark) return -1;
-        if (!a.bookmark && b.bookmark) return 1;
-        if (a.latestMessage && !b.latestMessage) return -1;
-        if (!a.latestMessage && b.latestMessage) return 1;
+        if (a.OPEN_P_BOOKMARK && !b.OPEN_P_BOOKMARK) return -1;
+        if (!a.OPEN_P_BOOKMARK && b.OPEN_P_BOOKMARK) return 1;
+        if (a.LATEST_MESSAGE && !b.LATEST_MESSAGE) return -1;
+        if (!a.LATEST_MESSAGE && b.LATEST_MESSAGE) return 1;
         return 0;
     });
 
@@ -168,7 +165,13 @@ const OpenChatPage = () => {
                             <ul>
                                 {sortedChatRooms.map((room) => (
                                     <li key={room.OPEN_R_ID}>
-                                        <img src={room?.OPEN_R_PROFILE} />
+                                        {
+                                            room?.OPEN_R_PROFILE === '' 
+                                            ?
+                                            <FaPeopleGroup />
+                                            :
+                                            <img src={room?.OPEN_R_PROFILE} />
+                                        }
                                         {room.OPEN_R_NAME}
                                         {room.LATEST_MESSAGE}
                                         <button onClick={() => handleJoinRoom(room)}>Join</button>
