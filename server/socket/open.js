@@ -1,7 +1,6 @@
-const {
-    getOpenChatRoomsByUserNo, AllOpenChatRooms
-} = require('./openChatDao/getOpenChatRoomsFromDatabase');
-
+const { getOpenChatRoomsByUserNo, AllOpenChatRooms } = require('./openChatDao/getOpenChatRoomsFromDatabase');
+const { createChatRoom, createChatRoomOnDefault } = require('./openChatDao/createChatRooms');
+const { updateBookmark } = require('./openChatDao/updateBookmark');
 
 module.exports = (io) => {
     io.on('connection', (socket) => {
@@ -43,7 +42,73 @@ module.exports = (io) => {
 
             }
 
+        });
 
+        socket.on('createOpenChat', async (form, ) => {
+
+            try {
+                createChatRoom(form, (error, result) => {
+                    if(error) {
+                        console.error('Failed to fetch create chat rooms:', error)
+ 
+                    } else {
+                        if(result[0] > 0) {
+                            socket.emit('createSuccess', [result[1], result[2]]);
+
+                        } else {
+                            console.log('DB INSERT FAIL');
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.log('채팅방생성 에러', error);
+            }
+
+        });
+
+        socket.on('createOpenChatOnDefault', async (form) => {
+
+            try {
+                createChatRoomOnDefault(form, (error, result) => {
+                    if(error) {
+                        console.log('Failed to fetch create chat rooms:', error);
+                    } else {
+                        if(result[0] > 0) {
+                            socket.emit('createSuccess', [result[1], result[2]]);
+                        } else {
+                            console.log('DB INSERT FAIL');
+                        }
+                    }
+                });
+            } catch (error) {
+                console.log('채팅방생성 에러', error);
+            }
+
+        })
+
+        socket.on('updateBookmark', async (rNo, uNo) => {
+
+            try {
+                updateBookmark(rNo, uNo, (error, result) => {
+
+                    if(error) {
+                        console.log('Failed to fetch updateBookmark:', error);
+                    } else {
+                        if(result > 0) {
+                            console.log('resultupdate', result);
+                            socket.emit('bookmarkUpdateSucceess', result);
+
+                        } else {
+                            console.log('DB INSERT FAIL');
+                        }
+                        
+                    }
+
+                });
+            } catch (error) {
+                console.log('update bookmark error', error);
+            }
 
         });
 

@@ -12,7 +12,7 @@ const OpenChatRoom = ({ room, onLeave }) => {
 
     return (
         <div>
-            <h3>{room.name}</h3>
+            <h3>{room.OPEN_R_NO}</h3>
             {/* 채팅 메시지 표시 및 입력 폼 */}
             <button onClick={handleLeaveChatRoom}>Leave</button>
         </div>
