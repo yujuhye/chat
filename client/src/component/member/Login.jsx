@@ -6,11 +6,11 @@ import { setUIdAction, setUPwAction, setIsLoginAction, setUserIdAction } from '.
 import useAxiosGetMember from "../../util/useAxiosGetMember";
 import cookie from 'js-cookie';
 import { GoogleLogin } from '@react-oauth/google';
+import { SERVER_URL } from '../../util/url';
 import '../../css/member/login.css';
 import * as jwt_decode from 'jwt-decode';
 import io from 'socket.io-client';
 const socket = io('http://localhost:3001');
-
 
 axios.defaults.withCredentials = true;
 const CLIENT_ID = '113858365495-jl2hl92heunsnv028li58n6aum139hcr.apps.googleusercontent.com';
@@ -45,7 +45,10 @@ const Login = () => {
 
 
     const axiosMemberLogin = () => {
-        axios.post('http://localhost:3001/member/signinConfirm', { uId, uPw }, { withCredentials: true })
+        axios.post(
+            // 'http://localhost:3001/member/signinConfirm', 
+            `${SERVER_URL.TARGET_URL()}/member/signinConfirm`,
+            { uId, uPw }, { withCredentials: true })
             .then(response => {
                 const { userToken } = response.data;
                 if (userToken) {
@@ -73,7 +76,10 @@ const Login = () => {
 
     const onGoogleLoginSuccess = async (response) => {
         try {
-            const res = await axios.post('http://localhost:3001/auth/google', { token: response.credential });
+            const res = await axios.post(
+                // 'http://localhost:3001/auth/google', 
+                `${SERVER_URL.TARGET_URL()}/auth/google`,
+                { token: response.credential });
             const { token } = res.data;
             if (token) {
                 alert('Google Login Successful!');

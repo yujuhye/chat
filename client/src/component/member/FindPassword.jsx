@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setYourIdAction, setYourEmailAction } from '../action/findPasswordActions';
+import { SERVER_URL } from '../../util/url';
 import '../../css/member/findpassword.css';
 
 axios.defaults.withCredentials = true;
@@ -51,7 +52,8 @@ const FindPassword = () => {
         console.log('[FindPassword] axiosFindPassword()');
 
         axios({
-            url: 'http://localhost:3001/member/findPassword',
+            // url: 'http://localhost:3001/member/findPassword',
+            url: `${SERVER_URL.TARGET_URL()}/member/findPassword`,
             method: 'post',
             data: {
                 'yourId': yourId,

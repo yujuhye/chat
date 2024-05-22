@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setMIdAction, setMPwAction, setMEmailAction, setMNicknameAction, setCurMIdAction, setCurMPwAction, setCurMEmailAction, setCurMNicknameAction, } from '../action/memberModifyActions';
+import { SERVER_URL } from '../../util/url';
 import Nav from '../../include/Nav';
 import cookie from 'js-cookie';
 import '../../css/member/membermodify.css';
@@ -33,7 +34,8 @@ const MemberModify = () => {
 
         } else {
             axios.get(
-                'http://localhost:3001/member/getMember',
+                // 'http://localhost:3001/member/getMember',
+                `${SERVER_URL.TARGET_URL()}/member/getMember`,
                 {
                     headers: {
                         Authorization: `Bearer ${userToken}`
@@ -170,7 +172,10 @@ const MemberModify = () => {
             mNickname: mNickname
         };
 
-        axios.post('http://localhost:3001/member/modifyConfirm', requestData, {
+        axios.post(
+            // 'http://localhost:3001/member/modifyConfirm', 
+            `${SERVER_URL.TARGET_URL()}/member/modifyConfirm`,
+            requestData, {
             headers: {
                 Authorization: `Bearer ${userToken}`
             }

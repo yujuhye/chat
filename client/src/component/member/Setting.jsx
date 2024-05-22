@@ -5,6 +5,7 @@ import { setIsLoginAction, setUserIdAction } from '../action/loginActions';
 import { setNewsListAction, setSelectedNewsContentAction } from '../action/newsActions';
 import Nav from '../../include/Nav';
 import { Link, useNavigate } from 'react-router-dom';
+import { SERVER_URL } from '../../util/url';
 import cookie from 'js-cookie';
 import useAxiosGetMember from '../../util/useAxiosGetMember';
 import '../../css/member/setting.css';
@@ -31,7 +32,8 @@ const Setting = () => {
         console.log('[Setting] AxiosGetNews()');
         try {
             const response = await axios.get(
-                'http://localhost:3001/admin/getNews',
+                // 'http://localhost:3001/admin/getNews',
+                `${SERVER_URL.TARGET_URL()}/admin/getNews`,
                 { withCredentials: true }
             );
 
@@ -74,7 +76,8 @@ const Setting = () => {
         setIsFetchingNewsContent(true);
         try {
             const response = await axios.get(
-                'http://localhost:3001/admin/getNewsContent',
+                // 'http://localhost:3001/admin/getNewsContent',
+                `${SERVER_URL.TARGET_URL()}/admin/getNewsContent`,
                 {
                     params: { index },
                     withCredentials: true
@@ -114,7 +117,8 @@ const Setting = () => {
         const userToken = cookie.get('userToken');
 
         axios({
-            url: 'http://localhost:3001/member/logoutConfirm',
+            // url: 'http://localhost:3001/member/logoutConfirm',
+            url: `${SERVER_URL.TARGET_URL()}/member/logoutConfirm`,
             method: 'put',
             headers: {
                 Authorization: `Bearer ${userToken}`
@@ -150,7 +154,8 @@ const Setting = () => {
         const userToken = cookie.get('userToken');
 
         axios({
-            url: 'http://localhost:3001/member/memberDeleteConfirm',
+            // url: 'http://localhost:3001/member/memberDeleteConfirm',
+            url: `${SERVER_URL.TARGET_URL()}/member/memberDeleteConfirm`,
             method: 'delete',
             data: {
                 userId: userId,

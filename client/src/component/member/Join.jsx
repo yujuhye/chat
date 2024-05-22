@@ -3,13 +3,14 @@ import axios from 'axios';
 import $ from 'jquery';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { SERVER_URL } from '../../util/url';
 import { setUIdAction, setUPwAction, setUEmailAction, setUNicknameAction, setUFrontImgNameAction } from '../action/joinActions';
 import '../../css/member/join.css';
 
 axios.defaults.withCredentials = true;
 
 const Join = () => {
-
+    
     const dispatch = useDispatch();
     const [uId, setUId] = useState('');
     const [uPw, setUPw] = useState('');
@@ -106,7 +107,8 @@ const Join = () => {
         formData.append("uFrontImgName", files[0]);
 
         axios({
-            url: `http://localhost:3001/member/signUpConfirm`,
+            // url: `http://localhost:3001/member/signUpConfirm`,
+            url: `${SERVER_URL.TARGET_URL()}/member/signUpConfirm`,
             method: 'post',
             data: formData,
         })
