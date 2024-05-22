@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { SERVER_URL } from '../../util/url';
 import axios from "axios";
 import  '../../css/profile.css';
 import '../../css/chat/Profile.css';
-
 import io from 'socket.io-client';
+import socketIOClientByFriend from "socket.io-client";
+import useAxiosGetMember from "../../util/useAxiosGetMember";
 
 const socket = io('http://localhost:3001');
+const server = "http://localhost:3001";
 
 const Profile = ({ onClose, selectedUserNo }) => {
 
     const navigate = useNavigate();
     const [requestMessage, setRequestMessage] = useState('');
-
+    useAxiosGetMember();
     const [profile, setProfile] = useState(null); // 프로필 정보 상태
     const [isLoading, setIsLoading] = useState(false);
     const [userInfo, setUserInfo] = useState('');
-
+    const userId = useSelector(state => state.login.userId);
     const selectedFriendId = useSelector(state => state['friend']['selectedFriend']);
     const friends = useSelector(state => state['friend']['friends']);
 
@@ -30,7 +33,8 @@ const Profile = ({ onClose, selectedUserNo }) => {
 
     const fetchUser = () => {
         axios({
-            url: `http://localhost:3001/chatRoom/getUserInfo`,
+            // url: `http://localhost:3001/chatRoom/getUserInfo`,
+            url: `${SERVER_URL.TARGET_URL()}/chatRoom/getUserInfo`,
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -39,13 +43,13 @@ const Profile = ({ onClose, selectedUserNo }) => {
         .then(response => {
             if (response.data) {
                 setUserInfo(response.data);
-                console.log('user info -----> ', response.data);
+                // console.log('user info -----> ', response.data);
             } else {
-                alert('[FriendListModal] user 정보를 불러오는 데 실패했습니다.');
+                // alert('[FriendListModal] user 정보를 불러오는 데 실패했습니다.');
             }
         })
         .catch(error => {
-            alert(`[FriendListModal] fetchUser Error: ${error.message}`);
+            alert(`[FriendListModal] user 정보를 불러오는 데 실패했습니다. : ${error.message}`);
         });
     };
 
@@ -56,8 +60,8 @@ const Profile = ({ onClose, selectedUserNo }) => {
             return;
         }
 
-        console.log('유저 정보!', userInfo);
-        console.log('chatBtnClickHandel()', userInfo, friendNo, friendName);
+        // console.log('유저 정보!', userInfo);
+        // console.log('chatBtnClickHandel()', userInfo, friendNo, friendName);
         createChatRoom(userInfo, friendNo, friendName);
         
     };
@@ -112,15 +116,16 @@ const Profile = ({ onClose, selectedUserNo }) => {
         console.log('선택한 유저 -----> ',params);
 
         axios({
-            url: 'http://localhost:3001/chat/profile',
+            // url: 'http://localhost:3001/chat/profile',
+            url: `${SERVER_URL.TARGET_URL()}/chat/profile`,
             method: 'get',
             params: params,
         })
         .then(response => {
-            console.log('axiosGetMyProfile success', response.data);
+            // console.log('axiosGetMyProfile success', response.data);
             setProfile(response.data); // 프로필 정보 상태 업데이트
 
-            console.log('axiosGetMyProfile success', profile);
+            // console.log('axiosGetMyProfile success', profile);
         })
         .catch(error => {
             console.log('axiosGetMyProfile error');
@@ -141,14 +146,15 @@ const Profile = ({ onClose, selectedUserNo }) => {
     function axiosRequestFriend(reqId, reqName) {
         console.log('axiosRequestFriend()');
 
+
         let formData = {
             'friendId': reqId,
             'friendName': reqName,
-            'reqMessage': requestMessage,
         }
 
         axios({
-            url: 'http://localhost:3001/friend/requestFriend',
+            // url: 'http://localhost:3001/friend/requestFriend',
+            url: `${SERVER_URL.TARGET_URL()}/friend/requestFriend`,
             method: 'post',
             data: formData
         })
@@ -156,10 +162,12 @@ const Profile = ({ onClose, selectedUserNo }) => {
             console.log('axiosRequestFriend success', response.data);
 
             
-            if(response.data > 0 ) {
+            if(response.data !== null ) {
 
                 alert('친구요청에 성공하였습니다.');
                 navigate('/friend/friendList');
+                const socket = socketIOClientByFriend(server);
+                socket.emit('send_friend_request', { targetId: reqId, fromName: response.data, fromId: userId});
     
             } else {
                 alert('친구요청에 실패하였습니다.');
@@ -176,7 +184,6 @@ const Profile = ({ onClose, selectedUserNo }) => {
             
         });
 
-
     }
 
     return (
@@ -186,9 +193,9 @@ const Profile = ({ onClose, selectedUserNo }) => {
                     <p className="chatProfilePTag">
                         <span className="chatProfileSpanTag">
                             {profile.USER_FRONT_IMG_NAME ? (
-                                <img src={profile.USER_FRONT_IMG_NAME} className="myFrontProfileImg" />
+                                <img src={profile.USER_FRONT_IMG_NAME} className="myProfileImg" />
                             ) : (
-                                <img src="/resource/img/profile_default.png" className="myFrontProfileImg" />
+                                <img src="/resource/img/profile_default.png" className="myProfileImg" />
                             )}
                         </span>
                         &nbsp;&nbsp;

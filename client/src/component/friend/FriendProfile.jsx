@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import '../../css/friendProfile.css';
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Favorite from "./Favorite";
 import { IoMdClose, IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -11,6 +11,7 @@ import io from 'socket.io-client';
 const socket = io('http://localhost:3001');
 
 function FriendProfile() {
+    const navigate = useNavigate();
 
     const selectedFriendId = useSelector(state => state['friend']['selectedFriend']);
     const friends = useSelector(state => state['friend']['friends']);
@@ -89,10 +90,14 @@ function FriendProfile() {
 
         socket.on('roomCreated', (data) => {
             console.log('Chat room created', data);
+            
+            navigate('/chatPage');
+            
         });
 
         socket.on('error', (error) => {
             console.error('Error creating chat room:', error);
+
         });
 
         return () => {

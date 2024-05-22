@@ -2,6 +2,7 @@ import React, { useState, useEffect, useReducer } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchUser } from "./fetchFunction";
 import { setRooms } from '../action/chatRoom';
+import { SERVER_URL } from '../../util/url';
 import axios from "axios"; 
 import '../../css/common.css';
 
@@ -19,7 +20,8 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
 
     const fetchFriends = () => {
         axios({
-            url: `http://localhost:3001/chatRoom/getFriendList`, 
+            // url: `http://localhost:3001/chatRoom/getFriendList`, 
+            url: `${SERVER_URL.TARGET_URL()}/chatRoom/getFriendList`,
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -31,20 +33,21 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
 
             } else {
 
-                alert('[FriendListModal] 친구 목록을 불러오는 데 실패했습니다.');
+                // alert('[FriendListModal] 친구 목록을 불러오는 데 실패했습니다.');
 
             }
         })
         .catch(error => {
 
-            alert(`[FriendListModal] fetchFriends Error: ${error.message}`);
+            alert(`[FriendListModal] 친구 목록을 불러오는 데 실패했습니다. : ${error.message}`);
 
         });
     };
 
     const fetchUser = () => {
         axios({
-            url: `http://localhost:3001/chatRoom/getUserInfo`, 
+            // url: `http://localhost:3001/chatRoom/getUserInfo`, 
+            url: `${SERVER_URL.TARGET_URL()}/chatRoom/getUserInfo`,
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -54,17 +57,17 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
             if (response.data) {
 
                 setUserInfo(response.data);
-                console.log('user info -----> ', response.data);
+                // console.log('user info -----> ', response.data);
 
             } else {
 
-                alert('[FriendListModal] user 정보를 불러오는 데 실패했습니다.');
+                // alert('[FriendListModal] user 정보를 불러오는 데 실패했습니다.');
 
             }
         })
         .catch(error => {
 
-            alert(`[FriendListModal] fetchUser Error: ${error.message}`);
+            alert(`[FriendListModal] 친구 목록을 불러오는 데 실패했습니다. : ${error.message}`);
 
         });
     };
@@ -121,21 +124,23 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
         if(inputName === 'room_default_name'){
             
             setChatName(inputValue);
-            console.log('변경할 채팅방 이름 : ', inputValue);
+            // console.log('변경할 채팅방 이름 : ', inputValue);
             
         } else if(inputName === 'room_personnel'){
             
             setSelectedFriends(inputValue);
-            console.log('채팅할 친구 : ', inputValue);
+            // console.log('채팅할 친구 : ', inputValue);
             
         } 
     }
 
     const fetchRooms = async () => {
         try {
-            const response = await axios.get('http://localhost:3001/chatRoom/list');
-            console.log('chat list : ', response.data); 
-            console.log('채팅 리스트 room : ', response.data.rooms); 
+            // url: `${SERVER_URL.TARGET_URL()}/chatRoom/getUserInfo`,
+            // const response = await axios.get('http://localhost:3001/chatRoom/list');
+            const response = await axios.get(`${SERVER_URL.TARGET_URL()}/chatRoom/list`);
+            // console.log('chat list : ', response.data); 
+            // console.log('채팅 리스트 room : ', response.data.rooms); 
 
             // 가져온 채팅방 목록을 리덕스 스토어에 설정
             dispatch(setRooms(response.data.rooms));
@@ -152,9 +157,9 @@ const FriendListModal = ({ socket, handleFriendInviteModalClose, isShowFriendMod
             userInfo: userInfo, 
         };
     
-        console.log('[friends modal] newChatData -----> ', newChatData);
-        console.log('[friends modal] selectedFriendDetails -----> ', selectedFriendDetails);
-        console.log('[friends modal] userInfo -----> ', userInfo);
+        // console.log('[friends modal] newChatData -----> ', newChatData);
+        // console.log('[friends modal] selectedFriendDetails -----> ', selectedFriendDetails);
+        // console.log('[friends modal] userInfo -----> ', userInfo);
         socket.emit('createRoom', newChatData);
         fetchRooms();
         socket.on('update room list', fetchRooms);

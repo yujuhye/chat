@@ -32,7 +32,7 @@ const ChatRoom = ({ handleRoomSelect }) => {
     const [searchResult, setSearchResult] = useState('');
     
     const handleChatRoomClick = (chatRoomId) => {
-        console.log('chatRoomId -----> ', chatRoomId);
+        // console.log('chatRoomId -----> ', chatRoomId);
         const room = { ROOM_NO: chatRoomId.ROOM_NO, };
         handleRoomSelect(room); // 상위 컴포넌트로 선택된 채팅방 정보 전달
     };
@@ -41,9 +41,11 @@ const ChatRoom = ({ handleRoomSelect }) => {
     useEffect(() => {
         const fetchRooms = async () => {
             try {
-                const response = await axios.get('http://localhost:3001/chatRoom/list');
-                console.log('chat list : ', response.data); 
-                console.log('채팅 리스트 room : ', response.data.rooms); 
+                // const response = await axios.get('http://localhost:3001/chatRoom/list');
+                const response = await axios.get(`${SERVER_URL.TARGET_URL()}/chatRoom/list`);
+                //url: `${SERVER_URL.TARGET_URL()}/chat/searChatText`,
+                // console.log('chat list : ', response.data); 
+                // console.log('채팅 리스트 room : ', response.data.rooms); 
 
                 // 가져온 채팅방 목록을 리덕스 스토어에 설정
                 dispatch(setRooms(response.data.rooms));
@@ -76,7 +78,7 @@ const ChatRoom = ({ handleRoomSelect }) => {
 
     useEffect(() => {
         socket.on('updateChatList', (chatList) => {
-            console.log(chatList); // 받은 데이터 확인
+            // console.log(chatList); // 받은 데이터 확인
             dispatch(setRooms(chatList));
 
         });
@@ -126,9 +128,9 @@ const ChatRoom = ({ handleRoomSelect }) => {
         socket.on('leaveRoomResult', leaveRoomResult);
         socket.on('userLeft', handleUserLeft);
         socket.on('update room list', (rooms) => {
-            console.log('방 목록이 업데이트 되었습니다.');
+            // console.log('방 목록이 업데이트 되었습니다.');
             dispatch(setRooms(rooms));
-            console.log('방 목록이 업데이트 되었습니다-----', dispatch(setRooms(rooms)));
+            // console.log('방 목록이 업데이트 되었습니다-----', dispatch(setRooms(rooms)));
         });
     
         // 컴포넌트 언마운트 시 이벤트 리스너 해제
@@ -150,7 +152,7 @@ const ChatRoom = ({ handleRoomSelect }) => {
             no: no,
         }
         socket.emit('leaveRoom', chatInfo);
-        console.log('나가기 이벤트 -----> ', chatInfo);
+        // console.log('나가기 이벤트 -----> ', chatInfo);
         dispatch(setLeaveRoom(id));
     };
 
@@ -183,9 +185,9 @@ const ChatRoom = ({ handleRoomSelect }) => {
     
         socket.on('chatLikeOkResult', likeMessageResult);
         socket.on('update room list', (rooms) => {
-            console.log('방 목록이 업데이트 되었습니다.');
+            // console.log('방 목록이 업데이트 되었습니다.');
             dispatch(setRooms(rooms));
-            console.log('방 목록이 업데이트 되었습니다-----', dispatch(setRooms(rooms)));
+            // console.log('방 목록이 업데이트 되었습니다-----', dispatch(setRooms(rooms)));
         });
     
         // 컴포넌트 언마운트 시 이벤트 리스너 해제
@@ -200,7 +202,7 @@ const ChatRoom = ({ handleRoomSelect }) => {
             no: no,
         }
         socket.emit('likeRoom', chatLikeInfo);
-        console.log('채팅방 즐겨찾기 이벤트 -----> ', chatLikeInfo);
+        // console.log('채팅방 즐겨찾기 이벤트 -----> ', chatLikeInfo);
         dispatch(setFavoriteRoom(id)); 
     };
 
@@ -222,7 +224,7 @@ const ChatRoom = ({ handleRoomSelect }) => {
         let inputValue = e.target.value;
         if(inputName === 'parti_customzing_name'){   
             setChatTitleName(inputValue);
-            console.log('변경할 채팅방 이름 : ', inputValue);    
+            // console.log('변경할 채팅방 이름 : ', inputValue);    
         }
     }
     
@@ -239,10 +241,10 @@ const ChatRoom = ({ handleRoomSelect }) => {
             user_no: no,
             parti_customzing_name: newName,
         };
-        console.log('data -----> ', data);
+        // console.log('data -----> ', data);
         axios({
-            url: `http://localhost:3001/chatRoom/modifyTitleConfirm`,
-            //url: `${SERVER_URL.TARGET_URL()}/chatRoom/modifyTitleConfirm`,
+            // url: `http://localhost:3001/chatRoom/modifyTitleConfirm`,
+            url: `${SERVER_URL.TARGET_URL()}/chatRoom/modifyTitleConfirm`,
             method: 'post',
             data: data,
             headers: {
@@ -251,19 +253,19 @@ const ChatRoom = ({ handleRoomSelect }) => {
         })
         .then(response => {
             if(response.data === null) {
-                alert('[ChatRoom] 채팅 방 이름 수정에 실패했습니다.');
+                alert('채팅 방 이름 수정에 실패했습니다.');
                 setModifyStatus('fail');
                 setIsShowChatTitleNameModModal(false);
             } else {
                 if(response.data.result > 0) {
-                    alert('[ChatRoom] 채팅 방 이름 수정에 성공했습니다.');
+                    alert('채팅 방 이름 수정에 성공했습니다.');
                     setChatTitleName(newName); // 상태 업데이트
                     setModifyStatus('success');
                     setIsShowChatTitleNameModModal(false);
                     window.location.reload();
                     // socket.emit('request room list', user);
                 } else {
-                    alert('[ChatRoom] Unexpected response format');
+                    // alert('[ChatRoom] Unexpected response format');
                     setModifyStatus('fail');
                     setIsShowChatTitleNameModModal(false);
                 }
@@ -304,9 +306,10 @@ const ChatRoom = ({ handleRoomSelect }) => {
         let params  = {
             parti_customzing_name: searchKey,
         }
-        console.log('params -----> ', params);
+        // console.log('params -----> ', params);
         axios({
-            url: `http://localhost:3001/chatRoom/searChatRoom`,
+            // url: `http://localhost:3001/chatRoom/searChatRoom`,
+            url: `${SERVER_URL.TARGET_URL()}/chatRoom/searChatRoom`,
             method: 'get',
             params: params,
             headers: {

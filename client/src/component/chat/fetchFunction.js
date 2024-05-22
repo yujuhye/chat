@@ -1,10 +1,12 @@
 // 자주 사용하는 함수 빼놓기
 import axios from 'axios';
+import { SERVER_URL } from '../../util/url';
 
 export const fetchUser = async () => {
     try {
         const response = await axios({
-            url: `http://localhost:3001/chatRoom/getUserInfo`, 
+            //url: `${SERVER_URL.TARGET_URL()}/chatRoom/searChatRoom`
+            url: `${SERVER_URL.TARGET_URL()}/chatRoom/getUserInfo`, 
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
