@@ -1,7 +1,7 @@
 .friendListContainer {
   display: flex;
   height: 100vh; 
-  width: 640px;
+  width: 600px;
   justify-content: flex-start; 
   padding-right: 400px; 
   
@@ -14,18 +14,6 @@
   margin-right: 300px;
   cursor: pointer; 
   transition: background-color 0.3s ease; 
-  width:480px;
-  overflow: hidden;
-
-}
-
-.friendCurMsg {
-  margin-left: 80px;
-  text-align: right;
-  display: flex;
-  align-items: center; 
-  white-space: nowrap; 
-
 }
 
 .friendList {
@@ -35,13 +23,10 @@
 
 .friendList:hover {
   background-color: #f0f0f0; 
-  width: 99%;
-
 }
 
 .friendList.selected {
   background-color: #dcdcdc;
-  width: 99%;
 }
 
 .frontProfileImg {
@@ -68,13 +53,7 @@
   border-left: 2px solid #d3d3d3; 
   border-right: 2px solid #d3d3d3; 
   padding: 10px; 
-  overflow: auto; /* 추가 */
-  overflow-x: hidden; /* 추가 */
-  box-sizing: border-box; /* 추가 */
-  position: relative; /* 추가 */
-
 }
-
 
 .friendListWrap h3 {
   border-top: 1px solid #d3d3d3; 
@@ -83,18 +62,8 @@
   width: 85%;
 }
 
-.friendLisText {
-  margin-top: 15px;
-}
-
 .friendProfileDetailsWrap{
-   /* margin: 20px; */
-   position: absolute; /* 추가 */
-   top: 0; /* 추가 */
-   right: 0; /* 추가 */
-   right: 280px;
-   /* height: 100%;  */
- 
+  margin: 20px;
 }
 
 .searchBox {
@@ -152,9 +121,6 @@
   margin: 10px;
   margin-right: 300px;
   width: 200px;
-  width:480px;
-  overflow: hidden;
-
   }
   
   .myFrontProfileImg {
@@ -175,44 +141,33 @@
     display: flex;
     align-items: center; 
     white-space: nowrap; 
-    margin-left: 80px;
+    margin-left: 50px;
     text-align: right;
   }
   
   .myProfileListWrap {
   background-color: #f0f0f0;
-  width:  480PX;
+  width: 94%;
   }
   
   .myProfileList {
   cursor: pointer;
-  width: 480px;
   }
   
   .myProfileList:hover {
   background-color: #dcdcdc;
-  width:  480PX;
+  width: 99%;
   }
   
   .myProfileDetailsWrap {
   /* border: 1px solid #d3d3d3; */
   width: 400px;
   height: 700px;
-  margin-left: 40px;
-  display: flex;
+  /* display: flex; */
+  margin: 15px;
   }
 
   .myProfileList.selected {
     background-color: #dcdcdc;
     width: 99%;
-  }
-
-  .friendListWithAlarm {
-    position: relative;
-  }
-
-  .reqAlarm {
-    position: absolute;
-    left: 270px;
-    top: 2px;
   }

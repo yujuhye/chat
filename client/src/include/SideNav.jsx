@@ -15,6 +15,7 @@ const SideNav = () => {
                 <Link to="/friend/friendList"><FaUserFriends size="30px" color="#505050" /></Link> &nbsp;
                 <Link to="/friend/managementFriend"><FaUserPlus size="30px" color="#505050" /></Link> &nbsp;
                 <Link to="/member/setting"><IoSettingsOutline  size="30px" color="#505050" /></Link> &nbsp;
+                <Link to="/OpenChatHome">오픈채팅</Link> &nbsp;
         </div>
         </>
     );
