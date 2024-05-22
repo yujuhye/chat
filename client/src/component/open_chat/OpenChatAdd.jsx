@@ -3,6 +3,7 @@ import socket from './socket';
 import { generateRandomString } from '../../util/randomString';
 import { FaPeopleGroup } from "react-icons/fa6";
 import uploadFile from '../../util/uploadFileOpenChat'
+import { SERVER_URL } from '../../util/url'
 
 const OpenChatAdd = ({ onLeave, userNo }) => {
 
