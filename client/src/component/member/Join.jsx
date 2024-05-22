@@ -4,6 +4,8 @@ import $ from 'jquery';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUIdAction, setUPwAction, setUEmailAction, setUNicknameAction, setUFrontImgNameAction } from '../action/joinActions';
+import '../../css/member/join.css';
+
 axios.defaults.withCredentials = true;
 
 const Join = () => {
@@ -145,7 +147,7 @@ const Join = () => {
     return (
         <div className="joinContainer">
             <div className="joinForm">
-                <p>MEMBER JOIN FORM</p>
+                <p>회원가입</p>
                 <form name="memberJoinForm">
                     <input type="text" name="uId" value={uId} onChange={memberInfoChangeHandler} placeholder="아이디를 입력하세요." /><br />
                     <input type="password" name="uPw" value={uPw} onChange={memberInfoChangeHandler} placeholder="비밀번호를 입력하세요." /><br />

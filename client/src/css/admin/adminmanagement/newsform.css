@@ -1,0 +1,80 @@
+body,
+html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.newsFormContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 60px);
+    background-color: #f8f9fa;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.newsFormHeader {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.newsForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    background-color: #ffffff;
+    padding: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+.newsInput,
+.newsTextarea {
+    width: 100%;
+    padding: 10px;
+    margin: 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.newsTextarea {
+    height: 200px;
+    resize: none;
+}
+
+.newsInput::placeholder,
+.newsTextarea::placeholder {
+    font-size: 1rem;
+    font-family: Arial, sans-serif;
+    color: #999;
+}
+
+.newsButton {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.newsButton:nth-of-type(1) {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.newsButton:nth-of-type(2) {
+    background-color: #6c757d;
+    color: #fff;
+}

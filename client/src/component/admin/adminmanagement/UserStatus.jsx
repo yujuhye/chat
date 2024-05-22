@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import Nav from '../../../include/Nav';
 import useAxiosGetAdmin from '../../../util/useAxiosGetAdmin';
+import '../../../css/admin/adminmanagement/userstatus.css';
 
 const UserStatus = () => {
     const [data, setData] = useState([]);
@@ -48,12 +49,10 @@ const UserStatus = () => {
         }
     };
 
-    // Calculate the indices for slicing the data
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    let currentPageData = data.slice(startIndex, endIndex).reverse(); // Reverse to make the most recent data on the right
+    let currentPageData = data.slice(startIndex, endIndex).reverse();
 
-    // Add placeholders if there are fewer than 12 items to align bars to the right
     if (currentPageData.length < itemsPerPage) {
         const placeholders = Array(itemsPerPage - currentPageData.length).fill({ regDate: '', registrationCount: 0 });
         currentPageData = [...placeholders, ...currentPageData];
@@ -62,28 +61,32 @@ const UserStatus = () => {
     return (
         <div>
             <Nav />
-            <h1>월별 가입자 수 현황</h1>
+            <div className="userStatusContainer">
+                <h1 className="userStatusHeader">월별 가입자 수 현황</h1>
 
-            <ResponsiveContainer width="80%" height={400}>
-                <BarChart
-                    data={currentPageData}
-                    margin={{
-                        top: 5,
-                        right: 30,
-                        left: 20,
-                        bottom: 5,
-                    }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="regDate" />
-                    <YAxis domain={[0, maxRegistrationCount]} />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="registrationCount" fill="#8884d8" />
-                </BarChart>
-            </ResponsiveContainer>
-            <button onClick={handlePrevPage} disabled={currentPage * itemsPerPage >= data.length}>이전</button>
-            <button onClick={handleNextPage} disabled={currentPage === 1}>다음</button>
+                <ResponsiveContainer width="80%" height={400}>
+                    <BarChart
+                        data={currentPageData}
+                        margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5,
+                        }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="regDate" />
+                        <YAxis domain={[0, maxRegistrationCount]} />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="registrationCount" fill="#8884d8" />
+                    </BarChart>
+                </ResponsiveContainer>
+                <div className="paginationButtons">
+                    <button onClick={handlePrevPage} disabled={currentPage * itemsPerPage >= data.length} className="pageButton">이전</button>
+                    <button onClick={handleNextPage} disabled={currentPage === 1} className="pageButton">다음</button>
+                </div>
+            </div>
         </div>
     );
 };

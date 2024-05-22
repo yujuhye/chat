@@ -5,9 +5,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { setNewsListAction, setSelectedNewsContentAction } from '../../../component/action/newsActions';
 import useAxiosGetAdmin from '../../../util/useAxiosGetAdmin';
+import '../../../css/admin/adminmanagement/newslist.css';
 
 const NewsList = () => {
-
     const newsList = useSelector(state => state.news.newsList);
     const [expandedNews, setExpandedNews] = useState(new Array(newsList.length).fill(false));
     const selectedNewsContent = useSelector(state => state.news.selectedNewsContent);
@@ -91,43 +91,63 @@ const NewsList = () => {
         }
     };
 
+    // Pagination logic
+    const [currentPage, setCurrentPage] = useState(1);
+    const newsPerPage = 10;
+
+    const indexOfLastNews = currentPage * newsPerPage;
+    const indexOfFirstNews = indexOfLastNews - newsPerPage;
+    const currentNews = newsList.slice(indexOfFirstNews, indexOfLastNews);
+    const totalPages = Math.ceil(newsList.length / newsPerPage);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
     return (
         <div>
             <Nav />
-            <h1>공지사항</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>공지</th>
-                        <th>날짜</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {newsList.map((news, index) => (
-                        <React.Fragment key={news.id || index}>
-                            <tr onClick={() => showNewsContent(index)}>
-                                <td>{news.NEWS_TITLE}</td>
-                                <td>{news.NEWS_REG_DATE.slice(0, 10)}</td>
+            <div className="newsListContainer">
+                <h1 className="newsListHeader">공지사항</h1>
+                <div className="newsListContent">
+                    <table className="newsListTable">
+                        <thead>
+                            <tr>
+                                <th className="titleColumn">공지</th>
+                                <th className="dateColumn">날짜</th>
                             </tr>
-                            {expandedNews[index] && (
-                                <tr>
-                                    <td colSpan="2">
-                                        {typeof selectedNewsContent === 'string' ? selectedNewsContent :
-                                            selectedNewsContent && selectedNewsContent.NEWS_CONTENT ? selectedNewsContent.NEWS_CONTENT : 'No content available'}
-                                    </td>
-                                </tr>
-                            )}
-                        </React.Fragment>
-                    ))}
-                </tbody>
-            </table>
-            <div>
-                <Link to="/admin/newsform">글쓰기</Link>
+                        </thead>
+                        <tbody>
+                            {currentNews.map((news, index) => (
+                                <React.Fragment key={news.id || index}>
+                                    <tr onClick={() => showNewsContent(indexOfFirstNews + index)}>
+                                        <td>{news.NEWS_TITLE}</td>
+                                        <td className="dateColumn">{news.NEWS_REG_DATE.slice(0, 10)}</td>
+                                    </tr>
+                                    {expandedNews[indexOfFirstNews + index] && (
+                                        <tr>
+                                            <td colSpan="2">
+                                                {typeof selectedNewsContent === 'string' ? selectedNewsContent :
+                                                    selectedNewsContent && selectedNewsContent.NEWS_CONTENT ? selectedNewsContent.NEWS_CONTENT : 'No content available'}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+                    <div className="pagination">
+                        {[...Array(totalPages)].map((_, i) => (
+                            <button key={i} onClick={() => paginate(i + 1)} className={`pageButton ${i + 1 === currentPage ? 'active' : ''}`}>
+                                {i + 1}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="newsListLinks">
+                        <Link to="/admin/newsform">글쓰기</Link>
+                    </div>
+                </div>
             </div>
         </div>
     );
-
 };
-
 
 export default NewsList;
