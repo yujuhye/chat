@@ -4,7 +4,6 @@ import $ from 'jquery';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setUIdAction, setUPwAction, setUEmailAction, setUNicknameAction, setUFrontImgNameAction } from '../action/joinActions';
-
 axios.defaults.withCredentials = true;
 
 const Join = () => {
