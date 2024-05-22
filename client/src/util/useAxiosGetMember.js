@@ -20,7 +20,8 @@ const useAxiosGetMember = () => {
 
             try {
                 const response = await axios.get(
-                    'http://localhost:3001/member/getMember',
+                    // 'http://localhost:3001/member/getMember',
+                    `${SERVER_URL.TARGET_URL()}/member/getMember`, 
                     {
                         headers: {
                             Authorization: `Bearer ${userToken}`

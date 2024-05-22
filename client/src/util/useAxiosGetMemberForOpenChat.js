@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import cookie from 'js-cookie';
 import { useNavigate } from "react-router-dom";
+import { SERVER_URL } from '../util/url';
 
 const useAxiosGetMember = () => {
     const dispatch = useDispatch();
@@ -22,7 +23,8 @@ const useAxiosGetMember = () => {
 
             try {
                 const response = await axios.get(
-                    'http://localhost:3001/member/getMember',
+                    // 'http://localhost:3001/member/getMember',
+                    `${SERVER_URL.TARGET_URL()}/member/getMember`, 
                     {
                         headers: {
                             Authorization: `Bearer ${userToken}`
