@@ -348,7 +348,7 @@ function MyProfileDetails() {
                 </span>
                 <div>
                     <input className="myProfileEditName" type="text" name="profileName" 
-                    value={profileName} placeholder="이름을 입력해주세요" onChange={(e) => myProfileInfoChangeHandler(e)}
+                    value={profileName} placeholder="이름을 입력해주세요" readOnly  onChange={(e) => myProfileInfoChangeHandler(e)}
                     />
                 </div>
                 <div>

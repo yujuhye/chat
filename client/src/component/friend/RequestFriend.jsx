@@ -706,9 +706,7 @@ function RequestFriend() {
                     : 
                     searchFriendInfo[searchFriendInfoId].friendStatus === 'friend'
                     ?
-                    <div>
-                    <Link to="/chat/chatView/:roomId">채팅</Link>
-                    </div>
+                    <p>친구 상태입니다.</p>
                     :
                     searchFriendInfo[searchFriendInfoId].friendStatus === 'myself'
                     ?
