@@ -12,6 +12,7 @@ const Nav = () => {
         <nav>
             {isAdminLogin ?
                 <>
+                    <Link to="/admin">관리자 홈</Link> &nbsp;
                     <Link to="/admin/news">공지사항</Link> &nbsp;
                     <Link to="/admin/userstatus">유저 통계</Link> &nbsp;
                     <Link to="/admin/chatstatushourly">채팅 통계</Link> &nbsp;
@@ -26,7 +27,7 @@ const Nav = () => {
                     <Link to="/member/setting">설정</Link> &nbsp;
                     {/* <Link to="/chatRoom/list">chat</Link> &nbsp; */}
                     {/* 추가 부분 */}
-                    <Link to="/chatPage">Chat</Link> &nbsp; 
+                    <Link to="/chatPage">Chat</Link> &nbsp;
                 </>
             }
 
