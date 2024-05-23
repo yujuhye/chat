@@ -43,6 +43,8 @@ const io = require('socket.io')(http, {
     }
 });
 
+console.log('host', host);
+
 // Socket.IO 설정을 위한 socket.js 모듈 호출
 require('./socket/socket')(io);
 require('./socket/alarm')(io);  //0520주해추가
