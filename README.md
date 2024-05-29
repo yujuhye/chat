@@ -1,7 +1,7 @@
 # chat square
 
 <p align=center>
-  <img width=50% src=https://github.com/yujuhye/chat/assets/161537140/4817c645-6a71-4a4c-8eec-7054e218b2bb >
+  <img width=60% src=https://github.com/yujuhye/chat/assets/161537140/4817c645-6a71-4a4c-8eec-7054e218b2bb >
 <p/>
 
 ### 개발팀원
