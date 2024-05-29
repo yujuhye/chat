@@ -31,5 +31,8 @@
 
 ### 개발환경
 ---
+client(프론트)와 server(백엔드)에 모두 npm install로 모듈들을 가져옵니다.
+그 뒤에 server를 올려주고 client에서 npm start로 시작
 
-
+<img width=20% src=https://github.com/yujuhye/chat/assets/161537140/dea52de9-42af-4548-ad0c-21325951ee6b >
+<img width=20% src=https://github.com/yujuhye/chat/assets/161537140/987c755c-f8d6-42d2-be2f-983c10a9aa24 >
