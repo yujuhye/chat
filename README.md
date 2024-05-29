@@ -1,5 +1,9 @@
 # chat square
 
+<p align=center>
+  <img width=50% src=https://github.com/yujuhye/chat/assets/161537140/4817c645-6a71-4a4c-8eec-7054e218b2bb >
+<p/>
+
 ### 개발팀원
 ---
 + **유주해(풀스텍)** - 친구리스트, 친구요청, 친구관리, 프로필 편집
@@ -16,9 +20,7 @@
 #### 특징 
 **친목**유지와 **실시간** 채팅
 
-<p align=center>
-  <img width=50% src=https://github.com/yujuhye/chat/assets/161537140/4817c645-6a71-4a4c-8eec-7054e218b2bb >
-<p/>
+
 
 ### 사용기술
 ---
