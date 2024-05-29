@@ -1,6 +1,6 @@
 # chat square
 
-### 개발조원
+### 개발팀원
 ---
 + **유주해(풀스텍)** - 친구리스트, 친구요청, 친구관리, 프로필 편집
 + **강미소(풀스텍)** - 채팅방 리스트, 채팅 파일, 이미지보내기, 실시간 채팅
@@ -31,6 +31,10 @@
 
 ### 개발환경
 ---
+<img width=20% src=https://github.com/yujuhye/chat/assets/161537140/87cf7c32-3109-45ee-aefb-bc060e41fc91>
+<img width=20% src=https://github.com/yujuhye/chat/assets/161537140/1c12876b-939b-412f-90cb-2bec1af1b761 >
+
+
 client(프론트)와 server(백엔드)에 모두 npm install로 모듈들을 가져옵니다.
 그 뒤에 server를 올려주고 client에서 npm start로 시작
 
